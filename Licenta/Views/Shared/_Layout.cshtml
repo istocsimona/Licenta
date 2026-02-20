@@ -4,44 +4,166 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Licenta</title>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Licenta.styles.css" asp-append-version="true" />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        /* ===============================
+                   GLOBAL VARIABLES & THEME
+                   =============================== */
+        :root {
+            --p1: #D7F2BA;
+            --p2: #BDE4A8;
+            --p3: #9CC69B;
+            --p4: #79B4A9;
+            --p5: #676F54;
+        }
+
+        body {
+            background-color: #e9f8da;
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--p5);
+        }
+
+        main {
+            flex: 1;
+        }
+
+        /* ===============================
+                   FULL-WIDTH ROUNDED NAVBAR
+                   =============================== */
+        .navbar-custom {
+            background-color: #fcfdfa; /* Solid off-white */
+            border-radius: 0 0 1rem 1rem; /* Softer rounding, only on the bottom corners */
+            box-shadow: 0 6px 24px rgba(103, 111, 84, 0.08); /* Soft shadow */
+            padding: 0.8rem 0; /* Breathing room */
+            border-bottom: 1px solid rgba(121, 180, 169, 0.15);
+        }
+
+        /* Brand & Custom Icon Alignment */
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--p5) !important;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-right: 2rem;
+            transition: opacity 0.2s ease;
+        }
+
+            .navbar-brand:hover {
+                opacity: 0.8;
+            }
+
+            .navbar-brand img {
+                width: 30px;
+                height: 30px;
+                object-fit: contain;
+            }
+
+        /* Nav Links */
+        .nav-link.custom-link {
+            font-weight: 600;
+            color: var(--p5) !important;
+            padding: 0.5rem 1.2rem !important;
+            border-radius: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+            .nav-link.custom-link:hover {
+                background-color: var(--p1);
+                color: var(--p5) !important;
+            }
+
+        /* Navbar Toggler (Mobile) */
+        .navbar-toggler {
+            border: none;
+            padding: 0.5rem;
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+                outline: none;
+            }
+
+        /* ===============================
+                   CLEAN FOOTER
+                   =============================== */
+        .footer-custom {
+            background: transparent;
+            border-top: 1px solid rgba(121, 180, 169, 0.2) !important;
+            color: #8a967a !important;
+            padding: 2rem 0;
+            font-weight: 500;
+            margin-top: 3rem;
+        }
+
+            .footer-custom a {
+                color: var(--p4);
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.2s ease;
+                padding-bottom: 2px;
+                border-bottom: 2px solid transparent;
+            }
+
+                .footer-custom a:hover {
+                    color: var(--p5);
+                    border-bottom-color: var(--p2);
+                }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Licenta</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light navbar-custom">
+            <div class="container">
+
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/favicon.ico" alt="Licenta Logo" />
+                    Licenta
+                </a>
+
+                <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link custom-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
+
             </div>
         </nav>
     </header>
+
     <div class="container">
-        <main role="main" class="pb-3">
+        <main role="main" class="pb-5 pt-5">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer-custom text-center mt-auto">
         <div class="container">
-            &copy; 2026 - Licenta - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - Licenta - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

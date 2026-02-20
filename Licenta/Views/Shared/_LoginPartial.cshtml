@@ -1,26 +1,151 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@using Licenta.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
-@if (SignInManager.IsSignedIn(User))
-{
-    <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
-}
-else
-{
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-}
+<style>
+    /* Ensure your root variables are available here if they aren't in a global CSS file */
+    :root {
+        --p1: #D7F2BA;
+        --p2: #BDE4A8;
+        --p3: #9CC69B;
+        --p4: #79B4A9;
+        --p5: #676F54;
+    }
+
+    /* Hide Bootstrap's default dropdown arrow */
+    .hide-arrow::after {
+        display: none !important;
+    }
+
+    /* ===============================
+           PROFILE PICTURE
+           =============================== */
+    .profile-pic-nav {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--p4); /* Changed from Bootstrap blue to your Teal */
+        transition: all 0.2s ease;
+    }
+
+        .profile-pic-nav:hover {
+            box-shadow: 0 0 0 0.2rem rgba(121, 180, 169, 0.25); /* Soft glow matching your inputs */
+        }
+
+    /* ===============================
+           DROPDOWN MENU
+           =============================== */
+    .custom-dropdown-menu {
+        border: 1px solid #e3e8e1;
+        border-radius: 1.2rem;
+        box-shadow: 0 10px 20px rgba(0,0,0,.08);
+        padding: 0.8rem;
+        min-width: 200px;
+    }
+
+        .custom-dropdown-menu .dropdown-header {
+            color: var(--p4);
+            font-size: 1.05rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .custom-dropdown-menu .dropdown-item {
+            border-radius: 0.6rem;
+            color: var(--p5);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+        }
+
+            .custom-dropdown-menu .dropdown-item:hover {
+                background-color: var(--p1);
+                color: var(--p5);
+            }
+
+            .custom-dropdown-menu .dropdown-item.text-danger:hover {
+                background-color: #fee2e2; /* Soft red hover for logout */
+                color: #dc3545 !important;
+            }
+
+        .custom-dropdown-menu hr {
+            opacity: 0.1;
+            margin: 0.5rem 0;
+        }
+
+    /* ===============================
+           GUEST BUTTONS (LOGIN / REGISTER)
+           =============================== */
+    .nav-btn-light {
+        color: var(--p5) !important;
+        font-weight: 600;
+        border-radius: 2rem;
+        padding: 0.5rem 1.5rem !important;
+        transition: all 0.2s ease;
+    }
+
+        .nav-btn-light:hover {
+            background-color: var(--p1);
+        }
+
+    .nav-btn-primary {
+        background: linear-gradient(135deg, var(--p3), var(--p4));
+        color: white !important;
+        font-weight: 600;
+        border-radius: 2rem;
+        padding: 0.5rem 1.8rem !important;
+        box-shadow: 0 4px 10px rgba(0,0,0,.1);
+        transition: all 0.2s ease;
+        border: none;
+    }
+
+        .nav-btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(0,0,0,.15);
+        }
+</style>
+
+<ul class="navbar-nav align-items-center gap-2">
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        var profilePic = user?.ProfilePicture ?? "/images/profiles/default-profile.png";
+
+        <li class="nav-item dropdown">
+            @* Profile Image Trigger *@
+            <a class="nav-link dropdown-toggle d-flex align-items-center hide-arrow p-0" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="@profilePic" alt="Profile" class="profile-pic-nav shadow-sm" />
+            </a>
+
+            @* Dropdown Menu *@
+            <ul class="dropdown-menu dropdown-menu-end custom-dropdown-menu mt-2" aria-labelledby="profileDropdown">
+                <li class="dropdown-header text-center">
+                    <strong>@User.Identity?.Name</strong>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item d-flex align-items-center" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="bi bi-person me-2 fs-5"></i> Manage Profile
+                    </a>
+                </li>
+                <li>
+                    <form id="logoutForm" class="form-inline m-0 p-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <button type="submit" class="dropdown-item text-danger d-flex align-items-center bg-transparent border-0 w-100">
+                            <i class="bi bi-box-arrow-right me-2 fs-5"></i> Logout
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item">
+            <a class="nav-link nav-btn-light" asp-area="Identity" asp-page="/Account/Login">Login</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link nav-btn-primary" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        </li>
+    }
 </ul>
