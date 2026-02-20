@@ -1,0 +1,193 @@
+﻿@model Licenta.Models.Trip
+
+@{
+    ViewData["Title"] = "Trip Details";
+}
+
+<style>
+    /* ===============================
+           CLEAN DETAILS CARD STYLING
+           =============================== */
+    .page-title {
+        color: var(--p5);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .details-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .trip-card {
+        background-color: #fcfdfa;
+        border-radius: 1.2rem;
+        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
+        border: none;
+        padding: 2.5rem;
+    }
+
+    .trip-title {
+        color: var(--p5);
+        font-weight: 800;
+        font-size: 1.8rem;
+        letter-spacing: -0.5px;
+        margin-bottom: 1rem;
+    }
+
+    .trip-desc {
+        color: #676f54;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 2.5rem;
+    }
+
+    
+    /* --- SIMPLE POLITICAL MAP CONTAINER --- */
+    .map-container {
+        width: 100%;
+        height: 250px;
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
+        border: 1px solid rgba(121, 180, 169, 0.2);
+        margin-bottom: 2rem;
+        background-color: #e9f8da;
+    }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+			/* pointer-events: none; */ /* Aici este magia: blocăm orice interacțiune (zoom, click, drag) */
+			/* Reducem intensitatea culorilor pentru un aspect mai "flat", de atlas */
+            filter: saturate(0.6) contrast(1.1) hue-rotate(-5deg);
+        }
+
+    /* Format unitar Iconiță + Text */
+    .date-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        color: var(--p5);
+        font-weight: 500;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .date-icon {
+        color: var(--p4);
+        font-size: 1.3rem;
+        width: 25px;
+        text-align: center;
+    }
+
+    .date-arrow {
+        color: var(--p3);
+        font-size: 0.85rem;
+        margin: 0 0.2rem;
+        opacity: 0.8;
+    }
+
+    /* Meta-informații (Create at, User) */
+    .meta-info {
+        font-size: 0.85rem;
+        color: #8c947c;
+        border-top: 1px solid rgba(121, 180, 169, 0.15);
+        padding-top: 1.5rem;
+        margin-top: 2.5rem;
+    }
+
+    /* Butoane */
+    .btn-back {
+        color: var(--p5);
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.2s ease;
+    }
+
+        .btn-back:hover {
+            color: var(--p4);
+            transform: translateX(-3px);
+        }
+
+    .btn-edit-large {
+        background-color: var(--p4);
+        color: white;
+        border: none;
+        border-radius: 0.5rem;
+        padding: 0.6rem 1.5rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .btn-edit-large:hover {
+            background-color: var(--p3);
+            color: var(--p5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(121, 180, 169, 0.3);
+        }
+</style>
+
+<div class="details-container mb-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+        <h1 class="page-title mb-0">Trip Details</h1>
+        <a asp-action="Index" class="btn-back">
+            <i class="bi bi-arrow-left me-2"></i>Back to Trips
+        </a>
+    </div>
+
+    <div class="trip-card">
+
+        <h2 class="trip-title">@Model.Title</h2>
+
+        <div class="trip-desc">
+            @Model.Description
+        </div>
+
+        <div class="map-container">
+            <iframe src="https://maps.google.com/maps?q=@Model.City,@Model.Country&t=&z=6&ie=UTF8&iwloc=&output=embed"
+                    loading="lazy"
+                    title="Map of @Model.City, @Model.Country">
+            </iframe>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-6">
+                <div class="date-wrapper">
+                    <i class="bi bi-clock date-icon"></i>
+                    <span>@Model.StartExplorationHour - @Model.EndExplorationHour</span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="date-wrapper">
+                    <i class="bi bi-calendar3 date-icon"></i>
+                    <span>@Model.StartDate.ToString("dd MMM yyyy")</span>
+                    <i class="bi bi-arrow-right date-arrow"></i>
+                    <span>@Model.EndDate.ToString("dd MMM yyyy")</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="meta-info d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <i class="bi bi-info-circle me-1"></i> Added on @Model.CreatedAt.ToString("dd MMM yyyy") &nbsp;|&nbsp; User ID: @Model.User.Id
+            </div>
+
+            @if (Model.StartDate > DateTime.Now.Date)
+            {
+                <a asp-action="Edit" asp-route-id="@Model?.TripId" class="btn-edit-large">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Trip
+                </a>
+            }
+        </div>
+
+    </div>
+</div>

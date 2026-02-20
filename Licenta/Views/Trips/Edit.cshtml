@@ -1,0 +1,498 @@
+﻿@model Licenta.Models.Trip
+
+@{
+    ViewData["Title"] = "Edit Trip";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<style>
+    :root {
+        --p1: #D7F2BA;
+        --p2: #BDE4A8;
+        --p3: #9CC69B;
+        --p4: #79B4A9;
+        --p5: #676F54;
+    }
+
+    /* Card */
+    .trip-card {
+        border: none;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        backdrop-filter: blur(6px);
+    }
+
+        .trip-card .card-header {
+            background: linear-gradient(135deg, var(--p3), var(--p4));
+            color: white;
+            border: none;
+            padding: 2.2rem 1rem;
+        }
+
+            .trip-card .card-header h2 {
+                font-weight: 700;
+                letter-spacing: .3px;
+            }
+
+        .trip-card .card-body {
+            background: #ffffffee;
+            padding: 2.5rem 2.5rem 2rem 2.5rem;
+        }
+
+    /* Inputs */
+    .form-control,
+    textarea.form-control {
+        border-radius: .8rem;
+        border: 1px solid #e3e8e1;
+        padding: .7rem .9rem;
+        transition: all .2s ease;
+        box-shadow: none;
+    }
+
+        .form-control:focus {
+            border-color: var(--p4);
+            box-shadow: 0 0 0 .15rem rgba(121,180,169,.25);
+        }
+
+    label {
+        color: var(--p5);
+        font-weight: 600;
+        margin-bottom: .35rem;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: linear-gradient(135deg, var(--p3), var(--p4));
+        border: none;
+        border-radius: 2rem;
+        padding: .6rem 2.2rem;
+        font-weight: 600;
+        letter-spacing: .3px;
+        box-shadow: 0 6px 14px rgba(0,0,0,.12);
+        transition: all .2s ease;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 18px rgba(0,0,0,.18);
+        }
+
+    .btn-light {
+        border-radius: 2rem;
+    }
+
+    /* Slider */
+    #exploration-slider {
+        margin-top: 40px;
+        height: 10px;
+        border: none;
+        background: #edf3ea;
+    }
+
+        #exploration-slider .noUi-connect {
+            background: linear-gradient(90deg, var(--p3), var(--p4));
+        }
+
+        #exploration-slider .noUi-handle {
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--p4);
+            width: 24px;
+            height: 24px;
+            right: -12px;
+            top: -8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,.15);
+        }
+
+    .slider-container {
+        background: linear-gradient(135deg, #ffffff, #f4f8f2);
+        border: 1px solid #e3e8e1;
+        border-radius: 1rem;
+        padding: 1.5rem 2rem;
+    }
+
+    .slider-labels span {
+        background: white;
+        border: 1px solid var(--p3);
+        color: var(--p5);
+        border-radius: 1rem;
+        font-weight: 600;
+    }
+
+    /* Calendar Overrides */
+    .calendar-wrapper {
+        background: linear-gradient(135deg, #ffffff, #f4f8f2);
+        border: 1px solid #e3e8e1;
+        border-radius: 1rem;
+        padding: 1rem;
+    }
+
+    .flatpickr-day.inRange,
+    .flatpickr-day.inRange.prevMonthDay,
+    .flatpickr-day.inRange.nextMonthDay,
+    .flatpickr-day.inRange:hover {
+        background: #BDE4A8 !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: -5px 0 0 #BDE4A8, 5px 0 0 #BDE4A8 !important;
+    }
+
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange,
+    .flatpickr-day.startRange:hover,
+    .flatpickr-day.endRange:hover {
+        background: #79B4A9 !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50% !important;
+        position: relative;
+        z-index: 2;
+        box-shadow: none !important;
+    }
+
+        .flatpickr-day.startRange::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            right: -5px;
+            background: linear-gradient(to right, #79B4A9, #BDE4A8);
+            z-index: -1;
+        }
+
+        .flatpickr-day.endRange::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 50%;
+            left: -5px;
+            background: linear-gradient(to left, #79B4A9, #BDE4A8);
+            z-index: -1;
+        }
+
+        .flatpickr-day.startRange.endRange::before {
+            display: none !important;
+        }
+
+    .flatpickr-day:hover {
+        background: #D7F2BA !important;
+        border-radius: 50%;
+    }
+
+    .flatpickr-day.today {
+        border: 1px solid #79B4A9 !important;
+        border-radius: 50%;
+    }
+
+    /* Autocomplete */
+    .autocomplete-results {
+        border-radius: .8rem;
+        border: 1px solid #e3e8e1;
+        box-shadow: 0 10px 20px rgba(0,0,0,.08);
+    }
+
+    .autocomplete-item:hover {
+        background: var(--p1);
+    }
+
+    #date-summary {
+        border-radius: 2rem;
+        font-weight: 600;
+    }
+
+    hr {
+        opacity: .1;
+    }
+</style>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+
+            <div class="card trip-card">
+
+                <div class="card-header text-center">
+                    <h2 class="mb-1">Edit Your Adventure</h2>
+                    <p class="mb-0 opacity-75">Update the details of your itinerary</p>
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-action="Edit" asp-controller="Trips" method="post" id="tripForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <input type="hidden" asp-for="TripId" />
+                        <input type="hidden" asp-for="CreatedAt" />
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Title"></label>
+                            <input asp-for="Title" class="form-control form-control-lg" placeholder="e.g., Summer Getaway in Rome" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label asp-for="Description"></label>
+                            <textarea asp-for="Description" class="form-control" rows="3" placeholder="What are your goals for this trip?"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4 autocomplete-wrapper">
+                            <label>Destination</label>
+
+                            <input type="text"
+                                   id="destination-search"
+                                   class="form-control"
+                                   placeholder="Search for a city..."
+                                   autocomplete="off"
+                                   value="@(Model.City), @(Model.Country)" />
+
+                            <div id="destination-error" class="text-danger small mt-1" style="display:none;">
+                                Please select a destination from the list.
+                            </div>
+
+                            <div id="destination-hint" class="text-muted mt-1 small">
+                                Start typing to search for a new city.
+                            </div>
+
+                            <div id="search-results" class="autocomplete-results"></div>
+
+                            <input type="hidden" asp-for="City" id="hidden-city" />
+                            <input type="hidden" asp-for="Country" id="hidden-country" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-group mb-4">
+                            <label>Trip Dates</label>
+
+                            <div class="calendar-wrapper d-flex flex-column align-items-center">
+                                <input type="text" id="date-range" class="d-none" />
+                            </div>
+
+                            <div class="text-center mt-3">
+                                <span id="date-summary" class="badge bg-white text-secondary border px-3 py-2 fs-6 shadow-sm">
+                                    Loading dates...
+                                </span>
+                            </div>
+
+                            <input type="hidden" asp-for="StartDate" id="hidden-start-date" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" asp-for="EndDate" id="hidden-end-date" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="form-group mb-5">
+                            <label>Daily Exploration Hours</label>
+                            <div class="slider-container">
+                                <div id="exploration-slider"></div>
+                                <div class="slider-labels d-flex justify-content-between mt-3">
+                                    <span id="start-label" class="badge px-3 py-2">Start: @Model.StartExplorationHour.ToString("00"):00</span>
+                                    <span id="end-label" class="badge px-3 py-2">End: @Model.EndExplorationHour.ToString("00"):00</span>
+                                </div>
+                            </div>
+                            <input type="hidden" asp-for="StartExplorationHour" id="start-input" />
+                            <input type="hidden" asp-for="EndExplorationHour" id="end-input" />
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <a asp-action="Index" class="btn btn-light border px-4 py-2 me-3 fw-bold text-muted">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        // =========================
+        // SLIDER (Pre-filled via Model data)
+        // =========================
+        var slider = document.getElementById('exploration-slider');
+        var startInput = document.getElementById('start-input');
+        var endInput = document.getElementById('end-input');
+        var startLabel = document.getElementById('start-label');
+        var endLabel = document.getElementById('end-label');
+
+        var initialStart = startInput.value ? parseInt(startInput.value) : 8;
+        var initialEnd = endInput.value ? parseInt(endInput.value) : 20;
+
+        noUiSlider.create(slider, {
+            start: [initialStart, initialEnd],
+            connect: true,
+            step: 1,
+            range: { min: 0, max: 24 },
+            tooltips: true,
+            format: {
+                to: v => Math.round(v),
+                from: v => Math.round(v)
+            }
+        });
+
+        slider.noUiSlider.on('update', function (values) {
+            startInput.value = values[0];
+            endInput.value = values[1];
+
+            startLabel.innerHTML =
+                "Start: " + values[0].toString().padStart(2, '0') + ":00";
+
+            endLabel.innerHTML =
+                "End: " + values[1].toString().padStart(2, '0') + ":00";
+        });
+
+
+        // =========================
+        // FLATPICKR RANGE CALENDAR (Pre-filled)
+        // =========================
+        const hiddenStartDate = document.getElementById('hidden-start-date');
+        const hiddenEndDate = document.getElementById('hidden-end-date');
+        const dateSummary = document.getElementById('date-summary');
+
+        // Capture existing dates for pre-population
+        const existingDates = [hiddenStartDate.value, hiddenEndDate.value];
+
+        flatpickr("#date-range", {
+            mode: "range",
+            minDate: "today",
+            inline: true,
+            showMonths: window.innerWidth > 768 ? 2 : 1,
+            defaultDate: existingDates, // Pre-fill calendar
+
+            onReady: function (selectedDates, dateStr, instance) {
+                // Initialize the badge on load
+                if (selectedDates.length === 2) {
+                    const startStr = instance.formatDate(selectedDates[0], "F j, Y");
+                    const endStr = instance.formatDate(selectedDates[1], "F j, Y");
+
+                    dateSummary.innerHTML = `✓ ${startStr} → ${endStr}`;
+                    dateSummary.className = "badge px-4 py-2 fs-6 shadow-sm";
+                    dateSummary.style.background = "#D7F2BA";
+                    dateSummary.style.color = "#676F54";
+                }
+            },
+
+            onChange: function (selectedDates, dateStr, instance) {
+
+                hiddenStartDate.value = "";
+                hiddenEndDate.value = "";
+
+                if (selectedDates.length === 2) {
+                    hiddenStartDate.value = instance.formatDate(selectedDates[0], "Y-m-d");
+                    hiddenEndDate.value = instance.formatDate(selectedDates[1], "Y-m-d");
+
+                    const startStr = instance.formatDate(selectedDates[0], "F j, Y");
+                    const endStr = instance.formatDate(selectedDates[1], "F j, Y");
+
+                    dateSummary.innerHTML = `✓ ${startStr} → ${endStr}`;
+                    dateSummary.className = "badge px-4 py-2 fs-6 shadow-sm";
+                    dateSummary.style.background = "#D7F2BA";
+                    dateSummary.style.color = "#676F54";
+                }
+                else if (selectedDates.length === 1) {
+                    dateSummary.innerHTML = "Select your end date…";
+                    dateSummary.className = "badge px-4 py-2 fs-6 shadow-sm";
+                    dateSummary.style.background = "#BDE4A8";
+                    dateSummary.style.color = "#676F54";
+                }
+                else {
+                    dateSummary.innerHTML = "Please select your start and end dates";
+                    dateSummary.className = "badge bg-white text-secondary border px-4 py-2 fs-6 shadow-sm";
+                }
+            }
+        });
+    </script>
+
+    <script>
+        // =========================
+        // CITY AUTOCOMPLETE
+        // =========================
+
+        const searchInput = document.getElementById("destination-search");
+        const resultsContainer = document.getElementById("search-results");
+        const hiddenCity = document.getElementById("hidden-city");
+        const hiddenCountry = document.getElementById("hidden-country");
+        const errorMsg = document.getElementById("destination-error");
+
+        let debounceTimer;
+
+        searchInput.addEventListener("input", function () {
+
+            const query = this.value.trim();
+
+            // Reset hidden values if user changes input
+            hiddenCity.value = "";
+            hiddenCountry.value = "";
+            errorMsg.style.display = "none";
+
+            clearTimeout(debounceTimer);
+
+            if (query.length < 2) {
+                resultsContainer.innerHTML = "";
+                return;
+            }
+
+            debounceTimer = setTimeout(() => {
+
+                fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=5&language=en&format=json`)
+                    .then(res => res.json())
+                    .then(data => {
+
+                        resultsContainer.innerHTML = "";
+
+                        if (!data.results) {
+                            resultsContainer.innerHTML =
+                                `<div class="autocomplete-item p-2 text-muted">No results found</div>`;
+                            return;
+                        }
+
+                        data.results.forEach(city => {
+
+                            const item = document.createElement("div");
+                            item.className = "autocomplete-item p-2";
+
+                            item.innerHTML = `<strong>${city.name}</strong>, ${city.country}`;
+
+                            item.addEventListener("click", () => {
+                                searchInput.value = `${city.name}, ${city.country}`;
+                                hiddenCity.value = city.name;
+                                hiddenCountry.value = city.country;
+                                resultsContainer.innerHTML = "";
+                            });
+
+                            resultsContainer.appendChild(item);
+                        });
+
+                    })
+                    .catch(err => console.error(err));
+
+            }, 400);
+        });
+
+        // =========================
+        // VALIDATE BEFORE SUBMIT
+        // =========================
+
+        document.getElementById("tripForm").addEventListener("submit", function (e) {
+            if (!hiddenCity.value) {
+                e.preventDefault();
+                errorMsg.style.display = "block";
+            }
+        });
+    </script>
+}

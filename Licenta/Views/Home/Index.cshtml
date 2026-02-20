@@ -2,7 +2,135 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    /* ===============================
+           HOME PAGE HERO STYLING
+           =============================== */
+    .hero-container {
+        max-width: 650px;
+        margin: 4rem auto;
+        background-color: #fcfdfa;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 30px rgba(103, 111, 84, 0.08);
+        padding: 3.5rem 2.5rem;
+        text-align: center;
+        border: none;
+        transition: transform 0.3s ease;
+    }
+
+        .hero-container:hover {
+            transform: translateY(-5px);
+        }
+
+    .hero-icon {
+        font-size: 3.5rem;
+        color: var(--p4);
+        margin-bottom: 1rem;
+        display: inline-block;
+        opacity: 0.9;
+    }
+
+    .hero-title {
+        color: var(--p5);
+        font-weight: 800;
+        letter-spacing: -0.8px;
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        color: #7a8268;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+
+    /* Primary Action Button */
+    .btn-main {
+        background-color: var(--p4);
+        color: white;
+        border: none;
+        border-radius: 0.8rem;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+        .btn-main:hover {
+            background-color: var(--p3);
+            color: var(--p5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(121, 180, 169, 0.35);
+        }
+
+    /* Secondary Action Button */
+    .btn-secondary-custom {
+        background-color: transparent;
+        color: var(--p4);
+        border: 2px solid var(--p1);
+        border-radius: 0.8rem;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        font-size: 1.05rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+        .btn-secondary-custom:hover {
+            background-color: var(--p1);
+            color: var(--p5);
+            border-color: var(--p2);
+        }
+
+    /* Link styling for Login/Register */
+    .auth-link {
+        color: var(--p4);
+        font-weight: 700;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+        .auth-link:hover {
+            color: var(--p5);
+            text-decoration: underline;
+        }
+</style>
+
+<div class="hero-container">
+    <i class="bi bi-airplane-engines hero-icon"></i>
+    <h1 class="hero-title">Welcome to Your Travel Planner</h1>
+    <p class="hero-subtitle">Organize your itineraries, explore new places, and keep track of your upcoming adventures all in one clean space.</p>
+
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="d-flex flex-column gap-3 mx-auto" style="max-width: 350px;">
+            <a asp-controller="Trips" asp-action="Create" class="btn-main">
+                <i class="bi bi-plus-lg me-2"></i> Plan a New Trip
+            </a>
+            <a asp-controller="Trips" asp-action="Index" class="btn-secondary-custom">
+                <i class="bi bi-journal-album me-2"></i> View My Trips
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3 mx-auto" style="max-width: 350px;">
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn-main">
+                <i class="bi bi-box-arrow-in-right me-2"></i> Login to Start
+            </a>
+            <p class="mt-2 mb-0" style="color: #8c947c; font-size: 0.95rem;">
+                Don't have an account? <a asp-area="Identity" asp-page="/Account/Register" class="auth-link">Register here</a>
+            </p>
+        </div>
+    }
 </div>
