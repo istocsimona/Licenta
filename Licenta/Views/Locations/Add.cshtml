@@ -1,0 +1,194 @@
+﻿@model Licenta.Models.Trip
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "Add Location";
+}
+
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+
+<style>
+    .page-title {
+        color: #676F54;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .map-container {
+        width: 100%;
+        height: 500px;
+        border-radius: 1.2rem;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(103, 111, 84, 0.15);
+        border: 1px solid rgba(121, 180, 169, 0.2);
+    }
+</style>
+
+<div class="mb-4 mt-2">
+    <a asp-controller="Trips" asp-action="Index" class="text-muted text-decoration-none mb-2 d-inline-block">
+        <i class="bi bi-arrow-left"></i> Back to Trips
+    </a>
+    <h1 class="page-title mb-1">Add locations in @Model.City</h1>
+    <p class="text-muted">Search for a place to add it to your itinerary.</p>
+</div>
+
+<!-- ✅ SEARCH BAR -->
+<div class="mb-3">
+    <mapbox-search-box id="searchBox"
+                       access-token="@Configuration["Mapbox:PublicKey"]"
+                       placeholder="Search places (e.g. Louvre Museum)"
+                       style="width:100%;">
+    </mapbox-search-box>
+</div>
+
+<div class="map-container mb-4">
+    <div id="map" style="width: 100%; height: 100%;"></div>
+</div>
+
+<form asp-action="SaveLocation" method="post" id="locationForm" class="bg-light p-4 rounded" style="display: none;">
+    <h4 class="mb-3" id="selectedPlaceNameText">Selected Place</h4>
+
+    <input type="hidden" name="TripId" value="@Model.TripId" />
+    <input type="hidden" id="Name" name="Name" />
+    <input type="hidden" id="Latitude" name="Latitude" />
+    <input type="hidden" id="Longitude" name="Longitude" />
+
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label text-muted">Avg. Duration (mins)</label>
+            <input type="number" name="AvgDuration" class="form-control" value="60" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label text-muted d-flex justify-content-between">
+                Opening Hour
+                <small><a href="javascript:void(0)" onclick="tryFetchHours()" class="text-primary text-decoration-none">Auto-fetch?</a></small>
+            </label>
+            <input type="time" id="OpeningHour" name="OpeningHour" class="form-control" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label text-muted">Closing Hour</label>
+            <input type="time" id="ClosingHour" name="ClosingHour" class="form-control" />
+        </div>
+        <div class="col-12">
+            <small id="osmStatus" class="text-muted"></small>
+        </div>
+        <div class="col-12 mt-4">
+            <button type="submit" class="btn btn-success px-4 fw-bold shadow-sm" style="background-color: #79B4A9; border: none;">
+                Save to Trip
+            </button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <!-- ✅ Mapbox GL -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+    <!-- ✅ NEW Search Box (IMPORTANT) -->
+    <script src="https://api.mapbox.com/search-js/v1.0.0-beta.20/web.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            mapboxgl.accessToken = '@Configuration["Mapbox:PublicKey"]';
+
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [0, 0],
+                zoom: 2
+            });
+
+            map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+            const searchBox = document.getElementById('searchBox');
+            if (!searchBox) return;
+
+            // 🌍 Center map on trip city
+            const cityQuery = "@Model.City, @Model.Country";
+
+            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(cityQuery)}.json?access_token=${mapboxgl.accessToken}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.features && data.features.length > 0) {
+                        const coords = data.features[0].center;
+
+                        map.flyTo({ center: coords, zoom: 13 });
+
+                        // bias search
+                        searchBox.proximity = coords.join(',');
+                    }
+                });
+
+            // 📍 Handle selection
+            searchBox.addEventListener('retrieve', (e) => {
+                const feature = e.detail.features[0];
+                if (!feature) return;
+
+                const coords = feature.geometry.coordinates;
+
+                document.getElementById('Name').value =
+                    feature.properties.full_address || feature.properties.name;
+
+                document.getElementById('Longitude').value = coords[0];
+                document.getElementById('Latitude').value = coords[1];
+
+                document.getElementById('selectedPlaceNameText').innerText =
+                    "Add " + (feature.properties.name || "selected place");
+
+                document.getElementById('locationForm').style.display = 'block';
+                document.getElementById('locationForm').scrollIntoView({ behavior: 'smooth' });
+
+                map.flyTo({ center: coords, zoom: 15 });
+
+                new mapboxgl.Marker().setLngLat(coords).addTo(map);
+            });
+        });
+
+        // 🌐 OSM HOURS FETCH
+        async function tryFetchHours() {
+            const name = document.getElementById('Name').value;
+            const lat = document.getElementById('Latitude').value;
+            const lon = document.getElementById('Longitude').value;
+            const statusLabel = document.getElementById('osmStatus');
+
+            if (!name || !lat) return;
+
+            statusLabel.innerText = "Searching OpenStreetMap...";
+
+            const cleanName = name.split(',')[0];
+
+            const query = `[out:json];
+            (
+                node["name"~"${cleanName}",i](around:1000,${lat},${lon});
+                way["name"~"${cleanName}",i](around:1000,${lat},${lon});
+            );
+            out tags;`;
+
+            const url = "https://overpass-api.de/api/interpreter?data=" + encodeURIComponent(query);
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+
+                const element = data.elements.find(el => el.tags && el.tags.opening_hours);
+
+                if (element) {
+                    const match = element.tags.opening_hours.match(/([01]\d|2[0-3]):([0-5]\d)-([01]\d|2[0-3]):([0-5]\d)/);
+
+                    if (match) {
+                        document.getElementById('OpeningHour').value = match[1] + ":" + match[2];
+                        document.getElementById('ClosingHour').value = match[3] + ":" + match[4];
+
+                        statusLabel.className = "text-success";
+                        statusLabel.innerText = "Hours found!";
+                        return;
+                    }
+                }
+
+                statusLabel.innerText = "Manual entry required.";
+            } catch (e) {
+                statusLabel.innerText = "Error fetching hours.";
+            }
+        }
+    </script>
+}
