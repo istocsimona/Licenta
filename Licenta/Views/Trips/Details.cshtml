@@ -1,13 +1,16 @@
 ﻿@model Licenta.Models.Trip
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Trip Details";
 }
 
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+
 <style>
     /* ===============================
-           CLEAN DETAILS CARD STYLING
-           =============================== */
+               CLEAN DETAILS CARD STYLING
+               =============================== */
     .page-title {
         color: var(--p5);
         font-weight: 700;
@@ -42,8 +45,7 @@
         margin-bottom: 2.5rem;
     }
 
-    
-    /* --- SIMPLE POLITICAL MAP CONTAINER --- */
+    /* --- MAPBOX CONTAINER --- */
     .map-container {
         width: 100%;
         height: 250px;
@@ -53,16 +55,13 @@
         border: 1px solid rgba(121, 180, 169, 0.2);
         margin-bottom: 2rem;
         background-color: #e9f8da;
+        position: relative;
     }
 
-        .map-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-			/* pointer-events: none; */ /* Aici este magia: blocăm orice interacțiune (zoom, click, drag) */
-			/* Reducem intensitatea culorilor pentru un aspect mai "flat", de atlas */
-            filter: saturate(0.6) contrast(1.1) hue-rotate(-5deg);
-        }
+    #map {
+        width: 100%;
+        height: 100%;
+    }
 
     /* Format unitar Iconiță + Text */
     .date-wrapper {
@@ -152,10 +151,7 @@
         </div>
 
         <div class="map-container">
-            <iframe src="https://maps.google.com/maps?q=@Model.City,@Model.Country&t=&z=6&ie=UTF8&iwloc=&output=embed"
-                    loading="lazy"
-                    title="Map of @Model.City, @Model.Country">
-            </iframe>
+            <div id="map"></div>
         </div>
 
         <div class="row mt-4">
@@ -178,7 +174,7 @@
 
         <div class="meta-info d-flex justify-content-between align-items-center flex-wrap gap-3">
             <div>
-                <i class="bi bi-info-circle me-1"></i> Added on @Model.CreatedAt.ToString("dd MMM yyyy") &nbsp;|&nbsp; User ID: @Model.User.Id
+                <i class="bi bi-info-circle me-1"></i> Added on @Model.CreatedAt.ToString("dd MMM yyyy")
             </div>
 
             @if (Model.StartDate > DateTime.Now.Date)
@@ -191,3 +187,50 @@
 
     </div>
 </div>
+
+@section Scripts {
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            const mapboxToken = '@Configuration["Mapbox:PublicKey"]';
+            mapboxgl.accessToken = mapboxToken;
+
+            const locationQuery = encodeURIComponent('@Html.Raw(Model.City), @Html.Raw(Model.Country)');
+
+            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${locationQuery}.json?access_token=${mapboxToken}&types=place,region,country`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.features && data.features.length > 0) {
+
+                        const coords = data.features[0].center; // [longitude, latitude]
+
+                        // 1. Initialize the map directly on the city
+                        const map = new mapboxgl.Map({
+                            container: 'map',
+                            style: 'mapbox://styles/mapbox/streets-v12', // Classic, colorful map style
+                            center: coords, // Start exactly on the city
+                            zoom: 12, // Perfect zoom level to see the city layout
+                            interactive: true // Allows the user to click, drag, and zoom
+                        });
+
+                        // 2. Add standard zoom buttons to the top right corner
+                        map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+                        // 3. Drop your custom teal marker on the exact center
+                        new mapboxgl.Marker({ color: '#79B4A9' })
+                            .setLngLat(coords)
+                            .addTo(map);
+
+                    } else {
+                        console.error("Location not found on Mapbox.");
+                        document.getElementById('map').innerHTML = '<div class="p-3 text-center text-muted mt-5">Map preview unavailable</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error("Error loading map coordinates:", error);
+                });
+        });
+    </script>
+}

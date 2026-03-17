@@ -1,4 +1,5 @@
 ﻿@model Licenta.Models.Trip
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Edit Trip";
@@ -6,6 +7,7 @@
 
 <link href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 
 <style>
     :root {
@@ -189,17 +191,6 @@
         border-radius: 50%;
     }
 
-    /* Autocomplete */
-    .autocomplete-results {
-        border-radius: .8rem;
-        border: 1px solid #e3e8e1;
-        box-shadow: 0 10px 20px rgba(0,0,0,.08);
-    }
-
-    .autocomplete-item:hover {
-        background: var(--p1);
-    }
-
     #date-summary {
         border-radius: 2rem;
         font-weight: 600;
@@ -208,21 +199,47 @@
     hr {
         opacity: .1;
     }
+
+    /* ===============================
+           MAPBOX STYLING OVERRIDES
+           =============================== */
+    .mapboxgl-ctrl-geocoder {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-shadow: none !important;
+        border: 1px solid #e3e8e1 !important;
+        border-radius: 0.8rem !important;
+        background-color: #fff !important;
+    }
+
+    .mapboxgl-ctrl-geocoder--input {
+        padding: 0.7rem 2.5rem !important;
+        height: auto !important;
+        color: var(--p5) !important;
+    }
+
+        .mapboxgl-ctrl-geocoder--input:focus {
+            outline: none !important;
+            border-color: var(--p4) !important;
+            box-shadow: 0 0 0 .15rem rgba(121,180,169,.25) !important;
+        }
+
+    .mapboxgl-ctrl-geocoder .suggestions {
+        border-radius: 0.8rem !important;
+        overflow: hidden !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,.08) !important;
+    }
 </style>
 
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-lg-8 col-md-10">
-
             <div class="card trip-card">
-
                 <div class="card-header text-center">
                     <h2 class="mb-1">Edit Your Adventure</h2>
                     <p class="mb-0 opacity-75">Update the details of your itinerary</p>
                 </div>
-
                 <div class="card-body">
-
                     <form asp-action="Edit" asp-controller="Trips" method="post" id="tripForm">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
@@ -241,25 +258,14 @@
                             <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
 
-                        <div class="form-group mb-4 autocomplete-wrapper">
+                        <div class="form-group mb-4">
                             <label>Destination</label>
 
-                            <input type="text"
-                                   id="destination-search"
-                                   class="form-control"
-                                   placeholder="Search for a city..."
-                                   autocomplete="off"
-                                   value="@(Model.City), @(Model.Country)" />
+                            <div id="geocoder-container" class="w-100"></div>
 
                             <div id="destination-error" class="text-danger small mt-1" style="display:none;">
                                 Please select a destination from the list.
                             </div>
-
-                            <div id="destination-hint" class="text-muted mt-1 small">
-                                Start typing to search for a new city.
-                            </div>
-
-                            <div id="search-results" class="autocomplete-results"></div>
 
                             <input type="hidden" asp-for="City" id="hidden-city" />
                             <input type="hidden" asp-for="Country" id="hidden-country" />
@@ -268,17 +274,14 @@
 
                         <div class="form-group mb-4">
                             <label>Trip Dates</label>
-
                             <div class="calendar-wrapper d-flex flex-column align-items-center">
                                 <input type="text" id="date-range" class="d-none" />
                             </div>
-
                             <div class="text-center mt-3">
                                 <span id="date-summary" class="badge bg-white text-secondary border px-3 py-2 fs-6 shadow-sm">
                                     Loading dates...
                                 </span>
                             </div>
-
                             <input type="hidden" asp-for="StartDate" id="hidden-start-date" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
                             <input type="hidden" asp-for="EndDate" id="hidden-end-date" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
                         </div>
@@ -302,12 +305,9 @@
                             <a asp-action="Index" class="btn btn-light border px-4 py-2 me-3 fw-bold text-muted">Cancel</a>
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
-
                     </form>
-
                 </div>
             </div>
-
         </div>
     </div>
 </div>
@@ -320,9 +320,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+
     <script>
         // =========================
-        // SLIDER (Pre-filled via Model data)
+        // SLIDER (Pre-filled)
         // =========================
         var slider = document.getElementById('exploration-slider');
         var startInput = document.getElementById('start-input');
@@ -348,14 +350,9 @@
         slider.noUiSlider.on('update', function (values) {
             startInput.value = values[0];
             endInput.value = values[1];
-
-            startLabel.innerHTML =
-                "Start: " + values[0].toString().padStart(2, '0') + ":00";
-
-            endLabel.innerHTML =
-                "End: " + values[1].toString().padStart(2, '0') + ":00";
+            startLabel.innerHTML = "Start: " + values[0].toString().padStart(2, '0') + ":00";
+            endLabel.innerHTML = "End: " + values[1].toString().padStart(2, '0') + ":00";
         });
-
 
         // =========================
         // FLATPICKR RANGE CALENDAR (Pre-filled)
@@ -363,8 +360,6 @@
         const hiddenStartDate = document.getElementById('hidden-start-date');
         const hiddenEndDate = document.getElementById('hidden-end-date');
         const dateSummary = document.getElementById('date-summary');
-
-        // Capture existing dates for pre-population
         const existingDates = [hiddenStartDate.value, hiddenEndDate.value];
 
         flatpickr("#date-range", {
@@ -372,14 +367,12 @@
             minDate: "today",
             inline: true,
             showMonths: window.innerWidth > 768 ? 2 : 1,
-            defaultDate: existingDates, // Pre-fill calendar
+            defaultDate: existingDates,
 
             onReady: function (selectedDates, dateStr, instance) {
-                // Initialize the badge on load
                 if (selectedDates.length === 2) {
                     const startStr = instance.formatDate(selectedDates[0], "F j, Y");
                     const endStr = instance.formatDate(selectedDates[1], "F j, Y");
-
                     dateSummary.innerHTML = `✓ ${startStr} → ${endStr}`;
                     dateSummary.className = "badge px-4 py-2 fs-6 shadow-sm";
                     dateSummary.style.background = "#D7F2BA";
@@ -388,106 +381,82 @@
             },
 
             onChange: function (selectedDates, dateStr, instance) {
-
                 hiddenStartDate.value = "";
                 hiddenEndDate.value = "";
 
                 if (selectedDates.length === 2) {
                     hiddenStartDate.value = instance.formatDate(selectedDates[0], "Y-m-d");
                     hiddenEndDate.value = instance.formatDate(selectedDates[1], "Y-m-d");
-
                     const startStr = instance.formatDate(selectedDates[0], "F j, Y");
                     const endStr = instance.formatDate(selectedDates[1], "F j, Y");
-
                     dateSummary.innerHTML = `✓ ${startStr} → ${endStr}`;
                     dateSummary.className = "badge px-4 py-2 fs-6 shadow-sm";
                     dateSummary.style.background = "#D7F2BA";
                     dateSummary.style.color = "#676F54";
-                }
-                else if (selectedDates.length === 1) {
+                } else if (selectedDates.length === 1) {
                     dateSummary.innerHTML = "Select your end date…";
                     dateSummary.className = "badge px-4 py-2 fs-6 shadow-sm";
                     dateSummary.style.background = "#BDE4A8";
                     dateSummary.style.color = "#676F54";
-                }
-                else {
+                } else {
                     dateSummary.innerHTML = "Please select your start and end dates";
                     dateSummary.className = "badge bg-white text-secondary border px-4 py-2 fs-6 shadow-sm";
                 }
             }
         });
-    </script>
 
-    <script>
         // =========================
-        // CITY AUTOCOMPLETE
+        // MAPBOX AUTOCOMPLETE (Pre-filled)
         // =========================
-
-        const searchInput = document.getElementById("destination-search");
-        const resultsContainer = document.getElementById("search-results");
+        const mapboxToken = '@Configuration["Mapbox:PublicKey"]';
         const hiddenCity = document.getElementById("hidden-city");
         const hiddenCountry = document.getElementById("hidden-country");
         const errorMsg = document.getElementById("destination-error");
 
-        let debounceTimer;
-
-        searchInput.addEventListener("input", function () {
-
-            const query = this.value.trim();
-
-            // Reset hidden values if user changes input
-            hiddenCity.value = "";
-            hiddenCountry.value = "";
-            errorMsg.style.display = "none";
-
-            clearTimeout(debounceTimer);
-
-            if (query.length < 2) {
-                resultsContainer.innerHTML = "";
-                return;
-            }
-
-            debounceTimer = setTimeout(() => {
-
-                fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${query}&count=5&language=en&format=json`)
-                    .then(res => res.json())
-                    .then(data => {
-
-                        resultsContainer.innerHTML = "";
-
-                        if (!data.results) {
-                            resultsContainer.innerHTML =
-                                `<div class="autocomplete-item p-2 text-muted">No results found</div>`;
-                            return;
-                        }
-
-                        data.results.forEach(city => {
-
-                            const item = document.createElement("div");
-                            item.className = "autocomplete-item p-2";
-
-                            item.innerHTML = `<strong>${city.name}</strong>, ${city.country}`;
-
-                            item.addEventListener("click", () => {
-                                searchInput.value = `${city.name}, ${city.country}`;
-                                hiddenCity.value = city.name;
-                                hiddenCountry.value = city.country;
-                                resultsContainer.innerHTML = "";
-                            });
-
-                            resultsContainer.appendChild(item);
-                        });
-
-                    })
-                    .catch(err => console.error(err));
-
-            }, 400);
+        const geocoder = new MapboxGeocoder({
+            accessToken: mapboxToken,
+            types: 'country,region,place,locality,neighborhood,poi',
+            placeholder: 'Search for a city, place, or museum...',
+            marker: false // We don't have a map visual here, just the search bar
         });
 
-        // =========================
-        // VALIDATE BEFORE SUBMIT
-        // =========================
+        geocoder.addTo('#geocoder-container');
 
+        // PRE-FILL for the Edit screen!
+        const initialCity = '@Html.Raw(Model.City)';
+        const initialCountry = '@Html.Raw(Model.Country)';
+        if (initialCity || initialCountry) {
+            // Set the visible text inside the Mapbox Search bar to match the saved location
+            geocoder.setInput(`${initialCity}, ${initialCountry}`);
+        }
+
+        geocoder.on('result', function(e) {
+            errorMsg.style.display = "none";
+            const result = e.result;
+
+            let city = '';
+            let country = '';
+
+            if (result.context) {
+                result.context.forEach(item => {
+                    if (item.id.includes('place')) city = item.text;
+                    if (item.id.includes('country')) country = item.text;
+                });
+            }
+
+            if (!city && result.place_type.includes('place')) city = result.text;
+            if (!country && result.place_type.includes('country')) country = result.text;
+
+            hiddenCity.value = city || result.text;
+            hiddenCountry.value = country;
+        });
+
+        geocoder.on('clear', function() {
+            hiddenCity.value = "";
+            hiddenCountry.value = "";
+        });
+
+        // VALIDATE BEFORE SUBMIT
         document.getElementById("tripForm").addEventListener("submit", function (e) {
             if (!hiddenCity.value) {
                 e.preventDefault();

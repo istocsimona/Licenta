@@ -1,0 +1,188 @@
+﻿@model IEnumerable<Licenta.Models.Trip>
+
+@{
+    ViewData["Title"] = "My Travel Calendar";
+}
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+
+<style>
+    /* ===============================
+       CALENDAR PAGE STYLING
+       =============================== */
+    .page-title {
+        color: var(--p5);
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .calendar-card {
+        background-color: #fcfdfa;
+        border-radius: 1.2rem;
+        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
+        padding: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    /* Suprascriem culorile standard FullCalendar pentru a se potrivi cu tema ta */
+    .fc {
+        color: var(--p5);
+    }
+    .fc-theme-standard .fc-scrollgrid {
+        border-color: rgba(121, 180, 169, 0.2);
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+        border-color: rgba(121, 180, 169, 0.15);
+    }
+    .fc-col-header-cell {
+        background-color: #e9f8da; /* Fundal verde deschis pentru zilele saptamanii */
+        padding: 10px 0;
+    }
+    .fc-col-header-cell-cushion {
+        color: var(--p5);
+        font-weight: 700;
+        text-decoration: none;
+    }
+    .fc-daygrid-day-number {
+        color: var(--p5);
+        font-weight: 500;
+        text-decoration: none;
+    }
+    .fc-button-primary {
+        background-color: var(--p4) !important;
+        border-color: var(--p4) !important;
+        box-shadow: none !important;
+        border-radius: 0.5rem !important;
+        text-transform: capitalize;
+    }
+    .fc-button-primary:hover {
+        background-color: var(--p3) !important;
+        border-color: var(--p3) !important;
+        color: var(--p5) !important;
+    }
+    .fc-button-active {
+        background-color: var(--p5) !important;
+    }
+    
+    /* Stil pentru evenimentele (excursiile) de pe calendar */
+    .fc-event {
+        border-radius: 4px;
+        border: none;
+        padding: 2px 4px;
+        font-weight: 600;
+        font-size: 0.85em;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+    }
+    .fc-event:hover {
+        transform: scale(1.02);
+    }
+
+    /* Bootstrap Tooltip Customization */
+    .custom-tooltip .tooltip-inner {
+        background-color: var(--p5);
+        color: white;
+        border-radius: 0.5rem;
+        padding: 0.8rem;
+        text-align: left;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        max-width: 250px;
+    }
+
+    /* Stiluri pentru link-urile de navigare (Zoom in pe lună) */
+    .fc-daygrid-nav-link {
+        color: var(--p5);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+    .fc-daygrid-nav-link:hover {
+        color: var(--p4);
+        text-decoration: underline;
+    }
+    
+    /* Titlurile lunilor în modul Anual */
+    .fc .fc-multimonth-title {
+        color: var(--p5);
+        font-weight: 800;
+        font-size: 1.2rem;
+        padding: 0.5rem 0;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+    <h1 class="page-title mb-0">Travel Calendar</h1>
+    <a asp-action="Index" class="btn btn-outline-secondary" style="border-radius: 0.5rem; color: var(--p4); border-color: var(--p4);">
+        <i class="bi bi-list-ul me-2"></i>List View
+    </a>
+</div>
+
+<div class="calendar-card">
+    <div id='calendar'></div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var tripsData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(t => new {
+                id = t.TripId,
+                title = t.Title,
+                start = t.StartDate.ToString("yyyy-MM-dd"),
+                end = t.EndDate.AddDays(1).ToString("yyyy-MM-dd"),
+                color = "#79B4A9", 
+                extendedProps = new {
+                    location = $"{t.City}, {t.Country}",
+                    schedule = $"{t.StartExplorationHour} - {t.EndExplorationHour}"
+                }
+            })));
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                // Setăm vizualizarea implicită pe AN
+                initialView: 'multiMonthYear',
+                
+                // Aranjăm meniul de sus
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'multiMonthYear,dayGridMonth' // Butoane pentru An și Lună
+                },
+                
+                // Setări pentru aspectul anual
+                multiMonthMaxColumns: 3, // Arată maxim 3 luni pe rând pentru a fi aerisit
+                
+                // ACTIVĂM FUNCȚIA DE "ZOOM"
+                navLinks: true, // Permite click pe numele lunii sau pe zi pentru a face zoom pe ele
+                
+                events: tripsData,
+                
+                // Tooltip-ul la hover
+                eventDidMount: function(info) {
+                    var location = info.event.extendedProps.location;
+                    var schedule = info.event.extendedProps.schedule;
+                    
+                    var tooltipContent = `
+                        <div class="fw-bold mb-1" style="font-size: 1.1em;">${info.event.title}</div>
+                        <div><i class="bi bi-geo-alt-fill text-info me-1"></i>${location}</div>
+                        <div><i class="bi bi-clock text-info me-1"></i>${schedule}</div>
+                    `;
+
+                    new bootstrap.Tooltip(info.el, {
+                        title: tooltipContent,
+                        html: true,
+                        placement: 'top',
+                        trigger: 'hover',
+                        customClass: 'custom-tooltip'
+                    });
+                },
+                
+                // Click pe excursie duce la Detalii
+                eventClick: function(info) {
+                    window.location.href = '/Trips/Details/' + info.event.id;
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+}

@@ -1,0 +1,190 @@
+﻿@model IEnumerable<string>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+@{
+    ViewData["Title"] = "My Travel Scratch Map";
+}
+
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+
+<style>
+    .page-title {
+        color: #676F54;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .scratch-map-container {
+        width: 100%;
+        height: 600px;
+        border-radius: 1.2rem;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(103, 111, 84, 0.15);
+        border: 1px solid rgba(121, 180, 169, 0.2);
+        position: relative;
+    }
+
+    #regions_div {
+        width: 100%;
+        height: 100%;
+    }
+
+    .mapboxgl-popup-content {
+        border-radius: 0.8rem;
+        padding: 10px 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        font-weight: 600;
+        color: #676F54;
+        text-align: center;
+    }
+
+    .mapboxgl-popup-close-button {
+        display: none;
+    }
+</style>
+
+<div class="mb-4 mt-2 text-center">
+    <h1 class="page-title mb-1">My Travel Scratch Map</h1>
+    <p class="text-muted">Spin the globe! Your past and future trips are highlighted.</p>
+</div>
+
+<div class="scratch-map-container mb-5">
+    <div id="regions_div"></div>
+</div>
+
+@section Scripts {
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+            // 1. Get BOTH lists from the ViewBag
+            const visitedCountries = @Html.Raw(Json.Serialize(ViewBag.VisitedCountries)) || [];
+            const futureCountries = @Html.Raw(Json.Serialize(ViewBag.FutureCountries)) || [];
+
+            // 2. Initialize Mapbox
+            mapboxgl.accessToken = '@Configuration["Mapbox:PublicKey"]';
+            const map = new mapboxgl.Map({
+                container: 'regions_div',
+                style: 'mapbox://styles/mapbox/light-v11',
+                center: [15, 30],
+                zoom: 1.5,
+                projection: 'globe'
+            });
+
+            map.on('style.load', () => {
+                map.setFog({
+                    color: 'rgb(255, 255, 255)',
+                    'high-color': 'rgb(200, 220, 240)',
+                    'space-color': 'rgb(244, 250, 255)'
+                });
+            });
+
+            map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+            map.on('load', () => {
+
+                map.addSource('world-countries', {
+                    type: 'geojson',
+                    data: 'https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json'
+                });
+
+                // 3. Build the color match expression
+                let fillPaintRule = ['match', ['get', 'name']];
+                let hasRules = false;
+
+                // Add GREEN for visited countries
+                visitedCountries.forEach(function(country) {
+                    if (country && country.trim() !== '') {
+                        fillPaintRule.push(country.trim());
+                        fillPaintRule.push('#79B4A9'); // Green color
+                        hasRules = true;
+                    }
+                });
+
+                // Add YELLOW for future countries
+                futureCountries.forEach(function(country) {
+                    if (country && country.trim() !== '' && !visitedCountries.includes(country.trim())) {
+                        fillPaintRule.push(country.trim());
+                        fillPaintRule.push('#e9c46a'); // Yellow color
+                        hasRules = true;
+                    }
+                });
+
+                // Default Color (Light Gray)
+                fillPaintRule.push('#ececec');
+
+                if (!hasRules) {
+                    fillPaintRule = '#ececec';
+                }
+
+                // 4. Slide map colors under text labels
+                const layers = map.getStyle().layers;
+                let firstSymbolId;
+                for (const layer of layers) {
+                    if (layer.type === 'symbol') {
+                        firstSymbolId = layer.id;
+                        break;
+                    }
+                }
+
+                // 5. Add fill layer
+                map.addLayer({
+                    'id': 'country-fills',
+                    'type': 'fill',
+                    'source': 'world-countries',
+                    'paint': {
+                        'fill-color': fillPaintRule,
+                        'fill-opacity': 0.8
+                    }
+                }, firstSymbolId);
+
+                // 6. Add thin borders
+                map.addLayer({
+                    'id': 'country-borders',
+                    'type': 'line',
+                    'source': 'world-countries',
+                    'paint': {
+                        'line-color': '#ffffff',
+                        'line-width': 1
+                    }
+                }, firstSymbolId);
+
+                // 7. Hover effect updates
+                const popup = new mapboxgl.Popup({
+                    closeButton: false,
+                    closeOnClick: false,
+                    offset: 15
+                });
+
+                map.on('mousemove', 'country-fills', (e) => {
+                    if (!e.features || e.features.length === 0) return;
+                    map.getCanvas().style.cursor = 'pointer';
+
+                    const countryName = e.features[0].properties.name;
+                    if (!countryName) return;
+
+                    const isVisited = visitedCountries.some(c => c && c.trim().toLowerCase() === countryName.toLowerCase());
+                    const isFuture = futureCountries.some(c => c && c.trim().toLowerCase() === countryName.toLowerCase());
+
+                    let popupText = `<strong>${countryName}</strong><br><small class="text-muted">Not visited yet</small>`;
+
+                    if (isVisited) {
+                        popupText = `📍 <strong>${countryName}</strong><br><small style="color:#79B4A9;">Visited</small>`;
+                    } else if (isFuture) {
+                        popupText = `✈️ <strong>${countryName}</strong><br><small style="color:#e9c46a;">Planning to visit</small>`;
+                    }
+
+                    popup.setLngLat(e.lngLat)
+                         .setHTML(popupText)
+                         .addTo(map);
+                });
+
+                map.on('mouseleave', 'country-fills', () => {
+                    map.getCanvas().style.cursor = '';
+                    popup.remove();
+                });
+            });
+        });
+    </script>
+}

@@ -171,5 +171,50 @@ namespace Licenta.Controllers
         {
             return _context.Trips.Any(e => e.TripId == id);
         }
+
+
+
+        // GET: Trips/Calendar
+        [Authorize]
+        public async Task<IActionResult> Calendar()
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            var userTrips = await _context.Trips
+                .Where(t => t.UserId == currentUserId)
+                .ToListAsync();
+
+            return View(userTrips);
+        }
+
+
+        
+        // GET: Trips/ScratchMap
+        [Authorize]
+        public async Task<IActionResult> ScratchMap()
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            var today = DateTime.Now.Date;
+
+            // 1. Visited: Trips that have already started/happened
+            var visitedCountries = await _context.Trips
+                .Where(t => t.UserId == currentUserId && !string.IsNullOrEmpty(t.Country) && t.StartDate <= today)
+                .Select(t => t.Country.Trim())
+                .Distinct()
+                .ToListAsync();
+
+            // 2. Future: Trips planned for the future
+            var futureCountries = await _context.Trips
+                .Where(t => t.UserId == currentUserId && !string.IsNullOrEmpty(t.Country) && t.StartDate > today)
+                .Select(t => t.Country.Trim())
+                .Distinct()
+                .ToListAsync();
+
+            // Pass both lists to the view
+            ViewBag.VisitedCountries = visitedCountries;
+            ViewBag.FutureCountries = futureCountries;
+
+            return View();
+        }
     }
+
 }

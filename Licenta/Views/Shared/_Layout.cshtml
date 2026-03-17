@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Licenta</title>
+    <title>@ViewData["Title"] - pinPoint</title>
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -14,8 +14,8 @@
 
     <style>
         /* ===============================
-                   GLOBAL VARIABLES & THEME
-                   =============================== */
+                           GLOBAL VARIABLES & THEME
+                           =============================== */
         :root {
             --p1: #D7F2BA;
             --p2: #BDE4A8;
@@ -38,13 +38,13 @@
         }
 
         /* ===============================
-                   FULL-WIDTH ROUNDED NAVBAR
-                   =============================== */
+                           FULL-WIDTH ROUNDED NAVBAR
+                           =============================== */
         .navbar-custom {
-            background-color: #fcfdfa; /* Solid off-white */
-            border-radius: 0 0 1rem 1rem; /* Softer rounding, only on the bottom corners */
-            box-shadow: 0 6px 24px rgba(103, 111, 84, 0.08); /* Soft shadow */
-            padding: 0.8rem 0; /* Breathing room */
+            background-color: #e9f8da; /* Culoare care se îmbină cu fundalul */
+            border-radius: 0 0 1rem 1rem;
+            box-shadow: 0 6px 24px rgba(103, 111, 84, 0.08);
+            padding: 0.8rem 0;
             border-bottom: 1px solid rgba(121, 180, 169, 0.15);
         }
 
@@ -52,13 +52,13 @@
         .navbar-brand {
             font-weight: 700;
             letter-spacing: -0.3px;
-            color: var(--p5) !important;
             font-size: 1.4rem;
             display: flex;
             align-items: center;
             gap: 0.75rem;
             margin-right: 2rem;
             transition: opacity 0.2s ease;
+            text-decoration: none; /* Previne sublinierea neintenționată */
         }
 
             .navbar-brand:hover {
@@ -97,8 +97,8 @@
             }
 
         /* ===============================
-                   CLEAN FOOTER
-                   =============================== */
+                           CLEAN FOOTER
+                           =============================== */
         .footer-custom {
             background: transparent;
             border-top: 1px solid rgba(121, 180, 169, 0.2) !important;
@@ -130,8 +130,10 @@
             <div class="container">
 
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/favicon.ico" alt="Licenta Logo" />
-                    Licenta
+                    <img src="~/favicon.ico" alt="pinPoint Logo" />
+                    <span>
+                        <span style="color: var(--p5);">pin</span><span style="color: var(--p4);">Point</span>
+                    </span>
                 </a>
 
                 <button class="navbar-toggler shadow-none" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -142,7 +144,13 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link custom-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link custom-link" asp-area="" asp-controller="Trips" asp-action="Index">My Trips</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-link" asp-area="" asp-controller="Trips" asp-action="Calendar">Calendar</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-link" asp-area="" asp-controller="Trips" asp-action="ScratchMap">Scratch Map</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -160,7 +168,7 @@
 
     <footer class="footer-custom text-center mt-auto">
         <div class="container">
-            &copy; 2026 - Licenta - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
+            &copy; 2026 - pinPoint - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy Policy</a>
         </div>
     </footer>
 

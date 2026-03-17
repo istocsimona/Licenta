@@ -1,0 +1,330 @@
+﻿@model List<Licenta.ViewModels.TagPreferenceViewModel>
+
+@{
+    ViewData["Title"] = "My Travel Preferences";
+
+    var mustSee = Model.Where(m => m.RankOrder == 1).ToList();
+    var shouldSee = Model.Where(m => m.RankOrder == 2).ToList();
+    var couldSee = Model.Where(m => m.RankOrder == 3).ToList();
+    var unassigned = Model.Where(m => m.RankOrder == null || m.RankOrder > 3).ToList();
+}
+
+<style>
+    :root {
+        --p1: #D7F2BA;
+        --p2: #BDE4A8;
+        --p3: #9CC69B;
+        --p4: #79B4A9;
+        --p5: #676F54;
+    }
+
+    /* Page Typography */
+    .page-title {
+        color: var(--p5);
+        font-weight: 800;
+        letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+        color: #8c947c;
+        font-size: 0.95rem;
+    }
+
+    /* Buttons matched to your Create page */
+    .btn-save {
+        background: linear-gradient(135deg, var(--p3), var(--p4));
+        color: white;
+        border: none;
+        border-radius: 2rem;
+        padding: 0.6rem 2.2rem;
+        font-weight: 600;
+        letter-spacing: .3px;
+        box-shadow: 0 6px 14px rgba(103, 111, 84, 0.15);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 18px rgba(103, 111, 84, 0.25);
+            color: white;
+        }
+
+    .btn-reset {
+        background-color: transparent;
+        color: #d9534f;
+        border: 1px solid #d9534f;
+        border-radius: 2rem;
+        padding: 0.5rem 1.8rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+        .btn-reset:hover {
+            background-color: #fdf2f2;
+            color: #d9534f;
+            transform: translateY(-2px);
+        }
+
+    /* Kanban Board Styling */
+    .kanban-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .kanban-column {
+        flex: 1;
+        min-width: 250px;
+        background-color: #fcfdfa;
+        border-radius: 1.2rem;
+        padding: 1.2rem;
+        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
+        border: 1px solid #e3e8e1;
+        display: flex;
+        flex-direction: column;
+        transition: box-shadow 0.3s ease;
+    }
+
+        .kanban-column:hover {
+            box-shadow: 0 10px 25px rgba(103, 111, 84, 0.1);
+        }
+
+    .kanban-header {
+        font-weight: 700;
+        font-size: 1.05rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Header Colors matching the Earthy Palette */
+    .header-must {
+        color: var(--p4);
+        border-bottom: 2px solid var(--p4);
+    }
+
+    .header-should {
+        color: var(--p3);
+        border-bottom: 2px solid var(--p3);
+    }
+
+    .header-could {
+        color: var(--p5);
+        opacity: 0.85;
+        border-bottom: 2px solid var(--p5);
+    }
+
+    .header-unassigned {
+        color: #8c947c;
+        border-bottom: 2px solid #e3e8e1;
+    }
+
+    .tier-list {
+        min-height: 150px;
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        flex-grow: 1;
+    }
+
+    /* Tag Cards */
+    .tag-card {
+        background: #ffffffee;
+        border-radius: 0.8rem;
+        padding: 10px 14px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 6px rgba(103, 111, 84, 0.08);
+        border: 1px solid #e3e8e1;
+        cursor: grab;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex;
+        align-items: center;
+        font-weight: 600;
+        color: var(--p5);
+        font-size: 0.95rem;
+    }
+
+        .tag-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(103, 111, 84, 0.15);
+            border-color: var(--p3);
+        }
+
+        .tag-card:active {
+            cursor: grabbing;
+        }
+
+    /* Dragging Ghost State */
+    .sortable-ghost {
+        opacity: 0.5;
+        background-color: var(--p1);
+        border: 2px dashed var(--p3);
+        box-shadow: none;
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-4 mt-2">
+    <div>
+        <h1 class="page-title mb-1">Rank Preferences</h1>
+        <p class="page-subtitle mb-0">Drag and drop the tags into categories to build your ideal travel profile.</p>
+    </div>
+    <div>
+        <button id="saveBtn" class="btn btn-save">Save Preferences</button>
+        <form id="resetForm" asp-action="Reset" method="post" style="display:inline;">
+            <button type="button" id="resetBtn" class="btn btn-reset ms-2">Reset</button>
+        </form>
+    </div>
+</div>
+
+<div class="kanban-container mb-5">
+    <div class="kanban-column">
+        <div class="kanban-header header-must">
+            <i class="bi bi-heart-fill"></i> Top Priority
+        </div>
+        <ul class="tier-list" data-tier="1">
+            @foreach (var tag in mustSee)
+            {
+                <li class="tag-card" data-id="@tag.TagId">
+                    <div style="width: 14px; height: 14px; background-color: @tag.Color; border-radius: 50%; margin-right: 12px;"></div>
+                    <span>@tag.Name</span>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="kanban-column">
+        <div class="kanban-header header-should">
+            <i class="bi bi-emoji-smile-fill"></i> Would Be Nice
+        </div>
+        <ul class="tier-list" data-tier="2">
+            @foreach (var tag in shouldSee)
+            {
+                <li class="tag-card" data-id="@tag.TagId">
+                    <div style="width: 14px; height: 14px; background-color: @tag.Color; border-radius: 50%; margin-right: 12px;"></div>
+                    <span>@tag.Name</span>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="kanban-column">
+        <div class="kanban-header header-could">
+            <i class="bi bi-question-circle-fill"></i> If There's Time
+        </div>
+        <ul class="tier-list" data-tier="3">
+            @foreach (var tag in couldSee)
+            {
+                <li class="tag-card" data-id="@tag.TagId">
+                    <div style="width: 14px; height: 14px; background-color: @tag.Color; border-radius: 50%; margin-right: 12px;"></div>
+                    <span>@tag.Name</span>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="kanban-column" style="background-color: #f7f9f6;">
+        <div class="kanban-header header-unassigned">
+            <i class="bi bi-inbox-fill"></i> Uncategorized
+        </div>
+        <ul class="tier-list" data-tier="4">
+            @foreach (var tag in unassigned)
+            {
+                <li class="tag-card" data-id="@tag.TagId" style="opacity: 0.85;">
+                    <div style="width: 14px; height: 14px; background-color: @tag.Color; border-radius: 50%; margin-right: 12px;"></div>
+                    <span>@tag.Name</span>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // --- Drag and Drop Initialization ---
+        var lists = document.querySelectorAll('.tier-list');
+        lists.forEach(function (list) {
+            Sortable.create(list, {
+                group: 'shared',
+                animation: 200,
+                ghostClass: 'sortable-ghost',
+            });
+        });
+
+        // --- Save Button Logic ---
+        document.getElementById('saveBtn').addEventListener('click', function () {
+            var payload = [];
+
+            lists.forEach(function(list) {
+                var tier = parseInt(list.getAttribute('data-tier'));
+                var items = list.querySelectorAll('li');
+
+                items.forEach(function(item) {
+                    payload.push({
+                        TagId: parseInt(item.getAttribute('data-id')),
+                        Tier: tier
+                    });
+                });
+            });
+
+            fetch('/UserPreferences/Save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success) {
+                    Swal.fire({
+                        title: 'Saved Successfully!',
+                        text: 'Your travel preferences are updated.',
+                        icon: 'success',
+                        confirmButtonColor: '#79B4A9', // Matches your --p4
+                        background: '#fcfdfa',
+                        color: '#676F54', // Matches your --p5
+                        customClass: {
+                            popup: 'rounded-4 shadow-lg border-0'
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire('Error', 'Something went wrong while saving.', 'error');
+            });
+        });
+
+        // --- Reset Button Logic ---
+        document.getElementById('resetBtn').addEventListener('click', function () {
+            Swal.fire({
+                title: 'Reset Preferences?',
+                text: "All your tags will be moved back to Uncategorized.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d9534f', // Danger Red
+                cancelButtonColor: '#e3e8e1', // Soft grey/green line color
+                confirmButtonText: 'Yes, reset',
+                cancelButtonText: '<span style="color: #676F54; font-weight: 600;">Cancel</span>',
+                background: '#fcfdfa',
+                color: '#676F54',
+                customClass: {
+                    popup: 'rounded-4 shadow-lg border-0'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('resetForm').submit();
+                }
+            });
+        });
+    </script>
+}
