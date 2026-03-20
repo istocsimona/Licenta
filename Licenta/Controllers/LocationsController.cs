@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Licenta.Controllers
@@ -22,17 +23,97 @@ namespace Licenta.Controllers
             return View();
         }
 
-        // GET: Locations/Add?tripId=5
+        // LocationsController.cs
         public async Task<IActionResult> Add(int tripId)
         {
             var trip = await _context.Trips.FirstOrDefaultAsync(t => t.TripId == tripId);
+            if (trip == null) return NotFound();
 
-            if (trip == null)
+            // Fetch all default tags to display as options or for auto-matching
+            ViewBag.AvailableTags = await _context.Tags.ToListAsync();
+
+            return View(trip);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SaveLocation(Location model, int[] SelectedTagIds)
+        {
+            // Remove only what is strictly necessary
+            ModelState.Remove("Trip");
+            ModelState.Remove("LocationTags");
+            ModelState.Remove("OpeningHour");
+            ModelState.Remove("ClosingHour");
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return BadRequest(new { message = "Validation failed", errors = errors });
             }
 
-            return View(trip); // We pass the Trip model to the view
+            try
+            {
+                _context.Locations.Add(model);
+                await _context.SaveChangesAsync();
+
+                if (SelectedTagIds != null && SelectedTagIds.Length > 0)
+                {
+                    var locationTags = SelectedTagIds.Select(tagId => new LocationTag
+                    {
+                        LocationId = model.LocationId,
+                        TagId = tagId
+                    }).ToList();
+
+                    _context.LocationTags.AddRange(locationTags);
+                    await _context.SaveChangesAsync();
+                }
+
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.InnerException?.Message ?? ex.Message });
+            }
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> GetTripLocations(int tripId)
+        {
+            var locations = await _context.Locations
+                .Where(l => l.TripId == tripId)
+                .Select(l => new {
+                    l.LocationId,
+                    l.Name,
+                    l.Latitude,
+                    l.Longitude,
+                    l.OpeningHour,
+                    l.ClosingHour,
+                    l.AvgDuration, // <--- ADD THIS LINE
+                    l.IsIndoor,
+                    Tags = _context.LocationTags
+                        .Where(lt => lt.LocationId == l.LocationId)
+                        .Select(lt => new { lt.Tag.Name, lt.Tag.Color })
+                        .ToList()
+                })
+                .ToListAsync();
+
+            return Json(locations);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteLocation(int id)
+        {
+            var location = await _context.Locations.FindAsync(id);
+            if (location == null) return NotFound();
+
+            // Remove associated tags first if your DB doesn't have Cascade Delete enabled
+            var tags = _context.LocationTags.Where(lt => lt.LocationId == id);
+            _context.LocationTags.RemoveRange(tags);
+
+            _context.Locations.Remove(location);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true });
         }
     }
 }
