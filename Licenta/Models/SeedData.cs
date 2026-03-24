@@ -73,6 +73,7 @@ namespace Licenta.Models
                     context.Tags.AddRange(
                         new Tag { Name = "Museum", Color = "#FF5733", IsDefault = true, Icon = "museum-icon" },
                         new Tag { Name = "Historic Site", Color = "#C0392B", IsDefault = true, Icon = "historic-icon" },
+                        new Tag { Name = "Art Gallery", Color = "#9B59B6", IsDefault = true, Icon = "gallery-icon" },
 
                         new Tag { Name = "Park", Color = "#2ECC71", IsDefault = true, Icon = "park-icon" },
                         new Tag { Name = "Botanical Garden", Color = "#27AE60", IsDefault = true, Icon = "garden-icon" },
