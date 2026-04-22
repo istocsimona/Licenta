@@ -36,6 +36,58 @@ namespace Licenta.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> UpdateLocation(int locationId, Location model, int[] SelectedTagIds)
+        {
+            // Remove validation for navigation properties
+            ModelState.Remove("Trip");
+            ModelState.Remove("LocationTags");
+            ModelState.Remove("OpeningHour");
+            ModelState.Remove("ClosingHour");
+
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                return BadRequest(new { message = "Validation failed", errors = errors });
+            }
+
+            try
+            {
+                var existingLocation = await _context.Locations.FindAsync(locationId);
+                if (existingLocation == null) return NotFound();
+
+                // Update the location
+                existingLocation.Name = model.Name;
+                existingLocation.Latitude = model.Latitude;
+                existingLocation.Longitude = model.Longitude;
+                existingLocation.AvgDuration = model.AvgDuration;
+                existingLocation.OpeningHour = model.OpeningHour;
+                existingLocation.ClosingHour = model.ClosingHour;
+                existingLocation.IsIndoor = model.IsIndoor;
+
+                // Update tags
+                var existingTags = _context.LocationTags.Where(lt => lt.LocationId == locationId);
+                _context.LocationTags.RemoveRange(existingTags);
+
+                if (SelectedTagIds != null && SelectedTagIds.Length > 0)
+                {
+                    var locationTags = SelectedTagIds.Select(tagId => new LocationTag
+                    {
+                        LocationId = locationId,
+                        TagId = tagId
+                    }).ToList();
+                    _context.LocationTags.AddRange(locationTags);
+                }
+
+                await _context.SaveChangesAsync();
+                return Ok(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.InnerException?.Message ?? ex.Message });
+            }
+        }
+
+        [HttpPost]
         public async Task<IActionResult> SaveLocation(Location model, int[] SelectedTagIds)
         {
             // Remove only what is strictly necessary
@@ -88,11 +140,11 @@ namespace Licenta.Controllers
                     l.Longitude,
                     l.OpeningHour,
                     l.ClosingHour,
-                    l.AvgDuration, // <--- ADD THIS LINE
+                    l.AvgDuration,
                     l.IsIndoor,
                     Tags = _context.LocationTags
                         .Where(lt => lt.LocationId == l.LocationId)
-                        .Select(lt => new { lt.Tag.Name, lt.Tag.Color })
+                        .Select(lt => new { lt.Tag.Name, lt.Tag.Color, lt.Tag.Icon })
                         .ToList()
                 })
                 .ToListAsync();
