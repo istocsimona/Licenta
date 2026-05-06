@@ -436,10 +436,10 @@
 	<div class="col-lg-7">
 		<div class="search-wrapper">
 			<mapbox-search-box id="searchBox"
-							                   access-token="@Configuration["Mapbox:PublicKey"]"
-							                   placeholder="Find a place in @Model.City..."
-							                   language="en,it,ro,de,fr,es" @* Allows multiple languages *@
-							                   style="width:100%;">
+							   access-token="@Configuration["Mapbox:PublicKey"]"
+							   placeholder="Find a place in @Model.City..."
+							   language="en,it,ro,de,fr,es"
+							   style="width:100%;">
 			</mapbox-search-box>
 		</div>
 
@@ -612,10 +612,58 @@
 	</div>
 </div>
 
+<!-- ADD EVENT MODAL -->
+<div class="modal fade" id="addEventModal" tabindex="-1" aria-hidden="true">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content" style="border-radius: 1.2rem; background-color: #fcfdfa;">
+			<div class="modal-header border-0 pt-4 px-4">
+				<h5 class="modal-title page-title">Add Event Here</h5>
+				<button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+			</div>
+			<form asp-controller="Reservations" asp-action="Create" method="post" id="addEventForm">
+				<div class="modal-body px-4">
+					<input type="hidden" name="TripId" value="@Model.TripId" />
+
+					<!-- Hidden inputs so the Controller knows exactly where this is -->
+					<input type="hidden" name="location" id="EventLocationString" />
+					<input type="hidden" name="latitude" id="EventLat" />
+					<input type="hidden" name="longitude" id="EventLng" />
+
+					<div class="mb-3">
+						<label class="form-label fw-600">Event Name</label>
+						<input type="text" name="Name" class="form-control" placeholder="Lunch, Museum Tour, Check-in..." required />
+					</div>
+
+					<div class="mb-3">
+						<label class="form-label fw-600">Location</label>
+						<!-- A readonly display so the user knows where they are adding it -->
+						<input type="text" id="EventLocationDisplay" class="form-control" readonly style="background-color: var(--p2); color: var(--p5);" />
+					</div>
+
+					<div class="row">
+						<div class="col-6 mb-3">
+							<label class="form-label fw-600">Start Date/Time</label>
+							<input type="datetime-local" name="StartDate" class="form-control" required />
+						</div>
+						<div class="col-6 mb-3">
+							<label class="form-label fw-600">End Date/Time</label>
+							<input type="datetime-local" name="EndDate" class="form-control" required />
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer border-0 pb-4 px-4">
+					<button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+					<!-- Reused your btn-save style for consistency -->
+					<button type="submit" class="btn-save" style="width: auto; padding: 0.6rem 1.2rem;">Save Event</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
 @section Scripts {
 	<script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
-	<script src="https://api.mapbox.com/search-js/v1.0.0-beta.20/web.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script defer src="https://api.mapbox.com/search-js/v1.0.0-beta.20/web.js"></script>	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
@@ -654,12 +702,23 @@
 				.then(data => {
 					if (data.features && data.features.length > 0) {
 						const feature = data.features[0];
-						const coords = feature.center;
-						map.flyTo({ center: coords, zoom: 12 });
-						searchBox.proximity = coords.join(',');
-						if (feature.bbox) searchBox.bbox = feature.bbox.join(',');
-					}
+						const coords = feature.center; // This is an array: [lng, lat]
 
+						// Center the map on the city
+						map.flyTo({ center: coords, zoom: 12 });
+
+						// FIX: Properly apply proximity and bounding box bias to the search box
+						const searchOptions = {
+							proximity: coords
+						};
+
+						if (feature.bbox) {
+							searchOptions.bbox = feature.bbox; // Expects array: [minX, minY, maxX, maxY]
+						}
+
+						// Apply the options to the Mapbox component
+						searchBox.options = searchOptions;
+					}
 				});
 
 			searchBox.addEventListener('retrieve', (e) => {
@@ -767,6 +826,9 @@
 				const response = await fetch(`/Locations/GetTripLocations?tripId=@Model.TripId`);
 				const locations = await response.json();
 
+				// Keep our local array synced so we can look up details when clicked!
+				existingLocations = locations;
+
 				if (!locations.length) {
 					container.innerHTML = `<div class="empty-state-placeholder" style="height:100% !important; border:none;"><p class="small text-muted">No locations yet.</p></div>`;
 					return;
@@ -778,29 +840,144 @@
 						: `<span class="badge rounded-pill px-2 py-1 me-1" style="background:#A0522D15; color:#A0522D; border:1px solid #A0522D; font-size:10px; font-weight:700;"><i class="bi bi-tree-fill"></i> Outdoor</span>`;
 
 					return `
-						<div class="card location-card shadow-sm border-0 mb-3">
+						<!-- ADDED cursor: pointer and onclick to view details -->
+						<div class="card location-card shadow-sm border-0 mb-3" style="cursor: pointer;" onclick="viewLocationDetails(${loc.locationId})">
 							<div class="card-body p-3">
 								<div class="d-flex justify-content-between align-items-start">
 									<div class="overflow-hidden">
 										<h6 class="fw-bold m-0">${loc.name}</h6>
 										<small class="text-muted d-block text-truncate mb-2" style="font-size: 0.75rem;">${loc.address || ''}</small>
 									</div>
-									<button onclick="deleteLocation(${loc.locationId})" class="btn btn-sm text-danger p-0"><i class="bi bi-trash3"></i></button>
+									<!-- ADDED event parameter to stop propagation -->
+									<button onclick="deleteLocation(event, ${loc.locationId})" class="btn btn-sm text-danger p-0"><i class="bi bi-trash3"></i></button>
 								</div>
 								<div class="small text-muted mb-2">
 									<i class="bi bi-clock me-1"></i> ${loc.openingHour || '--'} - ${loc.closingHour || '--'}
 									<span class="mx-1">•</span>
 									<i class="bi bi-hourglass-split me-1"></i> ${loc.avgDuration} mins
 								</div>
-								<div class="d-flex flex-wrap gap-1">
+								<div class="d-flex flex-wrap gap-1 mb-3">
 									${ioBadge}
 									${loc.tags.map(t => `<span class="badge rounded-pill px-2 py-1" style="background:${t.color}15; color:${t.color}; border:1px solid ${t.color}; font-size:10px; font-weight:700;"><i class="bi ${t.icon}"></i> ${t.name}</span>`).join('')}
 								</div>
+
+								<!-- NEW 'ADD EVENT' BUTTON -->
+								<button onclick="openEventModal(event, ${loc.locationId})" class="btn btn-sm w-100" style="background: var(--p1); color: var(--p5); border: 1px solid var(--p3); border-radius: 0.5rem; font-weight: 600;">
+									<i class="bi bi-calendar-plus me-1"></i> Add Event Here
+								</button>
 							</div>
 						</div>`;
 				}).join('');
 			} catch (e) { console.error(e); }
 		}
+
+		// Updated to catch 'e' so clicking delete doesn't open the Details view
+		async function deleteLocation(e, id) {
+			if (e) e.stopPropagation(); // Prevents the card click event from firing
+
+			const result = await Swal.fire({ title: 'Remove?', text: "Remove from itinerary?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#79B4A9' });
+			if (result.isConfirmed) {
+				await fetch(`/Locations/DeleteLocation?id=${id}`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+				refreshLocationList();
+			}
+		}
+
+		// --- NEW LOGIC FUNCTIONS ---
+
+		function viewLocationDetails(id) {
+			const loc = existingLocations.find(l => l.locationId === id);
+			if (!loc) return;
+
+			// 1. Switch to the 'Add New' tab UI
+			const addTabTrigger = document.getElementById('pills-add-tab');
+			bootstrap.Tab.getOrCreateInstance(addTabTrigger).show();
+
+			// 2. Create a fake Mapbox 'feature' object so your existing handleLocationSelection function can process it
+			const feature = {
+				properties: {
+					name: loc.name,
+					full_address: loc.address || ""
+				},
+				geometry: {
+					coordinates: [loc.longitude, loc.latitude]
+				}
+			};
+
+			// 3. Trigger your existing view logic
+			handleLocationSelection(feature);
+		}
+
+		function openEventModal(e, id) {
+			e.stopPropagation(); // Stop card click from firing
+
+			const loc = existingLocations.find(l => l.locationId === id);
+			if (!loc) return;
+
+			// Populate the hidden fields with exact location data for the Controller
+			document.getElementById('EventLocationString').value = loc.name;
+			document.getElementById('EventLat').value = loc.latitude;
+			document.getElementById('EventLng').value = loc.longitude;
+
+			// Show a nice visual display for the user
+			document.getElementById('EventLocationDisplay').value = loc.name + (loc.address ? ` - ${loc.address}` : "");
+
+			// Default dates to Trip dates as a helpful fallback
+			const tripStart = "@Model.StartDate.ToString("yyyy-MM-ddTHH:mm")";
+			document.querySelector('#addEventModal input[name="StartDate"]').value = tripStart;
+			document.querySelector('#addEventModal input[name="EndDate"]').value = tripStart;
+
+			// Show Modal
+			const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
+			modal.show();
+		}
+
+		document.getElementById('addEventForm').addEventListener('submit', async function (e) {
+			e.preventDefault(); // Stop the browser from navigating to the Index page
+
+			const form = e.target;
+			const formData = new FormData(form);
+			const submitBtn = form.querySelector('button[type="submit"]');
+			const originalText = submitBtn.innerHTML;
+
+			// Visual feedback
+			submitBtn.disabled = true;
+			submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...`;
+
+			try {
+				const response = await fetch(form.action, {
+					method: 'POST',
+					body: formData,
+					headers: { 'X-Requested-With': 'XMLHttpRequest' }
+				});
+
+				if (response.ok) {
+					// 1. Hide the modal
+					const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
+					modal.hide();
+
+					// 2. Show a nice success popup
+					Swal.fire({
+						title: 'Success!',
+						text: 'Event added to your itinerary.',
+						icon: 'success',
+						timer: 1500,
+						showConfirmButton: false
+					});
+
+					// 3. Clear the form for next time
+					form.reset();
+				} else {
+					Swal.fire('Error', 'Could not save the event.', 'error');
+				}
+			} catch (err) {
+				console.error(err);
+				Swal.fire('Error', 'A network error occurred.', 'error');
+			} finally {
+				// Restore button state
+				submitBtn.disabled = false;
+				submitBtn.innerHTML = originalText;
+			}
+		});
 
 		async function getCitySuggestions() {
 			const container = document.getElementById('suggestionListContainer');
