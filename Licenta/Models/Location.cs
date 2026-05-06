@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Licenta.Models
 {
@@ -16,5 +18,6 @@ namespace Licenta.Models
         public bool IsIndoor { get; set; }
 
         public virtual Trip Trip { get; set; }
+        public virtual ICollection<LocationTag> LocationTags { get; set; } = new List<LocationTag>();
     }
 }

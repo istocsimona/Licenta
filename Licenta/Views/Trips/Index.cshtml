@@ -6,8 +6,8 @@
 
 <style>
     /* ===============================
-               CLEAN CARD & DROPDOWN STYLING
-               =============================== */
+                   CLEAN CARD & DROPDOWN STYLING
+                   =============================== */
     .page-title {
         color: var(--p5);
         font-weight: 700;
@@ -97,15 +97,15 @@
         opacity: 0.7; /* Săgeată mai discretă */
     }
 
-    /* Add Location Button */
-    .btn-add-location {
-        background-color: transparent;
-        color: var(--p4);
-        border: 1px solid var(--p4); /* Margine mai subțire (1px în loc de 2px) */
-        border-radius: 0.5rem;
-        padding: 0.4rem 0.8rem;
-        font-size: 0.85rem;
-        font-weight: 600; /* Redus de la 700 */
+    /* Plan Button */
+    .btn-plan {
+        background-color: var(--p1);
+        color: var(--p5);
+        border: 1px solid var(--p3);
+        border-radius: 0.8rem;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.95rem;
+        font-weight: 700;
         text-decoration: none;
         transition: all 0.2s ease;
         display: block;
@@ -113,10 +113,11 @@
         width: 100%;
     }
 
-        .btn-add-location:hover {
-            background-color: var(--p1); /* Hover blând cu fundal deschis */
-            color: var(--p5);
-            border-color: var(--p3);
+        .btn-plan:hover {
+            background-color: var(--p3);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(121, 180, 169, 0.2);
         }
 
     /* 3-Dots Menu */
@@ -164,6 +165,23 @@
 
 <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
     <h1 class="page-title mb-0">My Trips</h1>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
+            <strong>Error!</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <a asp-action="Create" class="btn-create">
         <i class="bi bi-plus-lg me-2"></i>Create New Trip
     </a>
@@ -222,15 +240,11 @@
                             </div>
                         </div>
 
-                        <div class="col-6 mb-0">
-                            <div class="date-wrapper">
-                                <i class="bi bi-clock date-icon"></i>
-                                <span>@item.StartExplorationHour - @item.EndExplorationHour</span>
-                            </div>
-                        </div>
-
-                        <div class="col-6 mb-0">
-                            <a asp-controller="Locations" asp-action="Add" asp-route-tripId="@item.TripId" class="btn-add-location">+ Add Location</a>
+                        <!-- Single Plan Button -->
+                        <div class="col-12 mt-4">
+                            <a asp-controller="Locations" asp-action="Add" asp-route-tripId="@item.TripId" class="btn-plan">
+                                <i class="bi bi-map me-2"></i> Plan
+                            </a>
                         </div>
                     </div>
 
@@ -238,6 +252,7 @@
             </div>
         </div>
 
+        <!-- Delete Trip Modal (Kept this as it is used for deleting the trip itself) -->
         <div class="modal fade" id="deleteModal-@item.TripId" tabindex="-1" aria-labelledby="deleteModalLabel-@item.TripId" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content" style="border-radius: 1.2rem; background-color: #fcfdfa; border: none; box-shadow: 0 15px 35px rgba(103, 111, 84, 0.2);">

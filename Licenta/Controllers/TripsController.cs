@@ -36,8 +36,8 @@ namespace Licenta.Controllers
             return View(userTrips);
         }
 
-        // GET: Trips/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Trips/Details/5
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
             {
@@ -46,10 +46,21 @@ namespace Licenta.Controllers
 
             var trip = await _context.Trips
               .Include(t => t.User)
+              .Include(t => t.Locations)
+                .ThenInclude(l => l.LocationTags)
+                .ThenInclude(lt => lt.Tag)
+              .Include(t => t.Reservations)
               .FirstOrDefaultAsync(m => m.TripId == id);
+
             if (trip == null)
             {
                 return NotFound();
+            }
+
+            // SECURITY CHECK: Make sure the logged-in user owns this trip
+            if (trip.UserId != _userManager.GetUserId(User))
+            {
+                return Forbid();
             }
 
             return View(trip);

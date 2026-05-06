@@ -9,8 +9,8 @@
 
 <style>
     /* ===============================
-               CLEAN DETAILS CARD STYLING
-               =============================== */
+       CLEAN DETAILS CARD STYLING
+    =============================== */
     .page-title {
         color: var(--p5);
         font-weight: 700;
@@ -18,8 +18,63 @@
     }
 
     .details-container {
-        max-width: 800px;
-        margin: 0 auto;
+        width: 100%;
+        max-width: 1800px;
+        height: calc(100vh - 2rem); /* Fills almost the entire vertical screen */
+        margin: 1rem auto;
+    }
+
+    .trip-card {
+        background-color: #fcfdfa;
+        border-radius: 1.2rem;
+        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
+        border: none;
+        padding: 1.5rem;
+        height: 100%; /* Fills the container */
+        overflow: hidden; /* Prevents the whole card from scrolling */
+    }
+
+    .layout-row {
+        height: 100%;
+    }
+
+    /* --- LEFT COLUMN (SCROLLABLE) --- */
+    .left-column {
+        height: 100%;
+        overflow-y: auto; /* Adds the scrollbar ONLY to the left side */
+        padding-right: 1.5rem;
+        padding-left: 1rem;
+    }
+
+    /* Custom Scrollbar for Left Column */
+    .left-column::-webkit-scrollbar {
+        width: 6px;
+    }
+    .left-column::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .left-column::-webkit-scrollbar-thumb {
+        background: var(--p2);
+        border-radius: 10px;
+    }
+    .left-column::-webkit-scrollbar-thumb:hover {
+        background: var(--p3);
+    }
+
+    /* --- RIGHT COLUMN (MAP) --- */
+    .right-column {
+        height: 100%;
+        padding-right: 1rem;
+    }
+
+    .map-container {
+        width: 100%;
+        height: 100%; /* Stretches map to match the full height of the card */
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
+        border: 1px solid rgba(121, 180, 169, 0.2);
+        background-color: #e9f8da;
     }
 
     .trip-card {
@@ -45,18 +100,7 @@
         margin-bottom: 2.5rem;
     }
 
-    /* --- MAPBOX CONTAINER --- */
-    .map-container {
-        width: 100%;
-        height: 250px;
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
-        border: 1px solid rgba(121, 180, 169, 0.2);
-        margin-bottom: 2rem;
-        background-color: #e9f8da;
-        position: relative;
-    }
+    
 
     #map {
         width: 100%;
@@ -88,7 +132,6 @@
         opacity: 0.8;
     }
 
-    /* Meta-informații (Create at, User) */
     .meta-info {
         font-size: 0.85rem;
         color: #8c947c;
@@ -97,7 +140,110 @@
         margin-top: 2.5rem;
     }
 
-    /* Butoane */
+    /* --- SECTION TITLE --- */
+    .section-title {
+        color: var(--p4);
+        font-weight: 700;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        margin-top: 2rem;
+    }
+
+    /* --- TAGS DISPLAY --- */
+    .tags-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .tag-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background-color: #ffffff;
+        border: 1px solid rgba(121, 180, 169, 0.3);
+        border-radius: 2rem;
+        padding: 0.4rem 0.9rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--p5);
+        transition: all 0.2s ease;
+    }
+
+    .tag-badge:hover {
+        background-color: var(--p1);
+        border-color: var(--p4);
+    }
+
+    .tag-color-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+    }
+
+    /* --- EVENT/RESERVATION LIST STYLING --- */
+    .event-card {
+        background: #ffffff;
+        border: 1px solid rgba(121, 180, 169, 0.2);
+        border-radius: 0.8rem;
+        padding: 1rem 1.2rem;
+        margin-bottom: 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: transform 0.2s ease;
+    }
+
+    .event-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(103, 111, 84, 0.08);
+    }
+
+    .event-info {
+        flex-grow: 1;
+    }
+
+    .event-time {
+        font-weight: 700;
+        color: var(--p3);
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .event-name {
+        font-weight: 700;
+        color: var(--p5);
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .event-location {
+        font-size: 0.85rem;
+        color: #8c947c;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 2rem 1.5rem;
+        background: var(--p1);
+        border-radius: 0.8rem;
+        border: 1px dashed rgba(121, 180, 169, 0.4);
+    }
+
+    .empty-state-icon {
+        font-size: 2rem;
+        color: var(--p3);
+        opacity: 0.5;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-state-text {
+        color: #8c947c;
+        margin: 0;
+    }
+
+    /* Buttons */
     .btn-back {
         color: var(--p5);
         font-weight: 600;
@@ -107,10 +253,10 @@
         transition: all 0.2s ease;
     }
 
-        .btn-back:hover {
-            color: var(--p4);
-            transform: translateX(-3px);
-        }
+    .btn-back:hover {
+        color: var(--p4);
+        transform: translateX(-3px);
+    }
 
     .btn-edit-large {
         background-color: var(--p4);
@@ -125,112 +271,246 @@
         align-items: center;
     }
 
-        .btn-edit-large:hover {
-            background-color: var(--p3);
-            color: var(--p5);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(121, 180, 169, 0.3);
-        }
+    .btn-edit-large:hover {
+        background-color: var(--p3);
+        color: var(--p5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(121, 180, 169, 0.3);
+    }
 </style>
 
-<div class="details-container mb-5">
-
-    <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
-        <h1 class="page-title mb-0">Trip Details</h1>
-        <a asp-action="Index" class="btn-back">
-            <i class="bi bi-arrow-left me-2"></i>Back to Trips
-        </a>
-    </div>
-
+<div class="details-container">
     <div class="trip-card">
-
-        <h2 class="trip-title">@Model.Title</h2>
-
-        <div class="trip-desc">
-            @Model.Description
-        </div>
-
-        <div class="map-container">
-            <div id="map"></div>
-        </div>
-
-        <div class="row mt-4">
-            <div class="col-md-6">
-                <div class="date-wrapper">
-                    <i class="bi bi-clock date-icon"></i>
-                    <span>@Model.StartExplorationHour - @Model.EndExplorationHour</span>
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="date-wrapper">
-                    <i class="bi bi-calendar3 date-icon"></i>
-                    <span>@Model.StartDate.ToString("dd MMM yyyy")</span>
-                    <i class="bi bi-arrow-right date-arrow"></i>
-                    <span>@Model.EndDate.ToString("dd MMM yyyy")</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="meta-info d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div>
-                <i class="bi bi-info-circle me-1"></i> Added on @Model.CreatedAt.ToString("dd MMM yyyy")
-            </div>
-
-            @if (Model.StartDate > DateTime.Now.Date)
-            {
-                <a asp-action="Edit" asp-route-id="@Model?.TripId" class="btn-edit-large">
-                    <i class="bi bi-pencil-square me-2"></i>Edit Trip
+        <div class="row g-4 layout-row">
+            
+            <!-- LEFT COLUMN: Details (Scrollable) -->
+            <div class="col-lg-7 left-column order-2 order-lg-1 pb-4">
+                
+                <a asp-action="Index" class="btn-back mb-3 mt-2" style="font-size: 0.95rem; color: #8c947c;">
+                    <i class="bi bi-arrow-left me-1"></i>Back to Trips
                 </a>
-            }
-        </div>
 
+                <h2 class="trip-title mt-1" style="font-size: 2.2rem;">@Model.Title</h2>
+
+                <div class="trip-desc mb-4">
+                    @Model.Description
+                </div>
+
+                <!-- TAGS SECTION -->
+                @if (Model.Locations != null && Model.Locations.Any(l => l.LocationTags != null && l.LocationTags.Any()))
+                {
+                    <h3 class="section-title"><i class="bi bi-tags me-2"></i>Travel Interests</h3>
+                    <div class="tags-container">
+                        @{
+                            var allTags = Model.Locations
+                                .SelectMany(l => l.LocationTags ?? new List<LocationTag>())
+                                .GroupBy(lt => lt.TagId)
+                                .Select(g => g.First().Tag)
+                                .Distinct()
+                                .ToList();
+                        }
+                        @foreach (var tag in allTags)
+                        {
+                            <div class="tag-badge">
+                                <div class="tag-color-dot" style="background-color: @tag.Color;"></div>
+                                <span>@tag.Name</span>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <!-- LOCATIONS SECTION -->
+                <h3 class="section-title"><i class="bi bi-map-fill me-2"></i>Locations & Itinerary</h3>
+                @if (Model.Locations != null && Model.Locations.Any())
+                {
+                    <div class="events-list mb-4">
+                        @foreach (var loc in Model.Locations.OrderBy(l => l.OpeningHour ?? ""))
+                        {
+                            <div class="event-card">
+                                <div class="event-info">
+                                    <div class="event-name">@loc.Name</div>
+                                    @if (!string.IsNullOrEmpty(loc.OpeningHour))
+                                    {
+                                        <div class="event-time">
+                                            <i class="bi bi-clock me-1"></i>
+                                            @loc.OpeningHour
+                                            @if (!string.IsNullOrEmpty(loc.ClosingHour))
+                                            {
+                                                <span> - @loc.ClosingHour</span>
+                                            }
+                                        </div>
+                                    }
+                                    <div class="event-location">
+                                        <i class="bi bi-hourglass-split me-1"></i> @loc.AvgDuration mins
+                                        @if (loc.IsIndoor)
+                                        {
+                                            <span class="ms-2"><i class="bi bi-house-door-fill"></i> Indoor</span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-map-fill"></i></div>
+                        <p class="empty-state-text">No locations added yet.</p>
+                    </div>
+                }
+
+                <!-- RESERVATIONS/EVENTS SECTION -->
+                <h3 class="section-title"><i class="bi bi-calendar-event me-2"></i>Reservations & Events</h3>
+                @if (Model.Reservations != null && Model.Reservations.Any())
+                {
+                    <div class="events-list mb-4">
+                        @foreach (var reservation in Model.Reservations.OrderBy(r => r.StartDate))
+                        {
+                            <div class="event-card">
+                                <div class="event-info">
+                                    <div class="event-name">@reservation.Name</div>
+                                    <div class="event-time">
+                                        <i class="bi bi-calendar3 me-1"></i>
+                                        @reservation.StartDate.ToString("dd MMM yyyy HH:mm")
+                                        <span> → </span>
+                                        @reservation.EndDate.ToString("dd MMM yyyy HH:mm")
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(reservation.Location))
+                                    {
+                                        <div class="event-location">
+                                            <i class="bi bi-geo-alt me-1"></i>@reservation.Location
+                                        </div>
+                                    }
+                                </div>
+                                <form asp-controller="Reservations" asp-action="Delete" method="post" class="ms-3 m-0" onsubmit="return confirm('Are you sure you want to delete this event?');">
+                                    <input type="hidden" name="id" value="@reservation.ReservationId" />
+                                    <!-- Passing TripId so the backend knows where to redirect back to -->
+                                    <input type="hidden" name="tripId" value="@Model.TripId" />
+                    
+                                    <button type="submit" class="btn btn-link text-danger p-2 shadow-none border-0" style="opacity: 0.6; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.6'" title="Delete Event">
+                                        <i class="bi bi-x-lg fw-bold" style="font-size: 1.2rem;"></i>
+                                    </button>
+                                </form>
+
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-calendar-event"></i></div>
+                        <p class="empty-state-text">No reservations or events added yet.</p>
+                    </div>
+                }
+
+                <div class="row mt-5 pt-4 border-top" style="border-color: rgba(121, 180, 169, 0.15) !important;">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <div class="date-wrapper">
+                            <i class="bi bi-clock date-icon"></i>
+                            <span>@Model.StartExplorationHour - @Model.EndExplorationHour</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="date-wrapper">
+                            <i class="bi bi-calendar3 date-icon"></i>
+                            <span>@Model.StartDate.ToString("dd MMM yyyy")</span>
+                            <i class="bi bi-arrow-right date-arrow"></i>
+                            <span>@Model.EndDate.ToString("dd MMM yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="meta-info d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
+                    <div>
+                        <i class="bi bi-info-circle me-1"></i> Added on @Model.CreatedAt.ToString("dd MMM yyyy")
+                    </div>
+
+                    @if (Model.StartDate > DateTime.Now.Date)
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model?.TripId" class="btn-edit-large">
+                            <i class="bi bi-pencil-square me-2"></i>Edit Trip
+                        </a>
+                    }
+                </div>
+
+            </div>
+
+            <!-- RIGHT COLUMN: Map (Static, fills remaining space) -->
+            <div class="col-lg-5 right-column order-1 order-lg-2 mb-4 mb-lg-0">
+                <div class="map-container">
+                    <div id="map"></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 
-    <script>
+        <script>
         document.addEventListener('DOMContentLoaded', function () {
-
             const mapboxToken = '@Configuration["Mapbox:PublicKey"]';
             mapboxgl.accessToken = mapboxToken;
 
-            const locationQuery = encodeURIComponent('@Html.Raw(Model.City), @Html.Raw(Model.Country)');
+            // Extract the saved locations from the C# Model into a JavaScript array
+            const savedLocations = @Html.Raw(Json.Serialize(
+                Model.Locations != null 
+                    ? Model.Locations.Select(l => new { 
+                        name = l.Name, 
+                        lat = l.Latitude, 
+                        lng = l.Longitude 
+                    }).ToList()
+                    : new List<object>()
+            ));
 
-            fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${locationQuery}.json?access_token=${mapboxToken}&types=place,region,country`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.features && data.features.length > 0) {
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [0, 0],
+                zoom: 2
+            });
 
-                        const coords = data.features[0].center; // [longitude, latitude]
+            map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-                        // 1. Initialize the map directly on the city
-                        const map = new mapboxgl.Map({
-                            container: 'map',
-                            style: 'mapbox://styles/mapbox/streets-v12', // Classic, colorful map style
-                            center: coords, // Start exactly on the city
-                            zoom: 12, // Perfect zoom level to see the city layout
-                            interactive: true // Allows the user to click, drag, and zoom
-                        });
+            if (savedLocations && savedLocations.length > 0) {
+                
+                const bounds = new mapboxgl.LngLatBounds();
 
-                        // 2. Add standard zoom buttons to the top right corner
-                        map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+                savedLocations.forEach(loc => {
+                    const popup = new mapboxgl.Popup({ offset: 25 })
+                        .setHTML(`<h6 style="margin:0; padding:5px; color:#4A503D;">${loc.name}</h6>`);
 
-                        // 3. Drop your custom teal marker on the exact center
-                        new mapboxgl.Marker({ color: '#79B4A9' })
-                            .setLngLat(coords)
-                            .addTo(map);
+                    new mapboxgl.Marker({ color: '#79B4A9' })
+                        .setLngLat([loc.lng, loc.lat])
+                        .setPopup(popup)
+                        .addTo(map);
 
-                    } else {
-                        console.error("Location not found on Mapbox.");
-                        document.getElementById('map').innerHTML = '<div class="p-3 text-center text-muted mt-5">Map preview unavailable</div>';
-                    }
-                })
-                .catch(error => {
-                    console.error("Error loading map coordinates:", error);
+                    bounds.extend([loc.lng, loc.lat]);
                 });
+
+                map.fitBounds(bounds, { padding: 50, maxZoom: 14 });
+
+            } else {
+                const locationQuery = encodeURIComponent('@Html.Raw(Model.City), @Html.Raw(Model.Country)');
+
+                fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${locationQuery}.json?access_token=${mapboxToken}&types=place,region,country`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.features && data.features.length > 0) {
+                            const coords = data.features[0].center; 
+                            map.setCenter(coords);
+                            map.setZoom(12);
+                        } else {
+                            console.error("Location not found on Mapbox.");
+                        }
+                    })
+                    .catch(error => console.error("Error loading map coordinates:", error));
+            }
         });
     </script>
 }
