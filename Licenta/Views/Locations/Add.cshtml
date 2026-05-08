@@ -491,10 +491,13 @@
 					</div>
 
 					<div id="tagInputsContainer"></div>
+					<div id="existingEventBanner" class="mb-4 p-3 shadow-sm" style="display: none; background-color: var(--p1); border: 1px solid var(--p3); border-radius: 1rem; position: relative;">
+					</div>
 
 					<input type="hidden" id="IsIndoor" name="IsIndoor" value="false" />
 					<input type="hidden" name="TripId" value="@Model.TripId" />
 					<input type="hidden" id="Name" name="Name" />
+					<input type="hidden" id="Address" name="Address" />
 					<input type="hidden" id="Latitude" name="Latitude" />
 					<input type="hidden" id="Longitude" name="Longitude" />
 
@@ -594,10 +597,6 @@
 						</select>
 						<i class="bi bi-chevron-down position-absolute" style="right:14px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--p3);font-size:0.75rem;"></i>
 					</div>
-					<button onclick="getCitySuggestions()" class="btn btn-sm flex-shrink-0"
-							              style="border-radius:50px;background:var(--p3);color:#fff;font-weight:700;font-size:0.75rem;padding:0.45rem 1rem;">
-						<i class="bi bi-arrow-clockwise me-1"></i> Refresh
-					</button>
 				</div>
 
 				<div id="suggestionListContainer" class="custom-scrollbar p-1" style="height: 450px; overflow-y: auto;">
@@ -624,7 +623,6 @@
 				<div class="modal-body px-4">
 					<input type="hidden" name="TripId" value="@Model.TripId" />
 
-					<!-- Hidden inputs so the Controller knows exactly where this is -->
 					<input type="hidden" name="location" id="EventLocationString" />
 					<input type="hidden" name="latitude" id="EventLat" />
 					<input type="hidden" name="longitude" id="EventLng" />
@@ -636,24 +634,33 @@
 
 					<div class="mb-3">
 						<label class="form-label fw-600">Location</label>
-						<!-- A readonly display so the user knows where they are adding it -->
 						<input type="text" id="EventLocationDisplay" class="form-control" readonly style="background-color: var(--p2); color: var(--p5);" />
 					</div>
 
 					<div class="row">
-						<div class="col-6 mb-3">
-							<label class="form-label fw-600">Start Date/Time</label>
-							<input type="datetime-local" name="StartDate" class="form-control" required />
+						<div class="col-12 mb-3">
+							<label class="form-label fw-600">Event Date</label>
+							<input type="date" id="EventDateUI" class="form-control" required />
 						</div>
 						<div class="col-6 mb-3">
-							<label class="form-label fw-600">End Date/Time</label>
-							<input type="datetime-local" name="EndDate" class="form-control" required />
+							<label class="form-label fw-600">Start Time</label>
+							<input type="time" id="StartTimeUI" class="form-control" required />
+						</div>
+						<div class="col-6 mb-3">
+							<label class="form-label fw-600">Duration (Hours)</label>
+							<input type="number" id="DurationUI" class="form-control" value="1" min="0.5" step="0.5" required />
 						</div>
 					</div>
+
+					<div class="mb-3 p-2 rounded text-center" style="background-color: var(--p2); color: var(--p5); border: 1px dashed var(--p3);">
+						<i class="bi bi-clock-history me-1"></i> Event ends at: <strong id="EndTimeDisplay">--:--</strong>
+					</div>
+
+					<input type="hidden" name="StartDate" id="RealStartDate" />
+					<input type="hidden" name="EndDate" id="RealEndDate" />
 				</div>
 				<div class="modal-footer border-0 pb-4 px-4">
 					<button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-					<!-- Reused your btn-save style for consistency -->
 					<button type="submit" class="btn-save" style="width: auto; padding: 0.6rem 1.2rem;">Save Event</button>
 				</div>
 			</form>
@@ -672,6 +679,12 @@
 		let map;
 		let currentMarker = null;
 		let existingLocations = []; // Store {lat, lng}
+
+		let mapMarkers = {}; 
+
+		let currentSuggestions = [];
+		let visibleSuggestionsCount = 0;
+		const ITEMS_PER_PAGE = 5;
 
 		document.addEventListener('DOMContentLoaded', function () {
 			mapboxgl.accessToken = '@Configuration["Mapbox:PublicKey"]';
@@ -724,6 +737,13 @@
 			searchBox.addEventListener('retrieve', (e) => {
 				handleLocationSelection(e.detail.features[0]);
 			});
+
+			const categoryDropdown = document.getElementById('categoryFilter');
+			if (categoryDropdown) {
+				categoryDropdown.addEventListener('change', function() {
+					getCitySuggestions();
+				});
+			}
 		});
 
 				function toggleInputsLock(isLocked) {
@@ -768,7 +788,7 @@
 			return span;
 		}
 
-				async function saveLocationViaAjax() {
+		async function saveLocationViaAjax() {
 			const form = document.getElementById('locationForm');
 			const lat = parseFloat(document.getElementById('Latitude').value);
 			const lng = parseFloat(document.getElementById('Longitude').value);
@@ -814,6 +834,7 @@
 
 					refreshLocationList();
 					bootstrap.Tab.getOrCreateInstance(document.getElementById('pills-list-tab')).show();
+					await loadExistingPins();
 				} else {
 					Swal.fire('Error', 'Could not save.', 'error');
 				}
@@ -834,65 +855,97 @@
 					return;
 				}
 
-				container.innerHTML = locations.map(loc => {
-					const ioBadge = loc.isIndoor
-						? `<span class="badge rounded-pill px-2 py-1 me-1" style="background:#79B4A915; color:#79B4A9; border:1px solid #79B4A9; font-size:10px; font-weight:700;"><i class="bi bi-house-door-fill"></i> Indoor</span>`
-						: `<span class="badge rounded-pill px-2 py-1 me-1" style="background:#A0522D15; color:#A0522D; border:1px solid #A0522D; font-size:10px; font-weight:700;"><i class="bi bi-tree-fill"></i> Outdoor</span>`;
+		container.innerHTML = locations.map(loc => {
+			const ioBadge = loc.isIndoor
+				? `<span class="badge rounded-pill px-2 py-1 me-1" style="background:#79B4A915; color:#79B4A9; border:1px solid #79B4A9; font-size:10px; font-weight:700;"><i class="bi bi-house-door-fill"></i> Indoor</span>`
+				: `<span class="badge rounded-pill px-2 py-1 me-1" style="background:#A0522D15; color:#A0522D; border:1px solid #A0522D; font-size:10px; font-weight:700;"><i class="bi bi-tree-fill"></i> Outdoor</span>`;
 
-					return `
-						<!-- ADDED cursor: pointer and onclick to view details -->
-						<div class="card location-card shadow-sm border-0 mb-3" style="cursor: pointer;" onclick="viewLocationDetails(${loc.locationId})">
-							<div class="card-body p-3">
-								<div class="d-flex justify-content-between align-items-start">
-									<div class="overflow-hidden">
-										<h6 class="fw-bold m-0">${loc.name}</h6>
-										<small class="text-muted d-block text-truncate mb-2" style="font-size: 0.75rem;">${loc.address || ''}</small>
-									</div>
-									<!-- ADDED event parameter to stop propagation -->
-									<button onclick="deleteLocation(event, ${loc.locationId})" class="btn btn-sm text-danger p-0"><i class="bi bi-trash3"></i></button>
-								</div>
-								<div class="small text-muted mb-2">
-									<i class="bi bi-clock me-1"></i> ${loc.openingHour || '--'} - ${loc.closingHour || '--'}
-									<span class="mx-1">•</span>
-									<i class="bi bi-hourglass-split me-1"></i> ${loc.avgDuration} mins
-								</div>
-								<div class="d-flex flex-wrap gap-1 mb-3">
-									${ioBadge}
-									${loc.tags.map(t => `<span class="badge rounded-pill px-2 py-1" style="background:${t.color}15; color:${t.color}; border:1px solid ${t.color}; font-size:10px; font-weight:700;"><i class="bi ${t.icon}"></i> ${t.name}</span>`).join('')}
-								</div>
+			const eventUI = loc.eventDetails
+			? `<div class="d-flex align-items-center flex-shrink-0 ms-2 px-2 py-1" style="background: var(--p2); color: var(--p4); border-radius: 0.5rem; font-size: 0.75rem; font-weight: 700; border: 1px solid rgba(121, 180, 169, 0.3);">
+				   <i class="bi bi-calendar-check-fill text-success me-1" style="font-size: 0.8rem;"></i> ${loc.eventDetails.name}
+			   </div>`
+			: `<button onclick="openEventModal(event, '${loc.locationId || loc.id}')" class="btn btn-sm flex-shrink-0 ms-2" style="background: var(--p1); color: var(--p5); border: 1px solid var(--p3); border-radius: 0.5rem; font-weight: 600; font-size: 0.75rem; padding: 0.25rem 0.6rem;">
+				   <i class="bi bi-calendar-plus me-1"></i> Add Event
+			   </button>`;
 
-								<!-- NEW 'ADD EVENT' BUTTON -->
-								<button onclick="openEventModal(event, ${loc.locationId})" class="btn btn-sm w-100" style="background: var(--p1); color: var(--p5); border: 1px solid var(--p3); border-radius: 0.5rem; font-weight: 600;">
-									<i class="bi bi-calendar-plus me-1"></i> Add Event Here
-								</button>
+			return `
+				<div class="card location-card shadow-sm border-0 mb-3" style="cursor: pointer;" onclick="viewLocationDetails('${loc.locationId || loc.id}')">
+					<div class="card-body p-3">
+						<div class="d-flex justify-content-between align-items-start">
+							<div class="overflow-hidden">
+								<h6 class="fw-bold m-0">${loc.name}</h6>
+								<small class="text-muted d-block text-truncate mb-2" style="font-size: 0.75rem;">${loc.address || ''}</small>
 							</div>
-						</div>`;
-				}).join('');
+							<button onclick="deleteLocation(event, '${loc.locationId || loc.id}')" class="btn btn-sm text-danger p-0"><i class="bi bi-trash3"></i></button>
+						</div>
+						<div class="small text-muted mb-2">
+							<i class="bi bi-clock me-1"></i> ${loc.openingHour || '--'} - ${loc.closingHour || '--'}
+							<span class="mx-1">•</span>
+							<i class="bi bi-hourglass-split me-1"></i> ${loc.avgDuration} mins
+						</div>
+
+						<div class="d-flex justify-content-between align-items-center mt-2">
+							<div class="d-flex flex-wrap gap-1">
+								${ioBadge}
+								${loc.tags.map(t => `<span class="badge rounded-pill px-2 py-1" style="background:${t.color}15; color:${t.color}; border:1px solid ${t.color}; font-size:10px; font-weight:700;"><i class="bi ${t.icon}"></i> ${t.name}</span>`).join('')}
+							</div>
+
+							${eventUI}
+						</div>
+					</div>
+				</div>`;
+		}).join('');
 			} catch (e) { console.error(e); }
 		}
 
 		// Updated to catch 'e' so clicking delete doesn't open the Details view
-		async function deleteLocation(e, id) {
-			if (e) e.stopPropagation(); // Prevents the card click event from firing
+				async function deleteLocation(e, id) {
+			if (e) e.stopPropagation();
 
-			const result = await Swal.fire({ title: 'Remove?', text: "Remove from itinerary?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#79B4A9' });
+			const result = await Swal.fire({
+				title: 'Are you sure?',
+				text: "This will remove the location and any associated events!",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonText: 'Yes, delete it!'
+			});
+
 			if (result.isConfirmed) {
-				await fetch(`/Locations/DeleteLocation?id=${id}`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-				refreshLocationList();
+				try {
+					const response = await fetch(`/Locations/DeleteLocation?id=${id}`, {
+						method: 'POST',
+						headers: { 'X-Requested-With': 'XMLHttpRequest' }
+					});
+
+					if (response.ok) {
+						// --- THE KEY ADDITION ---
+						// Remove the pin from the map immediately
+						if (mapMarkers[id]) {
+							mapMarkers[id].remove(); // This deletes it from the Mapbox map
+							delete mapMarkers[id];   // This removes it from our tracking list
+						}
+
+						Swal.fire({ title: 'Deleted!', icon: 'success', timer: 1000, showConfirmButton: false });
+
+						refreshLocationList(); // Refresh the sidebar
+					}
+				} catch (e) { console.error(e); }
 			}
 		}
 
-		// --- NEW LOGIC FUNCTIONS ---
-
 		function viewLocationDetails(id) {
-			const loc = existingLocations.find(l => l.locationId === id);
+			// Fixed: Compare them as strings and check both locationId and id
+			const loc = existingLocations.find(l => String(l.locationId || l.id) === String(id));
 			if (!loc) return;
 
 			// 1. Switch to the 'Add New' tab UI
 			const addTabTrigger = document.getElementById('pills-add-tab');
 			bootstrap.Tab.getOrCreateInstance(addTabTrigger).show();
 
-			// 2. Create a fake Mapbox 'feature' object so your existing handleLocationSelection function can process it
+			const searchBox = document.getElementById('searchBox');
+			if (searchBox) searchBox.value = loc.name;
+
+			// 2. Create a fake Mapbox 'feature' object
 			const feature = {
 				properties: {
 					name: loc.name,
@@ -908,28 +961,61 @@
 		}
 
 		function openEventModal(e, id) {
-			e.stopPropagation(); // Stop card click from firing
+			e.stopPropagation();
 
-			const loc = existingLocations.find(l => l.locationId === id);
+			const loc = existingLocations.find(l => String(l.locationId || l.id) === String(id));
 			if (!loc) return;
 
-			// Populate the hidden fields with exact location data for the Controller
 			document.getElementById('EventLocationString').value = loc.name;
 			document.getElementById('EventLat').value = loc.latitude;
 			document.getElementById('EventLng').value = loc.longitude;
-
-			// Show a nice visual display for the user
 			document.getElementById('EventLocationDisplay').value = loc.name + (loc.address ? ` - ${loc.address}` : "");
 
-			// Default dates to Trip dates as a helpful fallback
-			const tripStart = "@Model.StartDate.ToString("yyyy-MM-ddTHH:mm")";
-			document.querySelector('#addEventModal input[name="StartDate"]').value = tripStart;
-			document.querySelector('#addEventModal input[name="EndDate"]').value = tripStart;
+			// --- NEW LOGIC: Set defaults for the new UI ---
+			const tripStartDate = "@Model.StartDate.ToString("yyyy-MM-dd")";
+			document.getElementById('EventDateUI').value = tripStartDate;
 
-			// Show Modal
+			// Set a default start time and duration to make it easy for the user
+			document.getElementById('StartTimeUI').value = "10:00";
+			document.getElementById('DurationUI').value = "1";
+
+			// Force a calculation so the hidden fields are populated immediately
+			calculateEventTimes();
+
 			const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
 			modal.show();
 		}
+
+				// Function to calculate End Time and update the hidden inputs
+		function calculateEventTimes() {
+			const dateVal = document.getElementById('EventDateUI').value;
+			const timeVal = document.getElementById('StartTimeUI').value;
+			const durVal = parseFloat(document.getElementById('DurationUI').value) || 0;
+
+			if (!dateVal || !timeVal) return;
+
+			// 1. Create a Javascript Date object for the Start Time
+			const startDateTime = new Date(`${dateVal}T${timeVal}`);
+
+			// 2. Add the duration (Hours converted to Milliseconds)
+			const endDateTime = new Date(startDateTime.getTime() + durVal * 60 * 60 * 1000);
+
+			// 3. Format helper for C# (yyyy-MM-ddTHH:mm)
+			const pad = (n) => n.toString().padStart(2, '0');
+			const formatForCSharp = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+
+			// 4. Populate the hidden inputs that the Controller expects
+			document.getElementById('RealStartDate').value = formatForCSharp(startDateTime);
+			document.getElementById('RealEndDate').value = formatForCSharp(endDateTime);
+
+			// 5. Update the visual UI badge for the user
+			document.getElementById('EndTimeDisplay').innerText = `${pad(endDateTime.getHours())}:${pad(endDateTime.getMinutes())}`;
+		}
+
+		// Attach listeners so the calculation runs automatically when the user types or clicks
+		document.getElementById('EventDateUI').addEventListener('input', calculateEventTimes);
+		document.getElementById('StartTimeUI').addEventListener('input', calculateEventTimes);
+		document.getElementById('DurationUI').addEventListener('input', calculateEventTimes);
 
 		document.getElementById('addEventForm').addEventListener('submit', async function (e) {
 			e.preventDefault(); // Stop the browser from navigating to the Index page
@@ -966,6 +1052,8 @@
 
 					// 3. Clear the form for next time
 					form.reset();
+
+					refreshLocationList();
 				} else {
 					Swal.fire('Error', 'Could not save the event.', 'error');
 				}
@@ -982,47 +1070,117 @@
 		async function getCitySuggestions() {
 			const container = document.getElementById('suggestionListContainer');
 			const cat = document.getElementById('categoryFilter').value;
+
+			// Show spinner
 			container.innerHTML = `<div class="text-center p-5"><div class="spinner-border text-success" role="status"></div></div>`;
 
 			const token = mapboxgl.accessToken;
 			try {
 				const geoRes = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent("@Model.City, @Model.Country")}.json?access_token=${token}`);
 				const geoData = await geoRes.json();
+
+				if (!geoData.features || geoData.features.length === 0) {
+					container.innerHTML = `<div class="p-4 text-center text-muted">City coordinates not found.</div>`;
+					return;
+				}
+
 				const [lng, lat] = geoData.features[0].center;
 
-				const cats = cat === 'random' ? ["museum", "historic_site", "park", "tourist_attraction"] : [cat];
+				const catsToSearch = cat === 'random'
+					? ["museum", "historic site", "park", "tourist attraction"]
+					: [cat.replace(/_/g, ' ')];
+
 				let allFeatures = [];
 				const seen = new Set();
 
-				for (let c of cats) {
-					const res = await fetch(`https://api.mapbox.com/search/searchbox/v1/category/${c}?access_token=${token}&proximity=${lng},${lat}&limit=5&language=en`);
+				// Create a quick lookup list of names you already have in your itinerary
+				const alreadyAddedNames = existingLocations.map(loc => loc.name.toLowerCase().trim());
+
+				for (let c of catsToSearch) {
+					const res = await fetch(`https://api.mapbox.com/search/searchbox/v1/forward?q=${encodeURIComponent(c)}&access_token=${token}&proximity=${lng},${lat}&limit=10&language=en`);
 					const data = await res.json();
+
 					if (data.features) {
 						data.features.forEach(f => {
-							if (!seen.has(f.properties.name.toLowerCase())) {
-								seen.add(f.properties.name.toLowerCase());
+							const placeName = f.properties.name ? f.properties.name.toLowerCase().trim() : "";
+
+							// ONLY add it if it's unique AND not already in 'alreadyAddedNames'
+							if (placeName && !seen.has(placeName) && !alreadyAddedNames.includes(placeName)) {
+								seen.add(placeName);
 								allFeatures.push(f);
 							}
 						});
 					}
 				}
 
-				container.innerHTML = allFeatures.map(feat => {
-					const p = feat.properties;
-					const mbCats = p.poi_category || [];
-					const dbTagsHtml = allSystemTags.filter(st => mbCats.some(c => st.name.toLowerCase().includes(c.toLowerCase().replace(/_/g,' ')))).map(t => `
-						<span class="badge rounded-pill px-2 py-1" style="background:${t.color}15; color:${t.color}; border:1px solid ${t.color}; font-size:10px; font-weight:700;"><i class="bi ${t.icon}"></i> ${t.name}</span>`).join('');
+				if (cat === 'random') {
+					allFeatures = allFeatures.sort(() => 0.5 - Math.random());
+				}
 
-					return `
-						<div class="card location-card shadow-sm border-0 mb-2" style="cursor: pointer;" onclick="selectSuggestedLocation('${encodeURIComponent(JSON.stringify(feat))}')">
-							<div class="card-body p-3">
-								<h6 class="fw-bold m-0">${p.name}</h6>
-								<small class="text-muted d-block text-truncate mb-2" style="font-size:0.75rem;">${p.full_address || ''}</small>
-								<div class="d-flex flex-wrap gap-1">${dbTagsHtml}</div>
-							</div>
-						</div>`;
-				}).join('');
-			} catch (e) { console.error(e); }
+				currentSuggestions = allFeatures;
+				visibleSuggestionsCount = 0;
+
+				renderSuggestions(true);
+
+			} catch (e) {
+				console.error("Suggestion Error:", e);
+				container.innerHTML = `<div class="p-4 text-center text-danger">Failed to load suggestions. Check console for details.</div>`;
+			}
+		}
+
+		function renderSuggestions(isInitialLoad = false) {
+			const container = document.getElementById('suggestionListContainer');
+
+			// If this is the first load, clear the spinner
+			if (isInitialLoad) {
+				container.innerHTML = "";
+				if (currentSuggestions.length === 0) {
+					container.innerHTML = `<div class="p-4 text-center text-muted">No spots found for this category.</div>`;
+					return;
+				}
+			} else {
+				// If clicking "Load More", remove the button temporarily so we can add more items below
+				const loadMoreBtn = document.getElementById('loadMoreBtnContainer');
+				if (loadMoreBtn) loadMoreBtn.remove();
+			}
+
+			// Grab the next 5 items from our saved array
+			const nextBatch = currentSuggestions.slice(visibleSuggestionsCount, visibleSuggestionsCount + ITEMS_PER_PAGE);
+
+			const html = nextBatch.map(feat => {
+				const p = feat.properties;
+				const mbCats = p.poi_category || [];
+				const dbTagsHtml = allSystemTags.filter(st => mbCats.some(c => st.name.toLowerCase().includes(c.toLowerCase().replace(/_/g,' ')))).map(t => `
+					<span class="badge rounded-pill px-2 py-1" style="background:${t.color}15; color:${t.color}; border:1px solid ${t.color}; font-size:10px; font-weight:700;"><i class="bi ${t.icon}"></i> ${t.name}</span>`).join('');
+
+				const encodedFeat = encodeURIComponent(JSON.stringify(feat)).replace(/'/g, "%27");
+
+				return `
+					<div class="card location-card shadow-sm border-0 mb-2" style="cursor: pointer;" onclick="selectSuggestedLocation('${encodedFeat}')">
+						<div class="card-body p-3">
+							<h6 class="fw-bold m-0">${p.name}</h6>
+							<small class="text-muted d-block text-truncate mb-2" style="font-size:0.75rem;">${p.full_address || p.place_formatted || ''}</small>
+							<div class="d-flex flex-wrap gap-1">${dbTagsHtml}</div>
+						</div>
+					</div>`;
+			}).join('');
+
+			// Append the new HTML to the bottom of the list without deleting what's already there
+			container.insertAdjacentHTML('beforeend', html);
+			visibleSuggestionsCount += nextBatch.length;
+
+			// If we still have more items in our array that haven't been shown yet, add the button back
+			if (visibleSuggestionsCount < currentSuggestions.length) {
+				container.insertAdjacentHTML('beforeend', `
+					<div id="loadMoreBtnContainer" class="text-center mt-3 mb-4">
+						<button class="btn btn-sm rounded-pill px-4 fw-bold shadow-sm"
+								style="border: 1px solid var(--p3); color: var(--p5); background-color: var(--p1);"
+								onclick="renderSuggestions()">
+							<i class="bi bi-arrow-down me-1"></i> Load More
+						</button>
+					</div>
+				`);
+			}
 		}
 
 		function selectSuggestedLocation(encoded) {
@@ -1125,7 +1283,7 @@
 			closeInput._flatpickr.set('clickOpens', false);
 		}
 
-				function handleLocationSelection(feature) {
+		function handleLocationSelection(feature) {
 			if (!feature) return;
 
 			const props = feature.properties;
@@ -1137,6 +1295,9 @@
 			document.getElementById('Name').value = props.name || props.full_address;
 			document.getElementById('Longitude').value = lng;
 			document.getElementById('Latitude').value = lat;
+
+			const addressInput = document.getElementById('Address');
+			if(addressInput) addressInput.value = address;
 
 			// 1. Check if it's already in our database array
 			// TIP: Ensure your existingLocations array is being populated correctly in loadExistingPins()
@@ -1170,6 +1331,38 @@
 				tryFetchHours(); // Go look for hours on OpenStreetMap
 			}
 
+			const eventBanner = document.getElementById('existingEventBanner');
+			if (existingData && existingData.eventDetails) {
+				const ev = existingData.eventDetails;
+
+				// Format the dates nicely (e.g., "Oct 24, 10:00 - 12:00")
+				const start = new Date(ev.startDate);
+				const end = new Date(ev.endDate);
+				const formattedDate = start.toLocaleDateString([], { month: 'short', day: 'numeric' });
+				const formattedTime = `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+
+				eventBanner.innerHTML = `
+					<button type="button" class="btn btn-sm text-danger position-absolute top-0 end-0 mt-2 me-2 p-1 border-0 bg-transparent shadow-none" onclick="deleteEvent(${ev.id})">
+						<i class="bi bi-trash3-fill fs-5"></i>
+					</button>
+
+					<div class="d-flex align-items-center">
+						<div class="rounded-circle p-2 me-3" style="background-color: var(--p2); color: var(--p3); display: flex; align-items: center; justify-content: center; width: 40px; height: 40px;">
+							<i class="bi bi-calendar-check-fill"></i>
+						</div>
+						<div class="pe-4"> <h6 class="mb-0 fw-bold" style="color: var(--p5);">${ev.name}</h6>
+							<small class="text-muted fw-bold d-block" style="font-size: 0.75rem;">📅 ${formattedDate} <span class="mx-1">•</span> 🕒 ${formattedTime}</small>
+						</div>
+					</div>
+				`;
+				eventBanner.style.display = 'block';
+			} else {
+				eventBanner.style.display = 'none';
+			}
+			
+			
+		
+
 			// Map and View logic...
 			if (currentMarker) currentMarker.remove();
 			if (!existingData) {
@@ -1181,6 +1374,60 @@
 			generateTagBadges(props, existingData);
 		}
 
+		async function deleteEvent(eventId) {
+			const result = await Swal.fire({
+				title: 'Remove Event?',
+				text: "This will remove the event from your itinerary.",
+				icon: 'warning',
+				showCancelButton: true,
+				confirmButtonColor: '#79B4A9',
+				cancelButtonColor: '#d33',
+				confirmButtonText: 'Yes, delete it!'
+			});
+
+			if (result.isConfirmed) {
+				try {
+					// Ensure the URL is correct based on your routing
+					const response = await fetch(`/Reservations/AjaxDeleteReservation?id=${eventId}`, {
+						method: 'POST',
+						headers: {
+							'X-Requested-With': 'XMLHttpRequest',
+							'Content-Type': 'application/x-www-form-urlencoded'
+						}
+					});
+
+					const data = await response.json();
+
+					if (data.success) {
+						Swal.fire({
+							title: 'Deleted!',
+							text: 'Event removed.',
+							icon: 'success',
+							timer: 1500,
+							showConfirmButton: false
+						});
+
+						document.getElementById('existingEventBanner').style.display = 'none';
+						await refreshLocationList();
+
+						// Update local memory so clicking the pin again doesn't show the old event
+						const lat = document.getElementById('Latitude').value;
+						const lng = document.getElementById('Longitude').value;
+						const locIndex = existingLocations.findIndex(l =>
+							Math.abs(l.latitude - lat) < 0.0001 && Math.abs(l.longitude - lng) < 0.0001
+						);
+						if (locIndex !== -1) {
+							existingLocations[locIndex].eventDetails = null;
+						}
+					} else {
+						Swal.fire('Error', data.message || 'Could not delete the event.', 'error');
+					}
+				} catch (e) {
+					console.error("Delete Error:", e);
+					Swal.fire('Error', 'A network error occurred.', 'error');
+				}
+			}
+		}
 
 		function createSplitPin(colors) {
 			const el = document.createElement('div');
@@ -1190,13 +1437,15 @@
 			return el;
 		}
 
-		async function loadExistingPins() {
+				async function loadExistingPins() {
 			try {
 				const res = await fetch(`/Locations/GetTripLocations?tripId=@Model.TripId`);
 				const locs = await res.json();
-
-				// Store the full objects so we can access hours/duration later
 				existingLocations = locs;
+
+				// Clear existing markers from the map first if re-loading
+				Object.values(mapMarkers).forEach(marker => marker.remove());
+				mapMarkers = {};
 
 				locs.forEach(l => {
 					const colors = l.tags.map(t => t.color);
@@ -1204,29 +1453,20 @@
 						.setLngLat([l.longitude, l.latitude])
 						.addTo(map);
 
-					// Optional: Make existing pins clickable to load the form
+					// Store the marker using its ID
+					const id = l.locationId || l.id;
+					mapMarkers[id] = marker;
+
 					marker.getElement().addEventListener('click', () => {
 						handleLocationSelection({
 							geometry: { coordinates: [l.longitude, l.latitude] },
-							properties: {
-								name: l.name,
-								full_address: l.address,
-								isExisting: true, // Custom flag
-								dbData: l // Pass the DB data directly
-							}
+							properties: { name: l.name, full_address: l.address }
 						});
 					});
 				});
 			} catch(e) { console.error("Error loading pins:", e); }
 		}
 
-		async function deleteLocation(id) {
-			const result = await Swal.fire({ title: 'Remove?', text: "Remove from itinerary?", icon: 'warning', showCancelButton: true, confirmButtonColor: '#79B4A9' });
-			if (result.isConfirmed) {
-				await fetch(`/Locations/DeleteLocation?id=${id}`, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
-				refreshLocationList();
-			}
-		}
 
 		async function tryFetchHours(retries = 3) {
 			const lat = document.getElementById('Latitude').value;

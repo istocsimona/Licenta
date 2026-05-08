@@ -57,6 +57,7 @@ namespace Licenta.Controllers
 
                 // Update the location
                 existingLocation.Name = model.Name;
+                existingLocation.Address = model.Address;
                 existingLocation.Latitude = model.Latitude;
                 existingLocation.Longitude = model.Longitude;
                 existingLocation.AvgDuration = model.AvgDuration;
@@ -136,12 +137,24 @@ namespace Licenta.Controllers
                 .Select(l => new {
                     l.LocationId,
                     l.Name,
+                    l.Address,
                     l.Latitude,
                     l.Longitude,
                     l.OpeningHour,
                     l.ClosingHour,
                     l.AvgDuration,
                     l.IsIndoor,
+
+                    EventDetails = _context.Reservations
+                        .Where(r => r.TripId == tripId && r.Location == l.Name)
+                        .Select(r => new {
+                            Id = r.ReservationId, // Note: Change to r.Id if your model uses 'Id' instead of 'ReservationId'
+                            Name = r.Name,
+                            StartDate = r.StartDate,
+                            EndDate = r.EndDate
+                        })
+                        .FirstOrDefault(),
+
                     Tags = _context.LocationTags
                         .Where(lt => lt.LocationId == l.LocationId)
                         .Select(lt => new { lt.Tag.Name, lt.Tag.Color, lt.Tag.Icon })
@@ -158,14 +171,28 @@ namespace Licenta.Controllers
             var location = await _context.Locations.FindAsync(id);
             if (location == null) return NotFound();
 
-            // Remove associated tags first if your DB doesn't have Cascade Delete enabled
+            // 1. Remove associated tags (manual cleanup)
             var tags = _context.LocationTags.Where(lt => lt.LocationId == id);
             _context.LocationTags.RemoveRange(tags);
 
+            // 2. Find and remove associated Events (Reservations)
+            // We match by TripId and Name since your Reservation model uses a string for Location
+            var associatedEvents = _context.Reservations
+                .Where(r => r.TripId == location.TripId && r.Location == location.Name);
+
+            if (associatedEvents.Any())
+            {
+                _context.Reservations.RemoveRange(associatedEvents);
+            }
+
+            // 3. Remove the location itself
             _context.Locations.Remove(location);
+
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true });
         }
+
+
     }
 }

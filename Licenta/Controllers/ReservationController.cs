@@ -102,6 +102,26 @@ namespace Licenta.Controllers // Ensure this matches your namespace
         }
 
         [HttpPost]
+        [IgnoreAntiforgeryToken] // Keep this for AJAX if not passing tokens
+        public async Task<IActionResult> AjaxDeleteReservation(int id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Explicitly check for ReservationId
+            var reservation = await _context.Reservations
+                .FirstOrDefaultAsync(r => r.ReservationId == id && r.UserId == userId);
+
+            if (reservation != null)
+            {
+                _context.Reservations.Remove(reservation);
+                await _context.SaveChangesAsync();
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false, message = "Reservation not found or access denied." });
+        }
+
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id, int tripId)
         {
