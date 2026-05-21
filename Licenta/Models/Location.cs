@@ -21,5 +21,7 @@ namespace Licenta.Models
 
         public virtual Trip Trip { get; set; }
         public virtual ICollection<LocationTag> LocationTags { get; set; } = new List<LocationTag>();
+        // Add this inside your Location class:
+        public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
     }
 }

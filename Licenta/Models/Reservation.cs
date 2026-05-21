@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Licenta.Models
 {
@@ -12,7 +13,10 @@ namespace Licenta.Models
         [Required]
         public string Name { get; set; } // Added Name
 
-        public string Location { get; set; }
+        public int? LocationId { get; set; }
+
+        [ForeignKey("LocationId")]
+        public virtual Location? Location { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime StartDate { get; set; }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace Licenta.Controllers
 {
@@ -23,7 +24,6 @@ namespace Licenta.Controllers
             return View();
         }
 
-        // LocationsController.cs
         public async Task<IActionResult> Add(int tripId)
         {
             var trip = await _context.Trips.FirstOrDefaultAsync(t => t.TripId == tripId);
@@ -43,6 +43,7 @@ namespace Licenta.Controllers
             ModelState.Remove("LocationTags");
             ModelState.Remove("OpeningHour");
             ModelState.Remove("ClosingHour");
+            ModelState.Remove("Reservations"); // Added to prevent validation failures on the new nav property
 
             if (!ModelState.IsValid)
             {
@@ -96,6 +97,7 @@ namespace Licenta.Controllers
             ModelState.Remove("LocationTags");
             ModelState.Remove("OpeningHour");
             ModelState.Remove("ClosingHour");
+            ModelState.Remove("Reservations"); // Added
 
             if (!ModelState.IsValid)
             {
@@ -128,7 +130,6 @@ namespace Licenta.Controllers
             }
         }
 
-
         [HttpGet]
         public async Task<IActionResult> GetTripLocations(int tripId)
         {
@@ -145,10 +146,11 @@ namespace Licenta.Controllers
                     l.AvgDuration,
                     l.IsIndoor,
 
+                    // FIX: Match reservations directly using the new LocationId!
                     EventDetails = _context.Reservations
-                        .Where(r => r.TripId == tripId && r.Location == l.Name)
+                        .Where(r => r.LocationId == l.LocationId)
                         .Select(r => new {
-                            Id = r.ReservationId, // Note: Change to r.Id if your model uses 'Id' instead of 'ReservationId'
+                            Id = r.ReservationId,
                             Name = r.Name,
                             StartDate = r.StartDate,
                             EndDate = r.EndDate
@@ -176,9 +178,9 @@ namespace Licenta.Controllers
             _context.LocationTags.RemoveRange(tags);
 
             // 2. Find and remove associated Events (Reservations)
-            // We match by TripId and Name since your Reservation model uses a string for Location
+            // FIX: Match by LocationId directly!
             var associatedEvents = _context.Reservations
-                .Where(r => r.TripId == location.TripId && r.Location == location.Name);
+                .Where(r => r.LocationId == id);
 
             if (associatedEvents.Any())
             {
@@ -192,7 +194,5 @@ namespace Licenta.Controllers
 
             return Ok(new { success = true });
         }
-
-
     }
 }
