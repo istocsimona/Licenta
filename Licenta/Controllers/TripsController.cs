@@ -45,12 +45,14 @@ namespace Licenta.Controllers
             }
 
             var trip = await _context.Trips
-              .Include(t => t.User)
-              .Include(t => t.Locations)
+            .Include(t => t.Locations)
                 .ThenInclude(l => l.LocationTags)
-                .ThenInclude(lt => lt.Tag)
-              .Include(t => t.Reservations)
-              .FirstOrDefaultAsync(m => m.TripId == id);
+                    .ThenInclude(lt => lt.Tag) 
+            .Include(t => t.Reservations)
+            .Include(t => t.DayPlans)
+                .ThenInclude(dp => dp.ItineraryItems)
+                    .ThenInclude(ii => ii.Location) 
+            .FirstOrDefaultAsync(m => m.TripId == id);
 
             if (trip == null)
             {

@@ -678,6 +678,7 @@
 		const allSystemTags = @Html.Raw(Json.Serialize(ViewBag.AvailableTags));
 		let map;
 		let currentMarker = null;
+		let currentSelectedLocationId = null
 		let existingLocations = []; // Store {lat, lng}
 
 		let mapMarkers = {}; 
@@ -685,6 +686,25 @@
 		let currentSuggestions = [];
 		let visibleSuggestionsCount = 0;
 		const ITEMS_PER_PAGE = 5;
+
+		const CATEGORY_DURATIONS = {
+			'museum': 120,
+			'art_gallery': 90,
+			'historic_site': 90,
+			'castle': 120,
+			'park': 60,
+			'restaurant': 90,
+			'cafe': 45,
+			'bar': 60,
+			'zoo': 180,
+			'aquarium': 120,
+			'theme_park': 240,
+			'monument': 30,
+			'tourist_attraction': 60,
+			'shopping_mall': 120,
+			'theater': 150,
+			'viewpoint': 20
+		};
 
 		document.addEventListener('DOMContentLoaded', function () {
 			mapboxgl.accessToken = '@Configuration["Mapbox:PublicKey"]';
@@ -701,6 +721,69 @@
 			map.on('load', () => {
 				loadExistingPins();
 				refreshLocationList();
+			});
+
+			// ==========================================
+			// NEW CODE: MAKE MAP POIs CLICKABLE
+			// ==========================================
+
+			// Change the cursor to a pointer when hovering over a POI to show it's clickable
+			map.on('mouseenter', 'poi-label', () => {
+				map.getCanvas().style.cursor = 'pointer';
+			});
+
+			// Revert the cursor when leaving the POI
+			map.on('mouseleave', 'poi-label', () => {
+				map.getCanvas().style.cursor = '';
+			});
+
+			// Handle the actual click on the map
+			map.on('click', (e) => {
+				// Search the area the user clicked specifically for the 'poi-label' layer
+				const features = map.queryRenderedFeatures(e.point, {
+					layers: ['poi-label']
+				});
+
+				// If they didn't click on a POI, do nothing
+				if (!features.length) return;
+
+				const clickedFeature = features[0];
+
+				// Try to get the exact POI coordinates, falling back to where the mouse clicked
+				let lng = e.lngLat.lng;
+				let lat = e.lngLat.lat;
+				if (clickedFeature.geometry && clickedFeature.geometry.type === 'Point') {
+					lng = clickedFeature.geometry.coordinates[0];
+					lat = clickedFeature.geometry.coordinates[1];
+				}
+
+				// Build a mock "feature" object that matches the structure your handleLocationSelection expects
+				const mockFeature = {
+					geometry: {
+						coordinates: [lng, lat]
+					},
+					properties: {
+						// Grab the localized name, or fallback to the standard name
+						name: clickedFeature.properties.name || clickedFeature.properties.name_en || "Selected Place",
+
+						// Mapbox base map features usually don't carry full addresses, so we leave it blank
+						full_address: "",
+
+						// Attempt to extract a category to help your system generate the right tag badges
+						poi_category: [clickedFeature.properties.category_en || clickedFeature.properties.maki || clickedFeature.properties.type || ""]
+					}
+				};
+
+				// Visually switch the user back to the 'Add New' tab if they were on Suggestions/List
+				const addTabTrigger = document.getElementById('pills-add-tab');
+				bootstrap.Tab.getOrCreateInstance(addTabTrigger).show();
+
+				// Update the search box text to reflect what they clicked
+				const searchBox = document.getElementById('searchBox');
+				if(searchBox) searchBox.value = mockFeature.properties.name;
+
+				// Pass the data to your existing function!
+				handleLocationSelection(mockFeature);
 			});
 
 			const fpConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, minuteIncrement: 5, disableMobile: "true" };
@@ -960,26 +1043,25 @@
 			handleLocationSelection(feature);
 		}
 
-		function openEventModal(e, id) {
+				function openEventModal(e, id) {
 			e.stopPropagation();
 
 			const loc = existingLocations.find(l => String(l.locationId || l.id) === String(id));
 			if (!loc) return;
+
+			// SAVE THE EXACT ID
+			currentSelectedLocationId = loc.locationId || loc.id;
 
 			document.getElementById('EventLocationString').value = loc.name;
 			document.getElementById('EventLat').value = loc.latitude;
 			document.getElementById('EventLng').value = loc.longitude;
 			document.getElementById('EventLocationDisplay').value = loc.name + (loc.address ? ` - ${loc.address}` : "");
 
-			// --- NEW LOGIC: Set defaults for the new UI ---
 			const tripStartDate = "@Model.StartDate.ToString("yyyy-MM-dd")";
 			document.getElementById('EventDateUI').value = tripStartDate;
-
-			// Set a default start time and duration to make it easy for the user
 			document.getElementById('StartTimeUI').value = "10:00";
 			document.getElementById('DurationUI').value = "1";
 
-			// Force a calculation so the hidden fields are populated immediately
 			calculateEventTimes();
 
 			const modal = new bootstrap.Modal(document.getElementById('addEventModal'));
@@ -1017,15 +1099,23 @@
 		document.getElementById('StartTimeUI').addEventListener('input', calculateEventTimes);
 		document.getElementById('DurationUI').addEventListener('input', calculateEventTimes);
 
-		document.getElementById('addEventForm').addEventListener('submit', async function (e) {
-			e.preventDefault(); // Stop the browser from navigating to the Index page
+				document.getElementById('addEventForm').addEventListener('submit', async function (e) {
+			e.preventDefault();
 
 			const form = e.target;
 			const formData = new FormData(form);
+
+			// ========================================================
+			// WE NOW SEND THE EXACT LOCATION ID TO THE CONTROLLER
+			// ========================================================
+			formData.set('locationId', currentSelectedLocationId);
+			formData.set('startDate', document.getElementById('RealStartDate').value);
+			formData.set('endDate', document.getElementById('RealEndDate').value);
+			// ========================================================
+
 			const submitBtn = form.querySelector('button[type="submit"]');
 			const originalText = submitBtn.innerHTML;
 
-			// Visual feedback
 			submitBtn.disabled = true;
 			submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...`;
 
@@ -1037,22 +1127,11 @@
 				});
 
 				if (response.ok) {
-					// 1. Hide the modal
 					const modal = bootstrap.Modal.getInstance(document.getElementById('addEventModal'));
 					modal.hide();
 
-					// 2. Show a nice success popup
-					Swal.fire({
-						title: 'Success!',
-						text: 'Event added to your itinerary.',
-						icon: 'success',
-						timer: 1500,
-						showConfirmButton: false
-					});
-
-					// 3. Clear the form for next time
+					Swal.fire({ title: 'Success!', text: 'Event added to your itinerary.', icon: 'success', timer: 1500, showConfirmButton: false });
 					form.reset();
-
 					refreshLocationList();
 				} else {
 					Swal.fire('Error', 'Could not save the event.', 'error');
@@ -1061,7 +1140,6 @@
 				console.error(err);
 				Swal.fire('Error', 'A network error occurred.', 'error');
 			} finally {
-				// Restore button state
 				submitBtn.disabled = false;
 				submitBtn.innerHTML = originalText;
 			}
@@ -1323,7 +1401,8 @@
 				toggleInputsLock(false); // <--- THIS IS THE CRITICAL FIX: Unlock for new items
 
 				// Reset to defaults for new places
-				document.querySelector('input[name="AvgDuration"]').value = 60;
+				const suggestedDuration = getDurationFromCategories(props.poi_category || []);
+				document.querySelector('input[name="AvgDuration"]').value = suggestedDuration;
 				document.getElementById('OpeningHour')._flatpickr.clear();
 				document.getElementById('ClosingHour')._flatpickr.clear();
 
@@ -1372,6 +1451,27 @@
 			document.getElementById('empty-state').style.display = 'none';
 			document.getElementById('locationForm').style.display = 'block';
 			generateTagBadges(props, existingData);
+		}
+
+		function getDurationFromCategories(categories) {
+			if (!categories || categories.length === 0) return 60; // Default fallback
+
+			let maxDuration = 0;
+
+			categories.forEach(cat => {
+				const normalizedCat = cat.toLowerCase().replace(/_/g, ' ');
+
+				// Check if our mapping contains this category string
+				for (const [key, minutes] of Object.entries(CATEGORY_DURATIONS)) {
+					if (normalizedCat.includes(key)) {
+						// If a place has multiple categories (e.g., "Museum" and "Cafe"),
+						// we usually want the longer one (the Museum).
+						if (minutes > maxDuration) maxDuration = minutes;
+					}
+				}
+			});
+
+			return maxDuration > 0 ? maxDuration : 60;
 		}
 
 		async function deleteEvent(eventId) {
