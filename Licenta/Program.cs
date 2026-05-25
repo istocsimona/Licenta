@@ -26,6 +26,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options => {
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
+
+
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
