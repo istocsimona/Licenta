@@ -786,9 +786,10 @@
 				handleLocationSelection(mockFeature);
 			});
 
-			const fpConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, minuteIncrement: 5, disableMobile: "true" };
+			const fpConfig = { enableTime: true, noCalendar: true, dateFormat: "H:i", time_24hr: true, minuteIncrement: 5, disableMobile: true };			
 			flatpickr("#OpeningHour", fpConfig);
 			flatpickr("#ClosingHour", fpConfig);
+			flatpickr("#StartTimeUI", fpConfig);
 
 			const cityQuery = "@Model.City, @Model.Country";
 			const searchBox = document.getElementById('searchBox');
@@ -1418,8 +1419,7 @@
 				const start = new Date(ev.startDate);
 				const end = new Date(ev.endDate);
 				const formattedDate = start.toLocaleDateString([], { month: 'short', day: 'numeric' });
-				const formattedTime = `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-
+				const formattedTime = `${start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - ${end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}`;
 				eventBanner.innerHTML = `
 					<button type="button" class="btn btn-sm text-danger position-absolute top-0 end-0 mt-2 me-2 p-1 border-0 bg-transparent shadow-none" onclick="deleteEvent(${ev.id})">
 						<i class="bi bi-trash3-fill fs-5"></i>
@@ -1584,9 +1584,14 @@
 				const element = data.elements.find(el => el.tags && el.tags.opening_hours);
 				if (element) {
 					const match = element.tags.opening_hours.match(/([0-1]?\d|2[0-3]):([0-5]\d)\s?-\s?([0-1]?\d|2[0-3]):([0-5]\d)/);
-					if (match) {
-						document.getElementById('OpeningHour').value = match[1].padStart(2, '0') + ":" + match[2];
-						document.getElementById('ClosingHour').value = match[3].padStart(2, '0') + ":" + match[4];
+						if (match) {
+						const openTime = match[1].padStart(2, '0') + ":" + match[2];
+						const closeTime = match[3].padStart(2, '0') + ":" + match[4];
+
+						// Use Flatpickr's API to set the date so it strictly enforces the 24hr format
+						document.getElementById('OpeningHour')._flatpickr.setDate(openTime);
+						document.getElementById('ClosingHour')._flatpickr.setDate(closeTime);
+
 						statusLabel.innerHTML = "<span>✅ Hours synced</span>";
 						statusLabel.className = "text-success fw-bold small";
 					} else { statusLabel.innerHTML = `<i class="bi bi-info-circle"></i> Check hours: ${element.tags.opening_hours}`; }

@@ -277,6 +277,118 @@
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(121, 180, 169, 0.3);
     }
+
+    /* --- GENERATE ITINERARY BUTTON --- */
+    .btn-generate {
+        background-color: var(--p4, #79b4a9);
+        color: #ffffff;
+        border: none;
+        border-radius: 0.8rem;
+        padding: 0.8rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(121, 180, 169, 0.4);
+        width: 100%; /* Makes it a nice, prominent block button */
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-generate:hover:not(:disabled) {
+        background-color: var(--p5, #4A5D4E); /* Darkens on hover */
+        color: #ffffff;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(121, 180, 169, 0.5);
+    }
+
+    .btn-generate:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 4px 10px rgba(121, 180, 169, 0.3);
+    }
+
+    .btn-generate:disabled {
+        background-color: #c4d4cc;
+        cursor: not-allowed;
+        box-shadow: none;
+        opacity: 0.8;
+    }
+
+    .btn-generate i {
+        font-size: 1.3rem;
+        transition: transform 0.3s ease;
+    }
+
+    .btn-generate:hover:not(:disabled) i {
+        transform: scale(1.1) rotate(5deg);
+    }
+    /* --- LOCATIONS HEADER & ADD BUTTON --- */
+    .locations-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .locations-header .section-title {
+        margin-top: 0; /* Override default top margin since flexbox handles it */
+        margin-bottom: 0;
+    }
+
+    .btn-add-location {
+        background-color: transparent;
+        color: var(--p4, #79b4a9);
+        border: 2px solid var(--p4, #79b4a9);
+        border-radius: 2rem;
+        padding: 0.35rem 1rem;
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .btn-add-location:hover {
+        background-color: var(--p4, #79b4a9);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+
+    /* --- DROPDOWN TOGGLE BAR --- */
+    .locations-dropdown-toggle {
+        background-color: #f5f8f3; 
+        border: 1px solid rgba(121, 180, 169, 0.3);
+        color: var(--p5);
+        font-weight: 600;
+        border-radius: 0.8rem;
+        padding: 0.8rem 1.2rem;
+        width: 100%;
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s ease;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+    }
+
+    .locations-dropdown-toggle:hover {
+        background-color: #e9f0e6;
+    }
+
+    .locations-dropdown-toggle .bi-chevron-down {
+        transition: transform 0.3s ease;
+    }
+
+    /* Rotates the arrow when the dropdown is open */
+    .locations-dropdown-toggle[aria-expanded="true"] .bi-chevron-down {
+        transform: rotate(180deg);
+    }
 </style>
 
 <div class="details-container">
@@ -321,41 +433,58 @@
                 }
 
                 <!-- LOCATIONS SECTION -->
-                <h3 class="section-title"><i class="bi bi-map-fill me-2"></i>Locations & Itinerary</h3>
+                <div class="locations-header">
+                    <h3 class="section-title"><i class="bi bi-map-fill me-2"></i>Locations & Itinerary</h3>
+                    
+                    <!-- NOTE: Adjust asp-controller and asp-action to match your actual routing -->
+                    <a asp-controller="Locations" asp-action="Add" asp-route-tripId="@Model.TripId" class="btn-add-location">
+                        <i class="bi bi-plus-lg me-1"></i> Add More
+                    </a>
+                </div>
+
                 @if (Model.Locations != null && Model.Locations.Any())
                 {
-                    <div class="events-list mb-4">
-                        @foreach (var loc in Model.Locations.OrderBy(l => l.OpeningHour ?? ""))
-                        {
-                            <div class="event-card">
-                                <div class="event-info">
-                                    <div class="event-name">@loc.Name</div>
-                                    @if (!string.IsNullOrEmpty(loc.OpeningHour))
-                                    {
-                                        <div class="event-time">
-                                            <i class="bi bi-clock me-1"></i>
-                                            @loc.OpeningHour
-                                            @if (!string.IsNullOrEmpty(loc.ClosingHour))
+                    <!-- Dropdown Toggle Button -->
+                    <button class="locations-dropdown-toggle border-0" type="button" data-bs-toggle="collapse" data-bs-target="#locationsCollapse" aria-expanded="false" aria-controls="locationsCollapse">
+                        <span><i class="bi bi-list-ul me-2"></i>View saved locations (@Model.Locations.Count())</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+
+                    <!-- Collapsible List -->
+                    <div class="collapse mb-4" id="locationsCollapse">
+                        <div class="events-list pt-3">
+                            @foreach (var loc in Model.Locations.OrderBy(l => l.OpeningHour ?? ""))
+                            {
+                                <div class="event-card">
+                                    <div class="event-info">
+                                        <div class="event-name">@loc.Name</div>
+                                        @if (!string.IsNullOrEmpty(loc.OpeningHour))
+                                        {
+                                            <div class="event-time">
+                                                <i class="bi bi-clock me-1"></i>
+                                                @loc.OpeningHour
+                                                @if (!string.IsNullOrEmpty(loc.ClosingHour))
+                                                {
+                                                    <span> - @loc.ClosingHour</span>
+                                                }
+                                            </div>
+                                        }
+                                        <div class="event-location">
+                                            <i class="bi bi-hourglass-split me-1"></i> @loc.AvgDuration mins
+                                            @if (loc.IsIndoor)
                                             {
-                                                <span> - @loc.ClosingHour</span>
+                                                <span class="ms-2"><i class="bi bi-house-door-fill"></i> Indoor</span>
                                             }
                                         </div>
-                                    }
-                                    <div class="event-location">
-                                        <i class="bi bi-hourglass-split me-1"></i> @loc.AvgDuration mins
-                                        @if (loc.IsIndoor)
-                                        {
-                                            <span class="ms-2"><i class="bi bi-house-door-fill"></i> Indoor</span>
-                                        }
                                     </div>
                                 </div>
-                            </div>
-                        }
+                            }
+                        </div>
                     </div>
                 }
                 else
                 {
-                    <div class="empty-state">
+                    <div class="empty-state mb-4">
                         <div class="empty-state-icon"><i class="bi bi-map-fill"></i></div>
                         <p class="empty-state-text">No locations added yet.</p>
                     </div>
@@ -364,8 +493,8 @@
                 
                 <form id="generateItineraryForm" asp-controller="Itinerary" asp-action="GenerateItinerary" method="post">
                     <input type="hidden" name="tripId" value="@Model.TripId" />
-                    <button type="submit" id="generateBtn" class="btn btn-primary mt-3">
-                        <i class="bi bi-cpu me-2"></i>Generate Daily Itinerary
+                    <button type="submit" id="generateBtn" class="btn-generate">
+                        <i class="bi bi-stars me-2"></i>Generate Daily Itinerary
                     </button>
                 </form>
 
@@ -606,6 +735,8 @@
             center: [0, 0],
             zoom: 2
         });
+        // Force the map to resize correctly to its container
+    map.on('idle', () => { map.resize(); });
 
         map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
@@ -637,49 +768,70 @@
 
             if (hasPoints) map.fitBounds(bounds, { padding: 50, maxZoom: 14 });
 
-            // 2. Draw ALL lines in a single 'load' event
+            // 2. Draw ACTUAL street routes in a single 'load' event
             map.on('load', () => {
-                itineraryDays.forEach((day, index) => {
+                itineraryDays.forEach(async (day, index) => {
                     const color = dayColors[index % dayColors.length];
                     
-                    // 👈 FIX: Filter out 0,0 coordinates for the drawn lines too!
+                    // Filter out 0,0 coordinates and format them for the Mapbox API (lng,lat)
                     const validCoordinates = day.locations
                         .filter(loc => loc.lat !== 0 && loc.lng !== 0)
-                        .map(loc => [loc.lng, loc.lat]);
+                        .map(loc => `${loc.lng},${loc.lat}`);
 
+                    // We need at least 2 points to draw a route
                     if (validCoordinates.length > 1) {
-                        const sourceId = `route-day-${index}`;
                         
-                        map.addSource(sourceId, {
-                            'type': 'geojson',
-                            'data': {
-                                'type': 'Feature',
-                                'properties': {},
-                                'geometry': {
-                                    'type': 'LineString',
-                                    'coordinates': validCoordinates
-                                }
-                            }
-                        });
+                        // Mapbox Directions API allows up to 25 waypoints per request.
+                        // If a user somehow plans more than 25 stops in one day, we cap it to prevent errors.
+                        const coordsString = validCoordinates.slice(0, 25).join(';');
+                        
+                        // Set profile to "walking", "driving", or "cycling"
+                        const profile = "walking"; 
+                        
+                        // Call the Mapbox Directions API and ask for the geometry as GeoJSON
+                        const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordsString}?geometries=geojson&access_token=${mapboxToken}`;
 
-                        map.addLayer({
-                            'id': sourceId,
-                            'type': 'line',
-                            'source': sourceId,
-                            'layout': {
-                                'line-join': 'round',
-                                'line-cap': 'round'
-                            },
-                            'paint': {
-                                'line-color': color,
-                                'line-width': 4,
-                                'line-dasharray': [1, 1] 
+                        try {
+                            const response = await fetch(url);
+                            const data = await response.json();
+
+                            if (data.routes && data.routes.length > 0) {
+                                // Extract the real street geometry from the API response
+                                const routeGeometry = data.routes[0].geometry;
+                                const sourceId = `route-day-${index}`;
+                                
+                                map.addSource(sourceId, {
+                                    'type': 'geojson',
+                                    'data': {
+                                        'type': 'Feature',
+                                        'properties': {},
+                                        'geometry': routeGeometry // <--- Using the real street path here!
+                                    }
+                                });
+
+                                map.addLayer({
+                                    'id': sourceId,
+                                    'type': 'line',
+                                    'source': sourceId,
+                                    'layout': {
+                                        'line-join': 'round',
+                                        'line-cap': 'round'
+                                    },
+                                    'paint': {
+                                        'line-color': color,
+                                        'line-width': 4,
+                                        // Optional: Removing the dash array makes it a solid line, 
+                                        // which often looks better for real street routes.
+                                        // 'line-dasharray': [1, 1] 
+                                    }
+                                });
                             }
-                        });
+                        } catch (error) {
+                            console.error(`Error fetching route for Day ${index + 1}:`, error);
+                        }
                     }
                 });
             });
-
         }
         else if (savedLocations && savedLocations.length > 0) {
             

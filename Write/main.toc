@@ -1,0 +1,9 @@
+\xpg@aux {}{romanian}
+\xpg@aux {}{romanian}
+\xpg@aux {}{romanian}
+\contentsline {chapter}{\numberline {1}Introducere}{4}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Lorem ipsum}{4}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Dolor sit amet}{5}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Quis tellus vitae}{5}{subsection.1.2.1}%
+\contentsline {chapter}{\numberline {2}Preliminarii}{6}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Concluzii}{8}{chapter.3}%
