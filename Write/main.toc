@@ -1,0 +1,14 @@
+\xpg@aux {}{romanian}
+\xpg@aux {}{romanian}
+\xpg@aux {}{romanian}
+\xpg@aux {}{english}
+\xpg@aux {}{romanian}
+\contentsline {chapter}{\numberline {1}Introducere}{5}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Motivație}{5}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Nevoi pe care aplicația le satisface}{5}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Aplicații similare}{5}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Ce aduce nou}{5}{section.1.4}%
+\contentsline {section}{\numberline {1.5}Structura lucrării}{5}{section.1.5}%
+\contentsline {chapter}{\numberline {2}Preliminarii}{6}{chapter.2}%
+\contentsline {chapter}{\numberline {3}Concluzii}{7}{chapter.3}%
+\contentsline {chapter}{Bibliografie}{8}{chapter*.2}%

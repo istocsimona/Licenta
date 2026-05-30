@@ -43,7 +43,8 @@ namespace Licenta.Controllers
             ModelState.Remove("LocationTags");
             ModelState.Remove("OpeningHour");
             ModelState.Remove("ClosingHour");
-            ModelState.Remove("Reservations"); // Added to prevent validation failures on the new nav property
+            ModelState.Remove("Reservations");
+            ModelState.Remove("City"); // 👈 ADD THIS: Ignore if form doesn't send City
 
             if (!ModelState.IsValid)
             {
@@ -65,6 +66,13 @@ namespace Licenta.Controllers
                 existingLocation.OpeningHour = model.OpeningHour;
                 existingLocation.ClosingHour = model.ClosingHour;
                 existingLocation.IsIndoor = model.IsIndoor;
+
+                // 👈 NEW LOGIC: Ensure City is populated
+                if (string.IsNullOrEmpty(existingLocation.City))
+                {
+                    var trip = await _context.Trips.FindAsync(existingLocation.TripId);
+                    if (trip != null) existingLocation.City = trip.City;
+                }
 
                 // Update tags
                 var existingTags = _context.LocationTags.Where(lt => lt.LocationId == locationId);
@@ -97,7 +105,8 @@ namespace Licenta.Controllers
             ModelState.Remove("LocationTags");
             ModelState.Remove("OpeningHour");
             ModelState.Remove("ClosingHour");
-            ModelState.Remove("Reservations"); // Added
+            ModelState.Remove("Reservations");
+            ModelState.Remove("City"); // 👈 ADD THIS
 
             if (!ModelState.IsValid)
             {
@@ -107,6 +116,13 @@ namespace Licenta.Controllers
 
             try
             {
+                // 👈 NEW LOGIC: Fetch the trip to assign the correct city before saving
+                var trip = await _context.Trips.FindAsync(model.TripId);
+                if (trip != null)
+                {
+                    model.City = trip.City;
+                }
+
                 _context.Locations.Add(model);
                 await _context.SaveChangesAsync();
 

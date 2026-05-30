@@ -22,7 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     // Tabelele pentru servicii externe
     public DbSet<WeatherForecast> WeatherForecasts { get; set; }
-    public DbSet<Accomodation> Accomodations { get; set; }
+    public DbSet<Accommodation> Accommodations { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -40,9 +40,11 @@ namespace Licenta.Models
 
         // --- NAVIGATION PROPERTIES ---
         public virtual ApplicationUser? User { get; set; }
+        public virtual Accommodation? Accommodation { get; set; }
         public virtual ICollection<DayPlan>? DayPlans { get; set; }
         public virtual ICollection<Location> Locations { get; set; } = new List<Location>();
         public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
+
 
         // --- NEW: Server-side custom validation ---
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

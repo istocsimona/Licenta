@@ -4,11 +4,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Mono.TextTemplating;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace Licenta.Controllers
 {
@@ -24,14 +22,71 @@ namespace Licenta.Controllers
         }
 
         // GET: Trips
-        [Authorize]
+        [Authorize]
         public async Task<IActionResult> Index()
         {
-            // Acum GetUserId va funcționa corect
+            // 1. Fetch user trips
             var currentUserId = _userManager.GetUserId(User);
             var userTrips = await _context.Trips
                 .Where(t => t.UserId == currentUserId)
                 .ToListAsync();
+
+            // 2. Set fallback messages
+            ViewBag.TriviaQuestion = "Travel trivia currently unavailable.";
+            ViewBag.TriviaAnswer = "";
+
+            // 3. Make the API call to Open Trivia DB
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    // category=22 is strictly Geography (Cities, Countries, Landmarks)
+                    var request = new HttpRequestMessage(HttpMethod.Get, "https://opentdb.com/api.php?amount=1&category=22");
+
+                    var response = await client.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonString = await response.Content.ReadAsStringAsync();
+
+                        using (var doc = JsonDocument.Parse(jsonString))
+                        {
+                            var root = doc.RootElement;
+
+                            // "response_code" of 0 means success
+                            // "response_code" of 0 means success
+                            if (root.GetProperty("response_code").GetInt32() == 0)
+                            {
+                                var result = root.GetProperty("results")[0];
+
+                                string question = result.GetProperty("question").GetString();
+                                string correctAnswer = result.GetProperty("correct_answer").GetString();
+
+                                // 1. Decode the question and correct answer
+                                ViewBag.TriviaQuestion = WebUtility.HtmlDecode(question);
+                                ViewBag.TriviaAnswer = WebUtility.HtmlDecode(correctAnswer);
+
+                                // 2. Grab the incorrect answers and decode them
+                                var options = new List<string>();
+                                foreach (var wrongAnswer in result.GetProperty("incorrect_answers").EnumerateArray())
+                                {
+                                    options.Add(WebUtility.HtmlDecode(wrongAnswer.GetString()));
+                                }
+
+                                // 3. Add the correct answer to the list of options
+                                options.Add(ViewBag.TriviaAnswer);
+
+                                // 4. Shuffle the options so the correct answer isn't always last
+                                var random = new Random();
+                                ViewBag.TriviaOptions = options.OrderBy(x => random.Next()).ToList();
+                            }
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                // Fails silently if internet connection drops
+            }
 
             return View(userTrips);
         }
@@ -45,6 +100,7 @@ namespace Licenta.Controllers
             }
 
             var trip = await _context.Trips
+             .Include(t => t.Accommodation)
             .Include(t => t.Locations)
                 .ThenInclude(l => l.LocationTags)
                     .ThenInclude(lt => lt.Tag) 
