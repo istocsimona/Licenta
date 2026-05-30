@@ -6,6 +6,7 @@
 }
 
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
 
 <style>
     /* ===============================
@@ -284,7 +285,7 @@
         color: #ffffff;
         border: none;
         border-radius: 0.8rem;
-        padding: 0.8rem 2rem;
+        padding: 0.8rem 1rem; /* Slightly reduced padding so text fits */
         font-size: 1.1rem;
         font-weight: 700;
         letter-spacing: 0.5px;
@@ -293,9 +294,7 @@
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 15px rgba(121, 180, 169, 0.4);
-        width: 100%; /* Makes it a nice, prominent block button */
-        margin-top: 1rem;
-        margin-bottom: 2rem;
+        width: 100%;
     }
 
     .btn-generate:hover:not(:disabled) {
@@ -389,6 +388,68 @@
     .locations-dropdown-toggle[aria-expanded="true"] .bi-chevron-down {
         transform: rotate(180deg);
     }
+
+    /* --- AI GENERATE BUTTON --- */
+    .btn-ai {
+        background: linear-gradient(135deg, #911eb4, #4363d8); 
+        color: #ffffff;
+        border: none;
+        border-radius: 0.8rem;
+        padding: 0.8rem 1rem; /* Slightly reduced padding so text fits */
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 15px rgba(145, 30, 180, 0.3);
+        width: 100%;
+    }
+
+    .btn-ai:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(145, 30, 180, 0.4);
+        color: white;
+    }
+
+    /* =========================================
+   MAPBOX GEOCODER IN BOOTSTRAP MODAL FIX
+   ========================================= */
+#acc-geocoder-container {
+    position: relative;
+    z-index: 1060; /* Higher than the Bootstrap modal */
+}
+
+#acc-geocoder-container .mapboxgl-ctrl-geocoder {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 0.375rem !important;
+    background-color: #fff !important;
+}
+
+#acc-geocoder-container .mapboxgl-ctrl-geocoder--input {
+    height: calc(2.5rem + 2px) !important;
+    padding: 0.375rem 2.5rem !important;
+    font-size: 1rem;
+}
+
+#acc-geocoder-container .mapboxgl-ctrl-geocoder .suggestions {
+    z-index: 9999 !important; /* Forces dropdown over everything */
+    top: 100% !important;
+    border-radius: 0.375rem !important;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15) !important;
+}
+
+/* Prevent the modal from cutting off the dropdown */
+#addAccommodationModal .modal-body {
+    overflow: visible !important;
+}
+#addAccommodationModal .modal-content {
+    overflow: visible !important;
+}
 </style>
 
 <div class="details-container">
@@ -431,6 +492,76 @@
                         }
                     </div>
                 }
+
+                <!-- ACCOMMODATION SECTION -->
+                
+                <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+    <h3 class="section-title m-0"><i class="bi bi-house-door-fill me-2"></i> Accommodation</h3>
+</div>
+
+@if (Model.Accommodation != null)
+{
+    <div class="card mb-4 border-0 shadow-sm" style="border-radius: 1rem; background: linear-gradient(135deg, #e9f8da, #f4f8f2);">
+        <div class="card-body position-relative p-4">
+            <h5 class="fw-bold text-dark mb-1">@Model.Accommodation.Name</h5>
+            <p class="text-muted small mb-0"><i class="bi bi-geo-alt-fill me-1 text-danger"></i>@Model.Accommodation.Address</p>
+
+            <div class="position-absolute top-0 end-0 p-3 d-flex gap-2">
+                 <form asp-controller="Accommodations" asp-action="Delete" method="post" onsubmit="return confirm('Are you sure you want to delete this accommodation?');" class="m-0">
+                     <input type="hidden" name="id" value="@Model.Accommodation.AccommodationId" />
+                     <input type="hidden" name="tripId" value="@Model.TripId" />
+                     <button type="submit" class="btn btn-sm btn-light text-danger rounded-circle shadow-sm" title="Delete Accommodation">
+                         <i class="bi bi-trash-fill"></i>
+                     </button>
+                 </form>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="empty-state mb-4 py-3">
+        <div class="empty-state-icon"><i class="bi bi-house-add"></i></div>
+        <p class="empty-state-text mb-2">Where are you staying? Add your hotel or Airbnb.</p>
+        <button type="button" class="btn btn-sm btn-outline-success rounded-pill fw-bold px-4 mt-2" data-bs-toggle="modal" data-bs-target="#addAccommodationModal">
+            <i class="bi bi-plus-lg me-1"></i> Add Accommodation
+        </button>
+    </div>
+}
+
+<div class="modal fade" id="addAccommodationModal" tabindex="-1" aria-labelledby="addAccommodationModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 1.2rem;">
+            <div class="modal-header bg-light border-0" style="border-radius: 1.2rem 1.2rem 0 0;">
+                <h5 class="modal-title fw-bold text-dark" id="addAccommodationModalLabel"><i class="bi bi-house-add-fill me-2" style="color: var(--p4);"></i>Add Accommodation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-controller="Accommodations" asp-action="CreateModal" method="post" id="accForm">
+                <div class="modal-body p-4">
+                    <input type="hidden" name="TripId" value="@Model.TripId" />
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-muted small">Hotel/Airbnb Name</label>
+                        <input type="text" name="Name" class="form-control" placeholder="e.g., Marriott Downtown" required />
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-bold text-muted small">Exact Address (Street & Number)</label>
+                        <div id="acc-geocoder-container" class="w-100 border rounded"></div>
+                        
+                        <input type="hidden" id="acc-address" name="Address" required />
+                        <input type="hidden" id="acc-lat" name="Latitude" />
+                        <input type="hidden" id="acc-lng" name="Longitude" />
+                    </div>
+                </div>
+                <div class="modal-footer border-0 bg-light" style="border-radius: 0 0 1.2rem 1.2rem;">
+                    <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn text-white px-4" style="background-color: var(--p4); border-radius: 2rem;">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
                 <!-- LOCATIONS SECTION -->
                 <div class="locations-header">
@@ -489,14 +620,26 @@
                         <p class="empty-state-text">No locations added yet.</p>
                     </div>
                 }
-
                 
-                <form id="generateItineraryForm" asp-controller="Itinerary" asp-action="GenerateItinerary" method="post">
-                    <input type="hidden" name="tripId" value="@Model.TripId" />
-                    <button type="submit" id="generateBtn" class="btn-generate">
-                        <i class="bi bi-stars me-2"></i>Generate Daily Itinerary
-                    </button>
-                </form>
+                <div class="row g-3 mt-2 mb-4">
+                    <div class="col-md-4">
+                        <form id="generateAiForm" asp-controller="Itinerary" asp-action="GenerateWithAI" method="post" class="h-100">
+                            <input type="hidden" name="tripId" value="@Model.TripId" />
+                            <button type="submit" id="generateAiBtn" class="btn-ai h-100 m-0 w-100" title="Automatically find and add the best locations">
+                                <i class="bi bi-magic me-1"></i> Auto-Fill (AI)
+                            </button>
+                        </form>
+                    </div>
+
+                    <div class="col-md-8">
+                        <form id="generateItineraryForm" asp-controller="Itinerary" asp-action="GenerateItinerary" method="post" class="h-100">
+                            <input type="hidden" name="tripId" value="@Model.TripId" />
+                            <button type="submit" id="generateBtn" class="btn-generate h-100 m-0 w-100">
+                                <i class="bi bi-stars me-2"></i> Generate Daily Timeline
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
                 @{
                     var dayColors = new string[] { "#e6194B", "#3cb44b", "#4363d8", "#f58231", "#911eb4", "#42d4f4", "#f032e6", "#bfef45", "#fabed4", "#469990" };
@@ -659,11 +802,16 @@
 
 @section Scripts {
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
 
     <script>
     document.addEventListener('DOMContentLoaded', function () {
         
-        // --- 1. AJAX FORM SUBMISSION ---
+        // --- 1. SET UP MAPBOX TOKEN (Needed for everything) ---
+        const mapboxToken = '@Configuration["Mapbox:PublicKey"]';
+        mapboxgl.accessToken = mapboxToken;
+
+        // --- 2. AJAX FORM SUBMISSION ---
         const form = document.getElementById('generateItineraryForm');
         if (form) {
             form.addEventListener('submit', async function (e) {
@@ -705,10 +853,84 @@
             });
         }
 
-        // --- 2. MAPBOX LOGIC ---
-        const mapboxToken = '@Configuration["Mapbox:PublicKey"]';
-        mapboxgl.accessToken = mapboxToken;
+        // --- AI FORM SUBMISSION ---
+        const aiForm = document.getElementById('generateAiForm');
+        if (aiForm) {
+            aiForm.addEventListener('submit', async function (e) {
+                e.preventDefault(); 
+                const btn = document.getElementById('generateAiBtn');
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>Consulting AI...';
+                btn.disabled = true;
 
+                try {
+                    const response = await fetch(this.action, { method: this.method, body: new FormData(this) });
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.reload(); 
+                    } else {
+                        alert("AI Error: " + (data.message || "Could not generate."));
+                        btn.innerHTML = originalHtml;
+                        btn.disabled = false;
+                    }
+                } catch (err) {
+                    alert("A network error occurred.");
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        // --- 3. ACCOMMODATION MODAL GEOCODER (MOVED INSIDE!) ---
+        const accModal = document.getElementById('addAccommodationModal');
+        let accGeocoderInitialized = false;
+
+        if (accModal) {
+            accModal.addEventListener('shown.bs.modal', function () {
+                if (!accGeocoderInitialized) {
+                    const accGeocoder = new MapboxGeocoder({
+                        accessToken: mapboxToken, // Now it can access the token!
+                        types: 'address,poi', 
+                        placeholder: 'Search for exact street or hotel...',
+                        marker: false 
+                    });
+
+                    accGeocoder.addTo('#acc-geocoder-container');
+
+                    accGeocoder.on('result', function(e) {
+                        const result = e.result;
+                        document.getElementById('acc-address').value = result.place_name;
+                        document.getElementById('acc-lng').value = result.center[0];
+                        document.getElementById('acc-lat').value = result.center[1];
+                    });
+
+                    accGeocoder.on('clear', function() {
+                        document.getElementById('acc-address').value = "";
+                        document.getElementById('acc-lng').value = "";
+                        document.getElementById('acc-lat').value = "";
+                    });
+
+                    // Force 100% width inside the Bootstrap modal
+                    const geocoderInputWrap = document.querySelector('#acc-geocoder-container .mapboxgl-ctrl-geocoder');
+                    if(geocoderInputWrap) {
+                        geocoderInputWrap.style.width = '100%';
+                        geocoderInputWrap.style.maxWidth = '100%';
+                        geocoderInputWrap.style.boxShadow = 'none';
+                    }
+                    
+                    accGeocoderInitialized = true;
+                }
+            });
+
+            document.getElementById('accForm').addEventListener('submit', function(e) {
+                if (!document.getElementById('acc-address').value) {
+                    e.preventDefault();
+                    alert('Please select an exact address from the dropdown suggestions.');
+                }
+            });
+        }
+
+        // --- 4. MAPBOX LOGIC (MAIN PAGE MAP) ---
         const dayColors = ['#e6194B', '#3cb44b', '#4363d8', '#f58231', '#911eb4', '#42d4f4', '#f032e6', '#bfef45', '#fabed4', '#469990'];
 
         const itineraryDays = @Html.Raw(Json.Serialize(
@@ -729,27 +951,57 @@
                 : new List<object>()
         ));
 
+        const accommodationData = @Html.Raw(Json.Serialize(
+            Model.Accommodation != null 
+                ? new { name = Model.Accommodation.Name, lat = Model.Accommodation.Latitude, lng = Model.Accommodation.Longitude }
+                : null
+        ));
+
         const map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v12',
             center: [0, 0],
             zoom: 2
         });
-        // Force the map to resize correctly to its container
-    map.on('idle', () => { map.resize(); });
-
+        
+        map.on('idle', () => { map.resize(); });
         map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
         const bounds = new mapboxgl.LngLatBounds();
         let hasPoints = false;
 
+        // Draw Accommodation marker 
+        if (accommodationData && accommodationData.lat !== 0 && accommodationData.lng !== 0) {
+            hasPoints = true;
+
+            const customMarkerEl = document.createElement('div');
+            customMarkerEl.innerHTML = '<i class="bi bi-house-door-fill" style="color: white; font-size: 18px;"></i>';
+            customMarkerEl.style.backgroundColor = '#911eb4'; 
+            customMarkerEl.style.width = '36px';
+            customMarkerEl.style.height = '36px';
+            customMarkerEl.style.borderRadius = '50%';
+            customMarkerEl.style.display = 'flex';
+            customMarkerEl.style.alignItems = 'center';
+            customMarkerEl.style.justifyContent = 'center';
+            customMarkerEl.style.boxShadow = '0 4px 10px rgba(0,0,0,0.3)';
+            customMarkerEl.style.border = '3px solid white';
+            customMarkerEl.style.cursor = 'pointer';
+
+            const popup = new mapboxgl.Popup({ offset: 25 })
+                .setHTML(`<h6 style="margin:0; padding:5px; color:#911eb4;"><i class="bi bi-house-door-fill me-1"></i>${accommodationData.name}</h6><span style="font-size:0.8rem; padding-left:5px;">Accommodation</span>`);
+
+            new mapboxgl.Marker({ element: customMarkerEl })
+                .setLngLat([accommodationData.lng, accommodationData.lat])
+                .setPopup(popup)
+                .addTo(map);
+
+            bounds.extend([accommodationData.lng, accommodationData.lat]);
+        }
+
+        // Draw Itinerary markers
         if (itineraryDays && itineraryDays.length > 0 && itineraryDays.some(d => d.locations.length > 0)) {
-            
-            // 1. Draw markers immediately
             itineraryDays.forEach((day, index) => {
                 const color = dayColors[index % dayColors.length];
-                
-                // 👈 FIX: Filter out 0,0 coordinates so it stops going to Africa!
                 const validLocations = day.locations.filter(loc => loc.lat !== 0 && loc.lng !== 0);
 
                 validLocations.forEach(loc => {
@@ -773,30 +1025,28 @@
                 itineraryDays.forEach(async (day, index) => {
                     const color = dayColors[index % dayColors.length];
                     
-                    // Filter out 0,0 coordinates and format them for the Mapbox API (lng,lat)
-                    const validCoordinates = day.locations
+                    let validCoordinates = day.locations
                         .filter(loc => loc.lat !== 0 && loc.lng !== 0)
                         .map(loc => `${loc.lng},${loc.lat}`);
 
-                    // We need at least 2 points to draw a route
+                    // Add the Accommodation to the START of the route
+                    if (accommodationData && accommodationData.lat !== 0 && accommodationData.lng !== 0 && validCoordinates.length > 0) {
+                        validCoordinates.unshift(`${accommodationData.lng},${accommodationData.lat}`);
+                    }
+
                     if (validCoordinates.length > 1) {
-                        
-                        // Mapbox Directions API allows up to 25 waypoints per request.
-                        // If a user somehow plans more than 25 stops in one day, we cap it to prevent errors.
+                        // Max 25 waypoints per request for Mapbox Directions API
                         const coordsString = validCoordinates.slice(0, 25).join(';');
-                        
-                        // Set profile to "walking", "driving", or "cycling"
                         const profile = "walking"; 
                         
-                        // Call the Mapbox Directions API and ask for the geometry as GeoJSON
-                        const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordsString}?geometries=geojson&access_token=${mapboxToken}`;
+                        // 🌟 THE FIX: Notice the "&overview=full" added to this URL below!
+                        const url = `https://api.mapbox.com/directions/v5/mapbox/${profile}/${coordsString}?geometries=geojson&overview=full&access_token=${mapboxToken}`;
 
                         try {
                             const response = await fetch(url);
                             const data = await response.json();
 
                             if (data.routes && data.routes.length > 0) {
-                                // Extract the real street geometry from the API response
                                 const routeGeometry = data.routes[0].geometry;
                                 const sourceId = `route-day-${index}`;
                                 
@@ -805,7 +1055,7 @@
                                     'data': {
                                         'type': 'Feature',
                                         'properties': {},
-                                        'geometry': routeGeometry // <--- Using the real street path here!
+                                        'geometry': routeGeometry 
                                     }
                                 });
 
@@ -819,10 +1069,8 @@
                                     },
                                     'paint': {
                                         'line-color': color,
-                                        'line-width': 4,
-                                        // Optional: Removing the dash array makes it a solid line, 
-                                        // which often looks better for real street routes.
-                                        // 'line-dasharray': [1, 1] 
+                                        'line-width': 5, // Slightly thicker line looks great with full overview
+                                        'line-opacity': 0.8 // Adds a nice slight transparency
                                     }
                                 });
                             }
@@ -834,8 +1082,6 @@
             });
         }
         else if (savedLocations && savedLocations.length > 0) {
-            
-            // 👈 FIX: Filter out 0,0 coordinates on the fallback map too
             const validSavedLocations = savedLocations.filter(loc => loc.lat !== 0 && loc.lng !== 0);
 
             validSavedLocations.forEach(loc => {
@@ -853,7 +1099,7 @@
 
             if (hasPoints) map.fitBounds(bounds, { padding: 50, maxZoom: 14 });
         } 
-        else {
+        else if (!hasPoints) {
             const locationQuery = encodeURIComponent('@Html.Raw(Model.City), @Html.Raw(Model.Country)');
 
             fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${locationQuery}.json?access_token=${mapboxToken}&types=place,region,country`)
@@ -867,6 +1113,6 @@
                 })
                 .catch(error => console.error("Error loading map coordinates:", error));
         }
-    });
-</script>
+    }); // <--- DOMContentLoaded End Bracket
+    </script>
 }

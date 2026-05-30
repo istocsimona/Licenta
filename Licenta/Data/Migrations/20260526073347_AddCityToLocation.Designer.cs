@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Licenta.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260526073347_AddCityToLocation")]
+    partial class AddCityToLocation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,25 +24,26 @@ namespace Licenta.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Licenta.Models.Accommodation", b =>
+            modelBuilder.Entity("Licenta.Models.Accomodation", b =>
                 {
-                    b.Property<int>("AccommodationId")
+                    b.Property<int>("AccomodationId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccommodationId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccomodationId"));
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("CheckInDate")
+                    b.Property<DateTime>("CheckInDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime?>("CheckOutDate")
+                    b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Details")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Latitude")
@@ -55,12 +59,9 @@ namespace Licenta.Data.Migrations
                     b.Property<int>("TripId")
                         .HasColumnType("int");
 
-                    b.HasKey("AccommodationId");
+                    b.HasKey("AccomodationId");
 
-                    b.HasIndex("TripId")
-                        .IsUnique();
-
-                    b.ToTable("Accommodations");
+                    b.ToTable("Accomodations");
                 });
 
             modelBuilder.Entity("Licenta.Models.ApplicationUser", b =>
@@ -554,17 +555,6 @@ namespace Licenta.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Licenta.Models.Accommodation", b =>
-                {
-                    b.HasOne("Licenta.Models.Trip", "Trip")
-                        .WithOne("Accommodation")
-                        .HasForeignKey("Licenta.Models.Accommodation", "TripId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Trip");
-                });
-
             modelBuilder.Entity("Licenta.Models.DayPlan", b =>
                 {
                     b.HasOne("Licenta.Models.Trip", "Trip")
@@ -740,8 +730,6 @@ namespace Licenta.Data.Migrations
 
             modelBuilder.Entity("Licenta.Models.Trip", b =>
                 {
-                    b.Navigation("Accommodation");
-
                     b.Navigation("DayPlans");
 
                     b.Navigation("Locations");

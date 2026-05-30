@@ -12,75 +12,96 @@
     var pastTrips = Model.Where(t => t.EndDate.Date < today).OrderByDescending(t => t.EndDate).ToList();
 
     // 3. Create a structure to easily loop through the sections in the UI
+    // Added a 'Type' property to apply specific CSS styles to different categories
     var tripSections = new[]
     {
-        new { Title = "Current Trips", Trips = currentTrips, ShowPlan = true },
-        new { Title = "Upcoming Trips", Trips = upcomingTrips, ShowPlan = true },
-        new { Title = "Past Trips", Trips = pastTrips, ShowPlan = false }
+        new { Title = "✨ Happening Now", Trips = currentTrips, ShowPlan = true, Type = "current" },
+        new { Title = "🗓️ Upcoming Adventures", Trips = upcomingTrips, ShowPlan = true, Type = "upcoming" },
+        new { Title = "📸 Travel Memories", Trips = pastTrips, ShowPlan = false, Type = "past" }
     };
 }
 
 <style>
     /* ===============================
-       CLEAN CARD & DROPDOWN STYLING
-       =============================== */
+           CLEAN CARD & DROPDOWN STYLING
+           =============================== */
     .page-title {
         color: var(--p5);
-        font-weight: 700;
+        font-weight: 800;
         letter-spacing: -0.5px;
+        font-size: 2rem;
     }
 
     /* Section Headers */
     .section-title {
         color: var(--p4);
         font-weight: 800;
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         margin-top: 1rem;
-        border-bottom: 2px solid var(--p1);
         padding-bottom: 0.4rem;
         display: inline-block;
+        border-bottom: 3px dashed var(--p1);
     }
 
     .btn-create {
-        background-color: var(--p4);
+        background: linear-gradient(135deg, var(--p4), var(--p3));
         color: white;
         border: none;
-        border-radius: 0.5rem;
-        padding: 0.6rem 1.2rem;
-        font-weight: 600;
+        border-radius: 1rem;
+        padding: 0.7rem 1.4rem;
+        font-weight: 700;
         text-decoration: none;
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(121, 180, 169, 0.2);
     }
 
         .btn-create:hover {
-            background-color: var(--p3);
-            color: var(--p5);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(121, 180, 169, 0.3);
+            color: white;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(121, 180, 169, 0.4);
         }
 
-    /* Clean Trip Card Styles */
+    /* Base Trip Card Styles */
     .trip-card {
         background-color: #fcfdfa;
-        border-radius: 1.2rem;
-        box-shadow: 0 4px 15px rgba(103, 111, 84, 0.05);
-        border: none;
-        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        border-radius: 1.5rem;
+        box-shadow: 0 8px 20px rgba(103, 111, 84, 0.05);
+        border: 2px solid transparent;
+        transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border 0.3s ease;
         display: flex;
         flex-direction: column;
         height: 100%;
         padding: 0.5rem;
+        position: relative;
     }
 
         .trip-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(103, 111, 84, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(103, 111, 84, 0.12);
+        }
+
+    /* 🔥 SPECIAL STYLING: CURRENT TRIP 🔥 */
+    .card-current {
+        border: 2px solid var(--p3);
+        background: linear-gradient(to bottom right, #ffffff, #f4f9f4);
+        box-shadow: 0 10px 25px rgba(121, 180, 169, 0.2);
+    }
+
+    /* 📸 SPECIAL STYLING: PAST TRIP (MEMORIES) 📸 */
+    .card-past {
+        opacity: 0.9;
+        background-color: #fafaf9;
+        border: 1px solid #e9ecef;
+    }
+
+        .card-past:hover {
+            opacity: 1;
         }
 
     .trip-title {
         color: var(--p5);
         font-weight: 800;
-        font-size: 1.35rem;
+        font-size: 1.4rem;
         letter-spacing: -0.3px;
     }
 
@@ -88,48 +109,40 @@
         color: #8c947c;
         font-size: 0.95rem;
         line-height: 1.6;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         display: -webkit-box;
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
     }
 
-    /* Grid for trip details */
+    /* Format unitar Iconiță + Text */
     .detail-group {
         margin-bottom: 0.8rem;
     }
 
-    /* Format unitar Iconiță + Text */
     .date-wrapper {
         display: flex;
         align-items: center;
         gap: 0.6rem;
         color: var(--p5);
-        font-weight: 500;
+        font-weight: 600;
         font-size: 0.95rem;
+        background-color: var(--p1);
+        padding: 0.5rem 0.8rem;
+        border-radius: 0.8rem;
     }
 
     .date-icon {
-        color: var(--p3);
+        color: var(--p4);
         font-size: 1.1rem;
-        width: 20px;
-        text-align: center;
     }
 
-    .date-arrow {
-        color: var(--p3);
-        font-size: 0.8rem;
-        margin: 0 0.1rem;
-        opacity: 0.7;
-    }
-
-    /* Plan Button */
+    /* Buttons */
     .btn-plan {
-        background-color: var(--p1);
-        color: var(--p5);
-        border: 1px solid var(--p3);
-        border-radius: 0.8rem;
+        background-color: var(--p4);
+        color: white;
+        border-radius: 1rem;
         padding: 0.6rem 0.8rem;
         font-size: 0.95rem;
         font-weight: 700;
@@ -141,43 +154,99 @@
     }
 
         .btn-plan:hover {
-            background-color: var(--p3);
+            background-color: var(--p5);
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(121, 180, 169, 0.2);
         }
 
-    /* 3-Dots Menu */
-    .menu-dots {
-        color: var(--p3);
-        font-size: 1.2rem;
-        transition: color 0.2s ease;
-        padding: 0;
-        opacity: 0.8;
+    .btn-card-details {
+        background-color: transparent;
+        color: var(--p4);
+        border: 2px solid var(--p4);
+        border-radius: 1rem;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: block;
+        text-align: center;
+        width: 100%;
     }
 
-        .menu-dots:hover, .menu-dots:focus {
+        .btn-card-details:hover {
+            background-color: var(--p1);
             color: var(--p5);
+            border-color: var(--p5);
+            transform: translateY(-2px);
+        }
+
+    /* Live Badge Animation */
+    @@keyframes pulse {
+        0%
+
+    {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(121, 180, 169, 0.7);
+    }
+
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 8px rgba(121, 180, 169, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(121, 180, 169, 0);
+    }
+
+    }
+
+    .badge-live {
+        background-color: var(--p3);
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 2rem;
+        font-size: 0.85rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        animation: pulse 2s infinite;
+        margin-bottom: 0.8rem;
+        width: fit-content;
+    }
+
+    /* Dropdown Menus */
+    .menu-dots {
+        color: var(--p3);
+        font-size: 1.4rem;
+        transition: color 0.2s ease;
+        padding: 0;
+        opacity: 0.7;
+    }
+
+        .menu-dots:hover {
             opacity: 1;
+            color: var(--p5);
         }
 
     .custom-dropdown {
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(103, 111, 84, 0.15);
         border: none;
-        border-radius: 0.8rem;
-        box-shadow: 0 8px 24px rgba(103, 111, 84, 0.12);
-        padding: 0.5rem 0;
+        padding: 0.5rem;
     }
 
         .custom-dropdown .dropdown-item {
-            font-weight: 500;
+            border-radius: 0.5rem;
+            font-weight: 600;
             color: var(--p5);
-            padding: 0.6rem 1.2rem;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.2s;
         }
 
             .custom-dropdown .dropdown-item:hover {
                 background-color: var(--p1);
-                color: var(--p5);
             }
 
         .custom-dropdown .delete-item {
@@ -186,159 +255,230 @@
 
             .custom-dropdown .delete-item:hover {
                 background-color: #fdf2f2;
-                color: #d9534f;
             }
+
+    /* Fact Box */
+    .fact-sidebar {
+        position: sticky;
+        top: 2rem;
+    }
+
+    .fact-box {
+        background-color: #fdfdfc;
+        border: 2px dashed var(--p3);
+        border-radius: 1.5rem;
+        padding: 1.8rem;
+        box-shadow: 0 8px 24px rgba(103, 111, 84, 0.08);
+    }
+
+    .btn-reveal {
+        background-color: var(--p1);
+        color: var(--p4);
+        border: none;
+        border-radius: 1rem;
+        padding: 0.6rem 0.8rem;
+        font-weight: 800;
+        width: 100%;
+        transition: all 0.2s;
+    }
+
+        .btn-reveal:hover {
+            background-color: var(--p3);
+            color: white;
+        }
 </style>
 
-<div class="d-flex justify-content-between align-items-center mb-4 mt-2">
-    <h1 class="page-title mb-0">My Trips</h1>
+<div class="row mt-3">
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h1 class="page-title mb-0">My Trips</h1>
 
-    @if (TempData["ErrorMessage"] != null)
-    {
-        <div class="alert alert-danger alert-dismissible fade show mt-3" role="alert">
-            <strong>Error!</strong> @TempData["ErrorMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    @if (TempData["SuccessMessage"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
-            <strong>Success!</strong> @TempData["SuccessMessage"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    }
-
-    <a asp-action="Create" class="btn-create">
-        <i class="bi bi-plus-lg me-2"></i>Create New Trip
-    </a>
-</div>
-
-@* Iterate through our categorized sections *@
-@* Iterate through our categorized sections using 'tripCategory' to avoid Razor keyword conflicts *@
-@foreach (var tripCategory in tripSections)
-{
-    @if (tripCategory.Trips.Any())
-    {
-        <h3 class="section-title mb-4">@tripCategory.Title</h3>
-
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-5">
-            @foreach (var item in tripCategory.Trips)
+            @if (TempData["ErrorMessage"] != null)
             {
-                <div class="col">
-                    <div class="trip-card">
-
-                        <div class="p-4 flex-grow-1 d-flex flex-column">
-
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h2 class="trip-title mb-0">@item.Title</h2>
-
-                                <div class="dropdown">
-                                    <button class="btn btn-link text-decoration-none menu-dots shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="bi bi-three-dots-vertical"></i>
-                                    </button>
-                                    <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
-                                        <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.TripId">Details</a></li>
-
-                                        @if (item.StartDate > today)
-                                        {
-                                            <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.TripId">Edit</a></li>
-                                        }
-
-                                        <li>
-                                            <a class="dropdown-item delete-item" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.TripId">
-                                                Delete
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div class="trip-desc">
-                                @item.Description
-                            </div>
-
-                            <div class="row mt-auto align-items-center">
-                                <div class="col-12 detail-group">
-                                    <div class="date-wrapper">
-                                        <i class="bi bi-geo-alt-fill date-icon"></i>
-                                        <span>@item.City, @item.Country</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 detail-group">
-                                    <div class="date-wrapper">
-                                        <i class="bi bi-calendar3 date-icon"></i>
-                                        <span>@item.StartDate.ToString("dd MMM yyyy")</span>
-                                        <i class="bi bi-arrow-right date-arrow"></i>
-                                        <span>@item.EndDate.ToString("dd MMM yyyy")</span>
-                                    </div>
-                                </div>
-
-                                <!-- Conditionally show the Plan Button based on the category settings -->
-                                @if (tripCategory.ShowPlan)
-                                {
-                                    <div class="col-12 mt-4">
-                                        <a asp-controller="Locations" asp-action="Add" asp-route-tripId="@item.TripId" class="btn-plan">
-                                            <i class="bi bi-map me-2"></i> Plan
-                                        </a>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <!-- A nice subtle visual indicator for past trips instead of a button -->
-                                    <div class="col-12 mt-4 text-center">
-                                        <span style="font-size: 0.85rem; font-weight: 600; color: #8c947c; padding: 0.4rem 1rem; background-color: var(--p1); border-radius: 1rem;">
-                                            <i class="bi bi-check2-circle me-1"></i> Completed
-                                        </span>
-                                    </div>
-                                }
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Delete Trip Modal -->
-                <div class="modal fade" id="deleteModal-@item.TripId" tabindex="-1" aria-labelledby="deleteModalLabel-@item.TripId" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content" style="border-radius: 1.2rem; background-color: #fcfdfa; border: none; box-shadow: 0 15px 35px rgba(103, 111, 84, 0.2);">
-
-                            <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
-                                <h5 class="modal-title page-title" id="deleteModalLabel-@item.TripId">Delete Trip</h5>
-                                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-
-                            <div class="modal-body px-4">
-                                <p style="color: #7a8268; font-size: 0.95rem;">Are you sure you want to delete this trip? This action cannot be undone.</p>
-
-                                <div class="p-3 mt-3" style="background-color: var(--p1); border-radius: 0.8rem; opacity: 0.9;">
-                                    <h6 style="color: var(--p5); font-weight: 700; margin-bottom: 0.5rem;">@item.Title</h6>
-                                    <div style="font-size: 0.85rem; color: var(--p5); font-weight: 500;">
-                                        <div class="mb-1"><i class="bi bi-geo-alt-fill me-1" style="color: var(--p4);"></i> @item.City, @item.Country</div>
-                                        <div class="mb-1"><i class="bi bi-calendar3 me-1" style="color: var(--p4);"></i> @item.StartDate.ToString("dd MMM yyyy") - @item.EndDate.ToString("dd MMM yyyy")</div>
-                                        <div><i class="bi bi-clock me-1" style="color: var(--p4);"></i> @item.StartExplorationHour - @item.EndExplorationHour</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
-                                <form asp-action="Delete" method="post" class="w-100 d-flex justify-content-end gap-2 m-0">
-                                    <input type="hidden" name="id" value="@item.TripId" />
-
-                                    <button type="button" class="btn" data-bs-dismiss="modal" style="border-radius: 0.5rem; font-weight: 600; color: var(--p5); background-color: #e9f8da;">
-                                        Cancel
-                                    </button>
-                                    <button type="submit" class="btn" style="border-radius: 0.5rem; font-weight: 600; background-color: #d9534f; color: white;">
-                                        Delete Trip
-                                    </button>
-                                </form>
-                            </div>
-
-                        </div>
-                    </div>
+                <div class="alert alert-danger alert-dismissible fade show position-absolute top-0 start-50 translate-middle-x mt-3 shadow" style="z-index: 1050; border-radius: 1rem;" role="alert">
+                    <strong>Oops!</strong> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show position-absolute top-0 start-50 translate-middle-x mt-3 shadow" style="z-index: 1050; border-radius: 1rem;" role="alert">
+                    <strong>Yay!</strong> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <a asp-action="Create" class="btn-create">
+                <i class="bi bi-airplane-fill me-2"></i> Plan New Trip
+            </a>
         </div>
-    }
-}
+
+        @foreach (var tripCategory in tripSections)
+        {
+            @if (tripCategory.Trips.Any())
+            {
+                <h3 class="section-title mb-4">@tripCategory.Title</h3>
+
+                <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
+                    @foreach (var item in tripCategory.Trips)
+                    {
+                        <div class="col">
+                            <div class="trip-card @(tripCategory.Type == "current" ? "card-current" : tripCategory.Type == "past" ? "card-past" : "")">
+                                <div class="p-4 flex-grow-1 d-flex flex-column">
+
+                                    @if (tripCategory.Type == "current")
+                                    {
+                                        // Calculate which day of the trip the user is currently on
+                                        var currentDay = (today - item.StartDate.Date).Days + 1;
+                                        var totalDays = (item.EndDate.Date - item.StartDate.Date).Days + 1;
+                                        <div class="badge-live">
+                                            <i class="bi bi-geo-alt-fill"></i> Day @currentDay of @totalDays
+                                        </div>
+                                    }
+
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h2 class="trip-title mb-0">@item.Title</h2>
+                                        <div class="dropdown">
+                                            <button class="btn btn-link text-decoration-none menu-dots shadow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end custom-dropdown">
+                                                <li><a class="dropdown-item" asp-action="Details" asp-route-id="@item.TripId"><i class="bi bi-list-task me-2"></i>Details</a></li>
+                                                @if (item.StartDate > today)
+                                                {
+                                                    <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@item.TripId"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                                                }
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <a class="dropdown-item delete-item" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#deleteModal-@item.TripId">
+                                                        <i class="bi bi-trash3 me-2"></i>Delete
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    <div class="trip-desc">@item.Description</div>
+
+                                    <div class="row mt-auto align-items-center">
+                                        <div class="col-12 detail-group">
+                                            <div class="date-wrapper">
+                                                <i class="bi bi-pin-map-fill date-icon"></i>
+                                                <span>@item.City, @item.Country</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 detail-group">
+                                            <div class="date-wrapper">
+                                                <i class="bi bi-calendar-heart date-icon"></i>
+                                                <span>@item.StartDate.ToString("dd MMM yyyy") <i class="bi bi-arrow-right mx-1" style="opacity: 0.5;"></i> @item.EndDate.ToString("dd MMM yyyy")</span>
+                                            </div>
+                                        </div>
+
+                                        @if (tripCategory.ShowPlan)
+                                        {
+                                            <div class="col-12 mt-3">
+                                                <div class="row g-2">
+                                                    <div class="col-6">
+                                                        <a asp-controller="Locations" asp-action="Add" asp-route-tripId="@item.TripId" class="btn-plan">
+                                                            <i class="bi bi-plus-circle me-1"></i> Locations
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <a asp-action="Details" asp-route-id="@item.TripId" class="btn-card-details">
+                                                            Itinerary <i class="bi bi-arrow-right-short"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-12 mt-3">
+                                                <a asp-action="Details" asp-route-id="@item.TripId" class="btn-plan w-100" style="background-color: var(--p1); color: var(--p5);">
+                                                    <i class="bi bi-journal-album me-1"></i> Relive the Memory
+                                                </a>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal fade" id="deleteModal-@item.TripId" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content" style="border-radius: 1.5rem; border: none; box-shadow: 0 15px 35px rgba(103, 111, 84, 0.2);">
+                                    <div class="modal-header border-bottom-0 pb-0 pt-4 px-4">
+                                        <h5 class="modal-title page-title fs-4">Delete Trip</h5>
+                                        <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body px-4">
+                                        <p class="text-muted">Are you sure you want to delete this trip? This action cannot be undone.</p>
+                                        <div class="p-3 mt-3" style="background-color: var(--p1); border-radius: 1rem;">
+                                            <h6 style="color: var(--p5); font-weight: 800;">@item.Title</h6>
+                                            <div class="text-muted" style="font-size: 0.9rem; font-weight: 600;">
+                                                <div><i class="bi bi-pin-map-fill me-1 text-secondary"></i> @item.City, @item.Country</div>
+                                                <div><i class="bi bi-calendar3 me-1 text-secondary"></i> @item.StartDate.ToString("dd MMM yyyy")</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer border-top-0 pt-0 pb-4 px-4">
+                                        <form asp-action="Delete" method="post" class="w-100 d-flex justify-content-end gap-2 m-0">
+                                            <input type="hidden" name="id" value="@item.TripId" />
+                                            <button type="button" class="btn text-muted fw-bold bg-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                                            <button type="submit" class="btn btn-danger fw-bold rounded-pill px-4 shadow-sm">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+
+    <div class="col-lg-3 mt-4 mt-lg-0">
+        <div class="fact-sidebar">
+            <div class="fact-box">
+                <h4 style="color: var(--p4); font-weight: 900; font-size: 1.3rem; margin-bottom: 1rem;">
+                    <i class="bi bi-patch-question-fill me-1" style="color: #ffc107;"></i>
+                    Trivia Time!
+                </h4>
+
+                <p style="color: var(--p5); font-weight: 700; font-size: 1.05rem; line-height: 1.5;">
+                    @ViewBag.TriviaQuestion
+                </p>
+
+                @if (ViewBag.TriviaOptions != null)
+                {
+                    <ul style="list-style-type: none; padding-left: 0; margin-bottom: 1.5rem;">
+                        @foreach (var option in (List<string>)ViewBag.TriviaOptions)
+                        {
+                            <li style="background-color: var(--p1); padding: 0.5rem 1rem; border-radius: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--p5);">
+                                @option
+                            </li>
+                        }
+                    </ul>
+                }
+
+                @if (!string.IsNullOrEmpty(ViewBag.TriviaAnswer))
+                {
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn-reveal shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#triviaAnswer">
+                            <i class="bi bi-stars me-1"></i> Reveal Answer
+                        </button>
+                        <div class="collapse mt-3" id="triviaAnswer">
+                            <div class="text-center p-3" style="background-color: #e9f0e6; border-radius: 1rem;">
+                                <p class="mb-0" style="font-weight: 900; color: var(--p5); font-size: 1.1rem;">
+                                    @ViewBag.TriviaAnswer
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

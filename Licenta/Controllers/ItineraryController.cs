@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace Licenta.Controllers
 {
@@ -12,13 +12,18 @@ namespace Licenta.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        // Update the constructor
-        public ItineraryController(ApplicationDbContext context, IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public ItineraryController(
+        ApplicationDbContext context,
+        IConfiguration configuration,
+        IHttpClientFactory httpClientFactory,
+        UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
+            _userManager = userManager;
         }
 
         [HttpPost]
@@ -29,6 +34,7 @@ namespace Licenta.Controllers
                 var trip = await _context.Trips
                     .Include(t => t.Locations)
                     .Include(t => t.Reservations)
+                    .Include(t => t.Accommodation) // 🌟 NEW: Include the Accommodation in the database query
                     .FirstOrDefaultAsync(t => t.TripId == tripId);
 
                 if (trip == null) return Json(new { success = false, message = "Trip not found" });
@@ -66,6 +72,18 @@ namespace Licenta.Controllers
 
                     int orderCounter = 1;
                     Location lastVisitedLocation = null;
+
+                    // 🌟 NEW: If the trip has an accommodation, set it as the starting point for every morning!
+                    if (trip.Accommodation != null)
+                    {
+                        lastVisitedLocation = new Location
+                        {
+                            LocationId = -1, // Dummy ID so it doesn't conflict with DB
+                            Latitude = trip.Accommodation.Latitude,
+                            Longitude = trip.Accommodation.Longitude,
+                            Name = trip.Accommodation.Name
+                        };
+                    }
 
                     // Failsafe: Prevent infinite loops by ensuring time always moves forward
                     TimeSpan previousTimeTracker = currentTime;
@@ -113,6 +131,7 @@ namespace Licenta.Controllers
                         if (bestLocation != null)
                         {
                             // If we had to travel here, advance the clock by the exact travel time BEFORE starting the activity
+                            // 🌟 Because the hotel is the 'lastVisitedLocation' in the morning, this will now add the travel time from the hotel to the first location!
                             if (lastVisitedLocation != null)
                             {
                                 currentTime = currentTime.Add(TimeSpan.FromMinutes(travelTime));
@@ -333,6 +352,241 @@ namespace Licenta.Controllers
             public List<List<double>> durations { get; set; }
             // Distances are in meters
             public List<List<double>> distances { get; set; }
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> GenerateWithAI(int tripId)
+        {
+            try
+            {
+                var userId = _userManager.GetUserId(User);
+                var trip = await _context.Trips
+                    .Include(t => t.Locations)
+                    .FirstOrDefaultAsync(t => t.TripId == tripId);
+
+                if (trip == null) return Json(new { success = false, message = "Trip not found." });
+
+                // 1. Get user preferences
+                var topTags = await _context.UserTagPreferences
+                    .Include(p => p.Tag)
+                    .Where(p => p.UserId == userId && p.RankOrder <= 3)
+                    .OrderBy(p => p.RankOrder)
+                    .Select(p => p.Tag)
+                    .ToListAsync();
+
+                if (!topTags.Any()) return Json(new { success = false, message = "Please rank your preferences first!" });
+
+                var mapboxToken = _configuration["Mapbox:PublicKey"];
+                var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Add("User-Agent", "TravelPlannerLicenta");
+
+                // 🔴 MAKE SURE YOUR KEY IS HERE
+                string groqApiKey = "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";
+                Uri groqEndpoint = new Uri("https://api.groq.com/openai/v1/chat/completions");
+
+                var addedLocations = new List<Location>();
+                List<AiLocationSuggestion> recommendedPlaces = new List<AiLocationSuggestion>();
+
+                // ====================================================================
+                // SHIELD LAYER 1: Resolve City Center Coordinates for Proximity Bias
+                // ====================================================================
+                double cityLng = 0;
+                double cityLat = 0;
+                string cityCenterUrl = $"https://api.mapbox.com/geocoding/v5/mapbox.places/{Uri.EscapeDataString($"{trip.City}, {trip.Country}")}.json?types=place,locality&access_token={mapboxToken}";
+
+                try
+                {
+                    var cityRes = await client.GetAsync(new Uri(cityCenterUrl));
+                    if (cityRes.IsSuccessStatusCode)
+                    {
+                        using var cityDoc = JsonDocument.Parse(await cityRes.Content.ReadAsStringAsync());
+                        var features = cityDoc.RootElement.GetProperty("features");
+                        if (features.GetArrayLength() > 0)
+                        {
+                            var center = features[0].GetProperty("center");
+                            cityLng = center[0].GetDouble();
+                            cityLat = center[1].GetDouble();
+                        }
+                    }
+                }
+                catch { }
+
+                // ====================================================================
+                // STEP 2: THE AI BRAIN
+                // ====================================================================
+                string tagsListString = string.Join(", ", topTags.Select(t => t.Name));
+
+                var aiRequestPayload = new
+                {
+                    model = "llama-3.3-70b-versatile",
+                    temperature = 0.1,
+                    response_format = new { type = "json_object" },
+                    messages = new[]
+                    {
+                        new { role = "system", content = "You are a travel API. Output ONLY raw JSON. Your output must exactly match this schema: {\"attractions\": [{\"name\": \"Exact Name\", \"tag\": \"Category\"}]}" },
+                        new { role = "user", content = $"Give me the 8 most famous, actual visitable tourist attractions in {trip.City}, {trip.Country}. Prioritize these categories: {tagsListString}. Do NOT include neighborhoods, hotels, or restaurants. Use their official real-world names." }
+                    }
+                };
+
+                try
+                {
+                    var aiRequest = new HttpRequestMessage(HttpMethod.Post, groqEndpoint);
+                    aiRequest.Headers.Add("Authorization", $"Bearer {groqApiKey}");
+                    aiRequest.Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(aiRequestPayload), System.Text.Encoding.UTF8, "application/json");
+
+                    var aiResponse = await client.SendAsync(aiRequest);
+                    if (aiResponse.IsSuccessStatusCode)
+                    {
+                        var aiJsonString = await aiResponse.Content.ReadAsStringAsync();
+                        using var aiDoc = JsonDocument.Parse(aiJsonString);
+
+                        string rawContentJson = aiDoc.RootElement
+                            .GetProperty("choices")[0]
+                            .GetProperty("message")
+                            .GetProperty("content")
+                            .GetString();
+
+                        int startIndex = rawContentJson.IndexOf('{');
+                        int endIndex = rawContentJson.LastIndexOf('}');
+
+                        if (startIndex >= 0 && endIndex >= 0)
+                        {
+                            rawContentJson = rawContentJson.Substring(startIndex, endIndex - startIndex + 1);
+                        }
+                        else
+                        {
+                            return Json(new { success = false, message = "AI Error: The AI did not return a valid JSON object." });
+                        }
+
+                        using var contentDoc = JsonDocument.Parse(rawContentJson);
+                        var attractionsArray = contentDoc.RootElement.GetProperty("attractions");
+
+                        recommendedPlaces = System.Text.Json.JsonSerializer.Deserialize<List<AiLocationSuggestion>>(attractionsArray.GetRawText());
+                    }
+                    else
+                    {
+                        string errorMsg = await aiResponse.Content.ReadAsStringAsync();
+                        return Json(new { success = false, message = $"AI Engine Error: {errorMsg}" });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return Json(new { success = false, message = "Failed to parse AI response. " + ex.Message });
+                }
+
+                if (recommendedPlaces == null || !recommendedPlaces.Any())
+                {
+                    return Json(new { success = false, message = $"The AI returned an empty list for {trip.City}." });
+                }
+
+                // ====================================================================
+                // STEP 3: MAPBOX GEOCODER WITH BIAS & MULTI-FIELD ADDRESS VALIDATION
+                // ====================================================================
+                foreach (var item in recommendedPlaces)
+                {
+                    if (addedLocations.Count >= 8) break;
+
+                    string geocodeQuery = $"{item.name}, {trip.City}";
+                    string url = $"https://api.mapbox.com/search/searchbox/v1/forward?q={Uri.EscapeDataString(geocodeQuery)}&poi_category=tourist_attraction,museum,historic,monument,park,place_of_worship,castle&access_token={mapboxToken}&limit=4";
+
+                    // Apply proximity bias if we successfully located the city center coordinates
+                    if (cityLat != 0 && cityLng != 0)
+                    {
+                        string strLng = cityLng.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        string strLat = cityLat.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                        url += $"&proximity={strLng},{strLat}";
+                    }
+
+                    try
+                    {
+                        var response = await client.GetAsync(new Uri(url));
+                        if (!response.IsSuccessStatusCode) continue;
+
+                        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                        var features = doc.RootElement.GetProperty("features");
+
+                        foreach (var feature in features.EnumerateArray())
+                        {
+                            var props = feature.GetProperty("properties");
+                            string validatedName = props.TryGetProperty("name", out var n) ? n.GetString() : item.name;
+
+                            string lowerName = validatedName.ToLower();
+                            if (lowerName.Contains("hotel") || lowerName.Contains("apartment") ||
+                                lowerName.Contains("studio") || lowerName.Contains("bedroom") ||
+                                lowerName.Contains("parking") || lowerName.Contains("yespark") ||
+                                lowerName.Contains("suite") || lowerName.Contains("room"))
+                            {
+                                continue;
+                            }
+
+                            // 🌟 SHIELD LAYER 2: Multi-Field Address Verification Check
+                            string fullAddress = props.TryGetProperty("full_address", out var addr) ? (addr.GetString() ?? "") : "";
+                            string placeFormatted = props.TryGetProperty("place_formatted", out var pf) ? (pf.GetString() ?? "") : "";
+
+                            // Confirm the metadata mentions BOTH the city and country parameters requested
+                            bool matchesCity = fullAddress.Contains(trip.City, StringComparison.OrdinalIgnoreCase) ||
+                                               placeFormatted.Contains(trip.City, StringComparison.OrdinalIgnoreCase);
+
+                            bool matchesCountry = fullAddress.Contains(trip.Country, StringComparison.OrdinalIgnoreCase) ||
+                                                  placeFormatted.Contains(trip.Country, StringComparison.OrdinalIgnoreCase);
+
+                            // If it fails to map to your destination, drop it out immediately!
+                            if (!matchesCity || !matchesCountry)
+                            {
+                                continue;
+                            }
+
+                            bool isDuplicate = trip.Locations.Any(l => l.Name.Equals(validatedName, StringComparison.OrdinalIgnoreCase)) ||
+                                               addedLocations.Any(l => l.Name.Equals(validatedName, StringComparison.OrdinalIgnoreCase));
+
+                            if (!isDuplicate)
+                            {
+                                var coords = feature.GetProperty("geometry").GetProperty("coordinates");
+                                var targetTag = topTags.FirstOrDefault(t => t.Name.Equals(item.tag, StringComparison.OrdinalIgnoreCase)) ?? topTags.First();
+
+                                var newLoc = new Location
+                                {
+                                    TripId = tripId,
+                                    Name = validatedName,
+                                    City = trip.City,
+                                    Address = !string.IsNullOrEmpty(fullAddress) ? fullAddress : placeFormatted,
+                                    Latitude = coords[1].GetDouble(),
+                                    Longitude = coords[0].GetDouble(),
+                                    AvgDuration = 90,
+                                    IsIndoor = true
+                                };
+
+                                _context.Locations.Add(newLoc);
+                                addedLocations.Add(newLoc);
+                                _context.LocationTags.Add(new LocationTag { Location = newLoc, TagId = targetTag.TagId });
+                                break;
+                            }
+                        }
+                    }
+                    catch { }
+                }
+
+                if (!addedLocations.Any())
+                {
+                    return Json(new { success = false, message = "AI gave suggestions, but Mapbox couldn't find their locations inside your destination city boundaries." });
+                }
+
+                await _context.SaveChangesAsync();
+
+                return await GenerateItinerary(tripId);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // Helper class needed to read the AI's JSON
+        public class AiLocationSuggestion
+        {
+            public string name { get; set; }
+            public string tag { get; set; }
         }
     }
 }

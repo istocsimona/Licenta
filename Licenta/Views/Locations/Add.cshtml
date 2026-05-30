@@ -884,6 +884,10 @@
 			}
 
 			const formData = new FormData(form);
+
+			//  ADD THIS LINE: Pass the city from the View Model down to the backend
+			formData.append('City', '@Model.City');
+
 			try {
 				const response = await fetch(form.action, {
 					method: 'POST',
