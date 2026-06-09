@@ -18,8 +18,6 @@
 
 	}
 
-
-	/* --- GLOBAL & TYPOGRAPHY --- */
 		.page-title {
 				color: var(--p4);
 				font-weight: 800;
@@ -28,7 +26,6 @@
 	}
 
 
-	/* --- BACK BUTTON --- */
 		.back-link {
 				display: inline-flex;
 				align-items: center;
@@ -59,7 +56,6 @@
 	}
 
 
-	/* --- CONTAINERS & TABS --- */
 		.map-container, #locationForm, .empty-state-placeholder, #locationListContainer {
 				height: 520px !important;
 				border-radius: 1.5rem;
@@ -67,7 +63,6 @@
 	}
 
 
-	/* Tab Navigation Styling */
 		.nav-pills .nav-link {
 				color: var(--p4);
 				font-weight: 700;
@@ -95,7 +90,6 @@
 		}
 
 
-	/* --- SIDEBAR LIST CARDS --- */
 		.location-card {
 				background-color: #ffffff;
 				border: 1px solid var(--p2);
@@ -113,7 +107,6 @@
 		}
 
 
-	/* --- FORM & SEARCH --- */
 		#locationForm {
 				background-color: #ffffff;
 				padding: 2rem;
@@ -174,7 +167,6 @@
 	}
 
 
-	/* --- BUTTONS & ANIMATIONS --- */
 		.btn-save {
 				background-color: var(--p3) !important;
 				color: white !important;
@@ -201,19 +193,10 @@
 
 		@@keyframes pulse {
 				0%, 100%
-
-	{
-					opacity: 1;
-
-	}
-
-			50% {
-					opacity: .5;
-
-	}
-
-
-	}
+				{opacity: 1;}
+				50% 
+				{opacity: .5;}
+		}
 
 		.custom-scrollbar::-webkit-scrollbar {
 				width: 5px;
@@ -232,7 +215,6 @@
 	}
 
 
-	/* --- DURATION CARD (REVERTED STYLE) --- */
 			.duration-card {
 				background: var(--p1);
 				border-radius: 1.2rem;
@@ -270,9 +252,8 @@
 		border-right: 2px solid rgba(121, 180, 169, 0.1) !important;
 	}
 
-	/* Position the edit/toggle container in the corner */
 	.duration-card {
-		position: relative; /* Required for absolute positioning of children */
+		position: relative; 
 	}
 
 	.edit-toggle-container {
@@ -298,13 +279,11 @@
 			color: var(--p3);
 		}
 
-	/* Visual feedback when in edit mode */
 	.duration-card.editing-active {
 		border: 1px solid var(--p3);
 		background-color: #fff;
 		box-shadow: 0 0 0 3px rgba(121, 180, 169, 0.1);
 	}
-	/* Removes the spin buttons on the number input for a cleaner look */
 			.duration-input::-webkit-outer-spin-button,
 			.duration-input::-webkit-inner-spin-button {
 					-webkit-appearance: none;
@@ -321,13 +300,12 @@
 	}
 
 
-	/* --- POLISHED TIME INPUTS --- */
 		.form-control-time {
 				display: flex;
 				align-items: center;
 				background-color: var(--p1);
 				border: 1px solid #e4e8dc;
-				border-radius: 50px; /* Matching your search bar */
+				border-radius: 50px; 
 				padding: 0.6rem 1.2rem;
 				font-weight: 600;
 				color: var(--p5);
@@ -338,7 +316,6 @@
 	}
 
 
-	/* Customizing the native time icon or clearing it for some browsers */
 		input[type="time"]::-webkit-calendar-picker-indicator {
 				background: transparent;
 				bottom: 0;
@@ -354,7 +331,6 @@
 	}
 
 
-	/* The visible clock icon we want */
 		.time-input-wrapper {
 				position: relative;
 				display: block;
@@ -379,7 +355,6 @@
 	}
 
 
-	/* --- CUSTOM FLATPICKR (SAGE THEME) --- */
 		.flatpickr-calendar {
 				background: #fff;
 				border-radius: 15px;
@@ -389,7 +364,6 @@
 	}
 
 
-	/* Change the blue highlight to your Accent Green (--p3) */
 		.flatpickr-time input:hover,
 		.flatpickr-time .flatpickr-am-pm:hover,
 		.flatpickr-time input:focus,
@@ -405,7 +379,6 @@
 	}
 
 
-	/* Style the arrow buttons */
 		.flatpickr-time .numInputWrapper span.arrowUp:after {
 				border-bottom-color: var(--p3);
 
@@ -417,7 +390,6 @@
 	}
 
 
-	/* Remove the default native browser picker icon entirely */
 		input[type="time"]::-webkit-calendar-picker-indicator {
 				display: none;
 
@@ -679,7 +651,7 @@
 		let map;
 		let currentMarker = null;
 		let currentSelectedLocationId = null
-		let existingLocations = []; // Store {lat, lng}
+		let existingLocations = []; 
 
 		let mapMarkers = {}; 
 
@@ -723,9 +695,7 @@
 				refreshLocationList();
 			});
 
-			// ==========================================
-			// NEW CODE: MAKE MAP POIs CLICKABLE
-			// ==========================================
+			// MAKE MAP POIs CLICKABLE
 
 			// Change the cursor to a pointer when hovering over a POI to show it's clickable
 			map.on('mouseenter', 'poi-label', () => {
@@ -791,26 +761,26 @@
 			flatpickr("#ClosingHour", fpConfig);
 			flatpickr("#StartTimeUI", fpConfig);
 
-			const cityQuery = "@Model.City, @Model.Country";
+			const cityQuery = "@Html.Raw(Model.City), @Html.Raw(Model.Country)";
 			const searchBox = document.getElementById('searchBox');
 
-			fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(cityQuery)}.json?access_token=${mapboxgl.accessToken}`)
+		fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(cityQuery)}.json?types=region,district,place,locality,neighborhood&access_token=${mapboxgl.accessToken}`)				
 				.then(res => res.json())
 				.then(data => {
 					if (data.features && data.features.length > 0) {
 						const feature = data.features[0];
-						const coords = feature.center; // This is an array: [lng, lat]
+						const coords = feature.center; //array: [lng, lat]
 
 						// Center the map on the city
 						map.flyTo({ center: coords, zoom: 12 });
 
-						// FIX: Properly apply proximity and bounding box bias to the search box
+						//Properly apply proximity and bounding box bias to the search box
 						const searchOptions = {
 							proximity: coords
 						};
 
 						if (feature.bbox) {
-							searchOptions.bbox = feature.bbox; // Expects array: [minX, minY, maxX, maxY]
+							searchOptions.bbox = feature.bbox; 
 						}
 
 						// Apply the options to the Mapbox component
@@ -844,8 +814,8 @@
 
 			if (isLocked) {
 				card.style.opacity = "0.85";
-				card.style.pointerEvents = "none"; // Disable clicking inside
-				editBtn.style.pointerEvents = "auto"; // But allow clicking the Edit button!
+				card.style.pointerEvents = "none"; 
+				editBtn.style.pointerEvents = "auto";
 
 				saveBtn.disabled = true;
 				saveBtn.style.backgroundColor = "#6c757d";
@@ -885,7 +855,7 @@
 
 			const formData = new FormData(form);
 
-			//  ADD THIS LINE: Pass the city from the View Model down to the backend
+			//Pass the city from the View Model down to the backend
 			formData.append('City', '@Model.City');
 
 			try {
@@ -898,7 +868,6 @@
 				if (response.ok) {
 					Swal.fire({ title: 'Success!', text: 'Location added.', icon: 'success', timer: 1500, showConfirmButton: false });
 
-					// --- NEW LOGIC TO ADD PIN IMMEDIATELY ---
 					// Extract colors from the hidden inputs we just sent
 					const selectedColors = [];
 					document.querySelectorAll('#tagInputsContainer input').forEach(input => {
@@ -910,15 +879,14 @@
 					// Create the custom split pin and add it to the map
 					new mapboxgl.Marker({ element: createSplitPin(selectedColors) })
 						.setLngLat([lng, lat])
-						.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`<h6>${name}</h6>`)) // Optional: add a popup
+						.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(`<h6>${name}</h6>`)) 
 						.addTo(map);
-					// ----------------------------------------
 
 					form.reset();
 					form.style.display = 'none';
 					document.getElementById('empty-state').style.display = 'flex';
 
-					if (currentMarker) currentMarker.remove(); // Remove the "searching" marker
+					if (currentMarker) currentMarker.remove(); 
 
 					refreshLocationList();
 					bootstrap.Tab.getOrCreateInstance(document.getElementById('pills-list-tab')).show();
@@ -986,7 +954,6 @@
 			} catch (e) { console.error(e); }
 		}
 
-		// Updated to catch 'e' so clicking delete doesn't open the Details view
 				async function deleteLocation(e, id) {
 			if (e) e.stopPropagation();
 
@@ -1006,7 +973,6 @@
 					});
 
 					if (response.ok) {
-						// --- THE KEY ADDITION ---
 						// Remove the pin from the map immediately
 						if (mapMarkers[id]) {
 							mapMarkers[id].remove(); // This deletes it from the Mapbox map
@@ -1022,7 +988,7 @@
 		}
 
 		function viewLocationDetails(id) {
-			// Fixed: Compare them as strings and check both locationId and id
+			// Compare them as strings and check both locationId and id
 			const loc = existingLocations.find(l => String(l.locationId || l.id) === String(id));
 			if (!loc) return;
 
@@ -1073,7 +1039,7 @@
 			modal.show();
 		}
 
-				// Function to calculate End Time and update the hidden inputs
+		// Function to calculate End Time and update the hidden inputs
 		function calculateEventTimes() {
 			const dateVal = document.getElementById('EventDateUI').value;
 			const timeVal = document.getElementById('StartTimeUI').value;
@@ -1104,19 +1070,16 @@
 		document.getElementById('StartTimeUI').addEventListener('input', calculateEventTimes);
 		document.getElementById('DurationUI').addEventListener('input', calculateEventTimes);
 
-				document.getElementById('addEventForm').addEventListener('submit', async function (e) {
+		document.getElementById('addEventForm').addEventListener('submit', async function (e) {
 			e.preventDefault();
 
 			const form = e.target;
 			const formData = new FormData(form);
 
-			// ========================================================
-			// WE NOW SEND THE EXACT LOCATION ID TO THE CONTROLLER
-			// ========================================================
+			//SEND THE EXACT LOCATION ID TO THE CONTROLLER
 			formData.set('locationId', currentSelectedLocationId);
 			formData.set('startDate', document.getElementById('RealStartDate').value);
 			formData.set('endDate', document.getElementById('RealEndDate').value);
-			// ========================================================
 
 			const submitBtn = form.querySelector('button[type="submit"]');
 			const originalText = submitBtn.innerHTML;
@@ -1159,7 +1122,7 @@
 
 			const token = mapboxgl.accessToken;
 			try {
-				const geoRes = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent("@Model.City, @Model.Country")}.json?access_token=${token}`);
+				const geoRes = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent("@Html.Raw(Model.City), @Html.Raw(Model.Country)")}.json?types=region,district,place,locality,neighborhood&access_token=${token}`);
 				const geoData = await geoRes.json();
 
 				if (!geoData.features || geoData.features.length === 0) {
@@ -1187,7 +1150,6 @@
 						data.features.forEach(f => {
 							const placeName = f.properties.name ? f.properties.name.toLowerCase().trim() : "";
 
-							// ONLY add it if it's unique AND not already in 'alreadyAddedNames'
 							if (placeName && !seen.has(placeName) && !alreadyAddedNames.includes(placeName)) {
 								seen.add(placeName);
 								allFeatures.push(f);
@@ -1214,7 +1176,6 @@
 		function renderSuggestions(isInitialLoad = false) {
 			const container = document.getElementById('suggestionListContainer');
 
-			// If this is the first load, clear the spinner
 			if (isInitialLoad) {
 				container.innerHTML = "";
 				if (currentSuggestions.length === 0) {
@@ -1248,11 +1209,9 @@
 					</div>`;
 			}).join('');
 
-			// Append the new HTML to the bottom of the list without deleting what's already there
 			container.insertAdjacentHTML('beforeend', html);
 			visibleSuggestionsCount += nextBatch.length;
 
-			// If we still have more items in our array that haven't been shown yet, add the button back
 			if (visibleSuggestionsCount < currentSuggestions.length) {
 				container.insertAdjacentHTML('beforeend', `
 					<div id="loadMoreBtnContainer" class="text-center mt-3 mb-4">
@@ -1269,17 +1228,12 @@
 		function selectSuggestedLocation(encoded) {
 			const feat = JSON.parse(decodeURIComponent(encoded));
 
-			// 1. Switch to the 'Add New' tab UI
 			const addTabTrigger = document.getElementById('pills-add-tab');
 			bootstrap.Tab.getOrCreateInstance(addTabTrigger).show();
 
-			// 2. Update the Search Box value visually (Optional but helps user experience)
 			const searchBox = document.getElementById('searchBox');
 			searchBox.value = feat.properties.name;
 
-			// 3. Manually trigger the logic you wrote in the 'retrieve' listener
-			// Instead of dispatching a fake event which often fails due to security/structure,
-			// it's cleaner to wrap your 'retrieve' logic in a named function.
 			handleLocationSelection(feat);
 		}
 
@@ -1311,7 +1265,7 @@
 		}
 
 
-		let originalValues = {}; // To store values for "Cancel"
+		let originalValues = {}; 
 
 		function enterEditMode() {
 			const card = document.getElementById('detailsCard');
@@ -1337,7 +1291,6 @@
 			openInput._flatpickr.set('clickOpens', true);
 			closeInput._flatpickr.set('clickOpens', true);
 
-			// Optional: add a subtle animation
 			card.style.transform = "scale(1.02)";
 			setTimeout(() => card.style.transform = "scale(1)", 200);
 		}
@@ -1349,7 +1302,6 @@
 			const closeInput = document.getElementById('ClosingHour');
 
 			if (!saveChanges) {
-				// Revert to original values
 				durInput.value = originalValues.duration;
 				openInput._flatpickr.setDate(originalValues.opening);
 				closeInput._flatpickr.setDate(originalValues.closing);
@@ -1383,7 +1335,6 @@
 			if(addressInput) addressInput.value = address;
 
 			// 1. Check if it's already in our database array
-			// TIP: Ensure your existingLocations array is being populated correctly in loadExistingPins()
 			const existingData = existingLocations.find(loc =>
 				Math.abs(loc.latitude - lat) < 0.0001 && Math.abs(loc.longitude - lng) < 0.0001
 			);
@@ -1395,15 +1346,15 @@
 				</small>`;
 
 			if (existingData) {
-				// --- CASE: IT IS IN YOUR ITINERARY ---
+				// --- IT IS IN YOUR ITINERARY ---
 				document.querySelector('input[name="AvgDuration"]').value = existingData.avgDuration;
 				document.getElementById('OpeningHour')._flatpickr.setDate(existingData.openingHour || "");
 				document.getElementById('ClosingHour')._flatpickr.setDate(existingData.closingHour || "");
 
-				toggleInputsLock(true); // This locks the UI
+				toggleInputsLock(true);
 			} else {
-				// --- CASE: IT IS NEW (NOT IN ITINERARY) ---
-				toggleInputsLock(false); // <--- THIS IS THE CRITICAL FIX: Unlock for new items
+				// --- IT IS NEW  ---
+				toggleInputsLock(false); 
 
 				// Reset to defaults for new places
 				const suggestedDuration = getDurationFromCategories(props.poi_category || []);
@@ -1412,14 +1363,13 @@
 				document.getElementById('ClosingHour')._flatpickr.clear();
 
 				document.getElementById('osmStatus').innerHTML = "";
-				tryFetchHours(); // Go look for hours on OpenStreetMap
+				tryFetchHours(); //look for hours on OpenStreetMap
 			}
 
 			const eventBanner = document.getElementById('existingEventBanner');
 			if (existingData && existingData.eventDetails) {
 				const ev = existingData.eventDetails;
 
-				// Format the dates nicely (e.g., "Oct 24, 10:00 - 12:00")
 				const start = new Date(ev.startDate);
 				const end = new Date(ev.endDate);
 				const formattedDate = start.toLocaleDateString([], { month: 'short', day: 'numeric' });
@@ -1444,9 +1394,6 @@
 			}
 			
 			
-		
-
-			// Map and View logic...
 			if (currentMarker) currentMarker.remove();
 			if (!existingData) {
 				currentMarker = new mapboxgl.Marker({ color: '#79B4A9' }).setLngLat([lng, lat]).addTo(map);
@@ -1458,7 +1405,7 @@
 		}
 
 		function getDurationFromCategories(categories) {
-			if (!categories || categories.length === 0) return 60; // Default fallback
+			if (!categories || categories.length === 0) return 60; 
 
 			let maxDuration = 0;
 
@@ -1468,8 +1415,6 @@
 				// Check if our mapping contains this category string
 				for (const [key, minutes] of Object.entries(CATEGORY_DURATIONS)) {
 					if (normalizedCat.includes(key)) {
-						// If a place has multiple categories (e.g., "Museum" and "Cafe"),
-						// we usually want the longer one (the Museum).
 						if (minutes > maxDuration) maxDuration = minutes;
 					}
 				}
@@ -1547,7 +1492,6 @@
 				const locs = await res.json();
 				existingLocations = locs;
 
-				// Clear existing markers from the map first if re-loading
 				Object.values(mapMarkers).forEach(marker => marker.remove());
 				mapMarkers = {};
 
@@ -1557,7 +1501,6 @@
 						.setLngLat([l.longitude, l.latitude])
 						.addTo(map);
 
-					// Store the marker using its ID
 					const id = l.locationId || l.id;
 					mapMarkers[id] = marker;
 
@@ -1592,7 +1535,6 @@
 						const openTime = match[1].padStart(2, '0') + ":" + match[2];
 						const closeTime = match[3].padStart(2, '0') + ":" + match[4];
 
-						// Use Flatpickr's API to set the date so it strictly enforces the 24hr format
 						document.getElementById('OpeningHour')._flatpickr.setDate(openTime);
 						document.getElementById('ClosingHour')._flatpickr.setDate(closeTime);
 

@@ -18,7 +18,6 @@
         --p5: #676F54;
     }
 
-    /* Page Typography */
     .page-title {
         color: var(--p5);
         font-weight: 800;
@@ -30,7 +29,6 @@
         font-size: 0.95rem;
     }
 
-    /* Buttons matched to your Create page */
     .btn-save {
         background: linear-gradient(135deg, var(--p3), var(--p4));
         color: white;
@@ -65,7 +63,6 @@
             transform: translateY(-2px);
         }
 
-    /* Kanban Board Styling */
     .kanban-container {
         display: flex;
         flex-wrap: wrap;
@@ -102,7 +99,6 @@
         gap: 8px;
     }
 
-    /* Header Colors matching the Earthy Palette */
     .header-must {
         color: var(--p4);
         border-bottom: 2px solid var(--p4);
@@ -132,7 +128,6 @@
         flex-grow: 1;
     }
 
-    /* Tag Cards */
     .tag-card {
         background: #ffffffee;
         border-radius: 0.8rem;
@@ -159,7 +154,6 @@
             cursor: grabbing;
         }
 
-    /* Dragging Ghost State */
     .sortable-ghost {
         opacity: 0.5;
         background-color: var(--p1);
@@ -289,9 +283,9 @@
                         title: 'Saved Successfully!',
                         text: 'Your travel preferences are updated.',
                         icon: 'success',
-                        confirmButtonColor: '#79B4A9', // Matches your --p4
+                        confirmButtonColor: '#79B4A9',
                         background: '#fcfdfa',
-                        color: '#676F54', // Matches your --p5
+                        color: '#676F54', 
                         customClass: {
                             popup: 'rounded-4 shadow-lg border-0'
                         }
@@ -311,8 +305,8 @@
                 text: "All your tags will be moved back to Uncategorized.",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d9534f', // Danger Red
-                cancelButtonColor: '#e3e8e1', // Soft grey/green line color
+                confirmButtonColor: '#d9534f', 
+                cancelButtonColor: '#e3e8e1', 
                 confirmButtonText: 'Yes, reset',
                 cancelButtonText: '<span style="color: #676F54; font-weight: 600;">Cancel</span>',
                 background: '#fcfdfa',

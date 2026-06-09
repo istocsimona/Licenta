@@ -44,7 +44,7 @@ namespace Licenta.Controllers
             ModelState.Remove("OpeningHour");
             ModelState.Remove("ClosingHour");
             ModelState.Remove("Reservations");
-            ModelState.Remove("City"); // 👈 ADD THIS: Ignore if form doesn't send City
+            ModelState.Remove("City"); 
 
             if (!ModelState.IsValid)
             {
@@ -67,7 +67,7 @@ namespace Licenta.Controllers
                 existingLocation.ClosingHour = model.ClosingHour;
                 existingLocation.IsIndoor = model.IsIndoor;
 
-                // 👈 NEW LOGIC: Ensure City is populated
+                
                 if (string.IsNullOrEmpty(existingLocation.City))
                 {
                     var trip = await _context.Trips.FindAsync(existingLocation.TripId);
@@ -100,13 +100,13 @@ namespace Licenta.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveLocation(Location model, int[] SelectedTagIds)
         {
-            // Remove only what is strictly necessary
+            
             ModelState.Remove("Trip");
             ModelState.Remove("LocationTags");
             ModelState.Remove("OpeningHour");
             ModelState.Remove("ClosingHour");
             ModelState.Remove("Reservations");
-            ModelState.Remove("City"); // 👈 ADD THIS
+            ModelState.Remove("City"); 
 
             if (!ModelState.IsValid)
             {
@@ -116,7 +116,7 @@ namespace Licenta.Controllers
 
             try
             {
-                // 👈 NEW LOGIC: Fetch the trip to assign the correct city before saving
+                // Fetch the trip to assign the correct city before saving
                 var trip = await _context.Trips.FindAsync(model.TripId);
                 if (trip != null)
                 {
@@ -162,7 +162,6 @@ namespace Licenta.Controllers
                     l.AvgDuration,
                     l.IsIndoor,
 
-                    // FIX: Match reservations directly using the new LocationId!
                     EventDetails = _context.Reservations
                         .Where(r => r.LocationId == l.LocationId)
                         .Select(r => new {
@@ -189,12 +188,10 @@ namespace Licenta.Controllers
             var location = await _context.Locations.FindAsync(id);
             if (location == null) return NotFound();
 
-            // 1. Remove associated tags (manual cleanup)
             var tags = _context.LocationTags.Where(lt => lt.LocationId == id);
             _context.LocationTags.RemoveRange(tags);
 
-            // 2. Find and remove associated Events (Reservations)
-            // FIX: Match by LocationId directly!
+            
             var associatedEvents = _context.Reservations
                 .Where(r => r.LocationId == id);
 
@@ -203,7 +200,6 @@ namespace Licenta.Controllers
                 _context.Reservations.RemoveRange(associatedEvents);
             }
 
-            // 3. Remove the location itself
             _context.Locations.Remove(location);
 
             await _context.SaveChangesAsync();

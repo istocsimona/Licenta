@@ -21,11 +21,11 @@ namespace Licenta.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-    [FromForm] int tripId,
-    [FromForm] string name,
-    [FromForm] int locationId, // CRITICAL FIX: We now just accept the exact Integer ID!
-    [FromForm] DateTime startDate,
-    [FromForm] DateTime endDate)
+        [FromForm] int tripId,
+        [FromForm] string name,
+        [FromForm] int locationId, 
+        [FromForm] DateTime startDate,
+        [FromForm] DateTime endDate)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace Licenta.Controllers
                     TripId = tripId,
                     UserId = userId,
                     Name = name,
-                    LocationId = locationId, // Perfect link
+                    LocationId = locationId, 
                     StartDate = startDate,
                     EndDate = endDate
                 };

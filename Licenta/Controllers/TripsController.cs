@@ -40,7 +40,6 @@ namespace Licenta.Controllers
             {
                 using (var client = new HttpClient())
                 {
-                    // category=22 is strictly Geography (Cities, Countries, Landmarks)
                     var request = new HttpRequestMessage(HttpMethod.Get, "https://opentdb.com/api.php?amount=1&category=22");
 
                     var response = await client.SendAsync(request);
@@ -52,8 +51,6 @@ namespace Licenta.Controllers
                         {
                             var root = doc.RootElement;
 
-                            // "response_code" of 0 means success
-                            // "response_code" of 0 means success
                             if (root.GetProperty("response_code").GetInt32() == 0)
                             {
                                 var result = root.GetProperty("results")[0];
@@ -115,7 +112,7 @@ namespace Licenta.Controllers
                 return NotFound();
             }
 
-            // SECURITY CHECK: Make sure the logged-in user owns this trip
+            // Make sure the logged-in user owns this trip
             if (trip.UserId != _userManager.GetUserId(User))
             {
                 return Forbid();
@@ -133,7 +130,6 @@ namespace Licenta.Controllers
 
         // POST: Trips/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -163,13 +159,13 @@ namespace Licenta.Controllers
             var trip = await _context.Trips.FindAsync(id);
             if (trip == null) return NotFound();
 
-            // VERIFICARE 1: Este acesta trip-ul utilizatorului logat?
+            // Este acesta trip-ul utilizatorului logat?
             if (trip.UserId != _userManager.GetUserId(User))
             {
                 return Forbid();
             }
 
-            // VERIFICARE 2: A inceput deja excursia? Daca da, interzicem editarea.
+            // A inceput deja excursia? Daca da, interzicem editarea.
             if (trip.StartDate <= DateTime.Now.Date)
             {
                 // Poti returna un mesaj de eroare custom sau pur si simplu Forbid/Redirect
@@ -184,7 +180,7 @@ namespace Licenta.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
-    [Bind("TripId,Title,Description,StartDate,EndDate,City,Country,StartExplorationHour,EndExplorationHour")] Trip trip)
+        [Bind("TripId,Title,Description,StartDate,EndDate,City,Country,StartExplorationHour,EndExplorationHour")] Trip trip)
         {
             if (id != trip.TripId)
                 return NotFound();

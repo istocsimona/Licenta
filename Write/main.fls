@@ -7,6 +7,16 @@ INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\report.
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\size12.clo
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\size12.clo
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\size12.clo
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\pifont.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\pifont.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\upzd.fd
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\upzd.fd
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\upzd.fd
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\zapfding\pzdr.tfm
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\upsy.fd
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\upsy.fd
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\upsy.fd
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\fonts\tfm\adobe\symbol\psyr.tfm
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\fontspec\fontspec.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\fontspec\fontspec.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\l3packages\xparse\xparse.sty
@@ -96,6 +106,8 @@ INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\biblatex\blx
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\biblatex\blx-case-expl3.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\setspace\setspace.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\setspace\setspace.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\tex-gyre\tgtermes.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\tex-gyre\tgtermes.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\geometry\geometry.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\geometry\geometry.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\iftex\ifvtex.sty
@@ -208,6 +220,9 @@ INPUT 1-introducere.aux
 INPUT .\2-preliminarii.aux
 INPUT .\2-preliminarii.aux
 INPUT 2-preliminarii.aux
+INPUT .\aplicatie.aux
+INPUT .\aplicatie.aux
+INPUT aplicatie.aux
 INPUT .\3-concluzii.aux
 INPUT .\3-concluzii.aux
 INPUT 3-concluzii.aux
@@ -281,6 +296,14 @@ OUTPUT 2-preliminarii.aux
 INPUT .\2-preliminarii.tex
 INPUT .\2-preliminarii.tex
 INPUT 2-preliminarii.tex
+INPUT .\images\Licenta.drawio.png
+INPUT .\images\Licenta.drawio.png
+INPUT .\aplicatie.tex
+INPUT .\aplicatie.tex
+OUTPUT aplicatie.aux
+INPUT .\aplicatie.tex
+INPUT .\aplicatie.tex
+INPUT aplicatie.tex
 INPUT .\3-concluzii.tex
 INPUT .\3-concluzii.tex
 OUTPUT 3-concluzii.aux
@@ -300,6 +323,9 @@ INPUT 1-introducere.aux
 INPUT .\2-preliminarii.aux
 INPUT .\2-preliminarii.aux
 INPUT 2-preliminarii.aux
+INPUT .\aplicatie.aux
+INPUT .\aplicatie.aux
+INPUT aplicatie.aux
 INPUT .\3-concluzii.aux
 INPUT .\3-concluzii.aux
 INPUT 3-concluzii.aux
