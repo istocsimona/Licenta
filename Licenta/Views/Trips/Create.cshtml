@@ -198,9 +198,6 @@
 
     hr { opacity: .1; }
 
-    /* ===============================
-       MAPBOX STYLING OVERRIDES
-       =============================== */
     .mapboxgl-ctrl-geocoder {
         width: 100% !important;
         max-width: 100% !important;
@@ -309,9 +306,6 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
 
     <script>
-        // =========================
-        // SLIDER
-        // =========================
         var slider = document.getElementById('exploration-slider');
         var startInput = document.getElementById('start-input');
         var endInput = document.getElementById('end-input');
@@ -340,9 +334,6 @@
             endLabel.innerHTML = "End: " + values[1].toString().padStart(2, '0') + ":00";
         });
 
-        // =========================
-        // FLATPICKR RANGE CALENDAR
-        // =========================
         const hiddenStartDate = document.getElementById('hidden-start-date');
         const hiddenEndDate = document.getElementById('hidden-end-date');
         const dateSummary = document.getElementById('date-summary');
@@ -377,9 +368,6 @@
             }
         });
 
-        // =========================
-        // MAPBOX AUTOCOMPLETE
-        // =========================
         const mapboxToken = '@Configuration["Mapbox:PublicKey"]';
         const hiddenCity = document.getElementById("hidden-city");
         const hiddenCountry = document.getElementById("hidden-country");
@@ -387,9 +375,9 @@
 
         const geocoder = new MapboxGeocoder({
             accessToken: mapboxToken,
-            types: 'country,region,place,locality,neighborhood,poi',
-            placeholder: 'Search for a city',
-            marker: false // We don't have a map visual here, just the search bar
+            types: 'place,locality,neighborhood',
+            placeholder: 'Search for a city, town, or village...',
+            marker: false
         });
 
         geocoder.addTo('#geocoder-container');
@@ -397,38 +385,43 @@
         geocoder.on('result', function(e) {
             errorMsg.style.display = "none";
             const result = e.result;
-            
+
             let city = '';
             let country = '';
 
-            // Extract context components
-            if (result.context) {
-                result.context.forEach(item => {
-                    if (item.id.includes('place')) city = item.text;
-                    if (item.id.includes('country')) country = item.text;
-                });
+            const primaryType = result.id.split('.')[0];
+
+            if (primaryType === 'place' || primaryType === 'locality' || primaryType === 'neighborhood') {
+                city = result.text;
+            }
+            else if (result.context) {
+                const contextLocality = result.context.find(item => item.id.includes('locality'));
+                const contextPlace = result.context.find(item => item.id.includes('place'));
+
+                if (contextLocality) {
+                    city = contextLocality.text;
+                } else if (contextPlace) {
+                    city = contextPlace.text;
+                }
             }
 
-            // Fallbacks in case they searched directly for a city or country
-            if (!city && result.place_type.includes('place')) city = result.text;
-            if (!country && result.place_type.includes('country')) country = result.text;
+            if (result.context) {
+                const contextCountry = result.context.find(item => item.id.includes('country'));
+                if (contextCountry) {
+                    country = contextCountry.text;
+                }
+            }
 
-            hiddenCity.value = city || result.text;
+            if (!city) city = result.text;
+            if (!country) country = "Romania";
+
+            hiddenCity.value = city;
             hiddenCountry.value = country;
         });
 
-        // Clear hidden inputs if they click the 'x'
         geocoder.on('clear', function() {
             hiddenCity.value = "";
             hiddenCountry.value = "";
-        });
-
-        // VALIDATE BEFORE SUBMIT
-        document.getElementById("tripForm").addEventListener("submit", function (e) {
-            if (!hiddenCity.value) {
-                e.preventDefault();
-                errorMsg.style.display = "block";
-            }
         });
     </script>
 }

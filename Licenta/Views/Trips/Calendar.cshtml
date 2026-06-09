@@ -7,9 +7,6 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 
 <style>
-    /* ===============================
-       CALENDAR PAGE STYLING
-       =============================== */
     .page-title {
         color: var(--p5);
         font-weight: 700;
@@ -24,7 +21,6 @@
         margin-bottom: 3rem;
     }
 
-    /* Suprascriem culorile standard FullCalendar pentru a se potrivi cu tema ta */
     .fc {
         color: var(--p5);
     }
@@ -35,7 +31,7 @@
         border-color: rgba(121, 180, 169, 0.15);
     }
     .fc-col-header-cell {
-        background-color: #e9f8da; /* Fundal verde deschis pentru zilele saptamanii */
+        background-color: #e9f8da; 
         padding: 10px 0;
     }
     .fc-col-header-cell-cushion {
@@ -64,7 +60,6 @@
         background-color: var(--p5) !important;
     }
     
-    /* Stil pentru evenimentele (excursiile) de pe calendar */
     .fc-event {
         border-radius: 4px;
         border: none;
@@ -78,7 +73,6 @@
         transform: scale(1.02);
     }
 
-    /* Bootstrap Tooltip Customization */
     .custom-tooltip .tooltip-inner {
         background-color: var(--p5);
         color: white;
@@ -89,7 +83,6 @@
         max-width: 250px;
     }
 
-    /* Stiluri pentru link-urile de navigare (Zoom in pe lună) */
     .fc-daygrid-nav-link {
         color: var(--p5);
         text-decoration: none;
@@ -100,7 +93,6 @@
         text-decoration: underline;
     }
     
-    /* Titlurile lunilor în modul Anual */
     .fc .fc-multimonth-title {
         color: var(--p5);
         font-weight: 800;
@@ -149,14 +141,12 @@
                 },
                 
                 // Setări pentru aspectul anual
-                multiMonthMaxColumns: 3, // Arată maxim 3 luni pe rând pentru a fi aerisit
+                multiMonthMaxColumns: 3, 
                 
-                // ACTIVĂM FUNCȚIA DE "ZOOM"
-                navLinks: true, // Permite click pe numele lunii sau pe zi pentru a face zoom pe ele
+                navLinks: true, 
                 
                 events: tripsData,
                 
-                // Tooltip-ul la hover
                 eventDidMount: function(info) {
                     var location = info.event.extendedProps.location;
                     var schedule = info.event.extendedProps.schedule;
@@ -176,7 +166,6 @@
                     });
                 },
                 
-                // Click pe excursie duce la Detalii
                 eventClick: function(info) {
                     window.location.href = '/Trips/Details/' + info.event.id;
                 }

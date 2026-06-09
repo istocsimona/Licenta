@@ -181,7 +181,6 @@
             transform: translateY(-2px);
         }
 
-    /* Live Badge Animation */
     @@keyframes pulse {
         0%
 
@@ -329,7 +328,6 @@
 
                                     @if (tripCategory.Type == "current")
                                     {
-                                        // Calculate which day of the trip the user is currently on
                                         var currentDay = (today - item.StartDate.Date).Days + 1;
                                         var totalDays = (item.EndDate.Date - item.StartDate.Date).Days + 1;
                                         <div class="badge-live">

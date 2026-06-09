@@ -1,2 +1,129 @@
-\chapter{Preliminarii}
+\chapter{Tehnologii și Framework-uri Utilizate}
+
+\section{Framework Backend: .NET and ASP.NET Core}
+
+\subsection{Ecosistemul C\# si .NET 8}
+Alegerea folosirii limbajului C\# și platformei .NET 8 a fost motivată de necesitatea unui ecosistem robust, capabil să susțină o logică de business complexă pentru aplicații de tip întreprindere.Aplicația impune implementarea unor algorimti avansați pentru orchestrarea datelor, dupa cum urmează:
+
+Aplicația impune implementarea unor algoritmi avansați pentru orchestrarea datelor, după cum urmează:
+
+$\to$ Optimizarea algoritmică a itinerariului: implică rezolvarea unor variații ale problemei comis-voiajorului și aplicarea unor euristici de rutare. Sistemul calculează traiectoriile optime între locații (noduri) multiple, respectând riguros constrângerile multidimensionale de distanță fizică și ferestrele de timp.
+
+$\to$ Mecanisme de potrivire: presupune filtrarea avansată și ierarhizarea ponderată a punctelor de interes. Algoritmul procesează preferințele utilizatorului pe trei nivele de prioritate, realizând o mapare semantică între locații și vectorul de preferințe.
+
+$\to$ Programarea temporală: soluționarea unor probleme de satisfacere a constrângerilor pentru alocarea și gestionarea intervalelor zilnice, asigurând crearea unor planificări fără suprapuneri, cu timpi de tranzit calculați și cu o marjă de siguranță pentru rezervări, acestea având cea mai mare prioritate.
+
+C\# oferă avantajul verificării statice a tipurilor la compilare (static type checking) și un sistem de tipuri puternice (strong type). Aceste caracteristici scad semnificativ riscul excepțiilor la execuție (runtime exceptions) și garantează integritatea memoriei, un atribut critic pentru consistența funcțională a aplicației.
+
+În plus, trecerea la .NET 8 introduce optimizări la nivel de execuție, îmbunătățiri ale compilatorului JIT (Just-in-Time) și opțiuni de compilare AOT (Ahead of Time). Acestea se traduc printr-un timp de inițializare extrem de redus și un footprint de memorie scăzut, transformând aplicația într-o soluție ideală pentru implementări scalabile de tip cloud-native. În același context, extensia LINQ (Language Integrated Query) a fost instrumentală în arhitectura sistemului, permițând manipularea declarativă și evaluarea leneșă (lazy evaluation) a colecțiilor în memorie, esențiale pentru modulele de filtrare complexă de matching.
+
+\subsection{Arhitectura ASP.NET Core}
+
+ASP.NET Core este un framework web ușor și de înaltă performanță, care suportă atât tiparul MVC, cât și Razor Pages. Pentru această aplicație, abordarea hibridă, folosind Controllere pentru endpoint-uri API și Razor Pages pentru gestionarea identității, oferă o separare optimă a responsabilității.
+
+ASP.NET Core este un framework web cross-platform, asincron și puternic optimizat pentru procesarea eficientă a unui volum ridicat de cereri concurente.
+
+Pentru a respecta principiul responsabilității unice (Single Responsibility Principle — SRP), s-a optat pentru un design hibrid care combină paradigma MVC (Model-View-Controller) cu Razor Pages:
+
+$\to$ Controller: reprezintă nivelul de interacțiune stateless, expunând puncte terminale pentru interfețele client. Acestea încapsulează și deleagă către stratul de servicii logica de business core (gruparea călătoriilor, managementul rezervărilor, coordonarea locațiilor).
+
+$\to$ Razor Pages: subsistemul de Identity Access Management este izolat funcțional prin intermediul Razor Pages. Această abordare page-focused a oferit un mediu coerent și sigur pentru gestionarea fluxului de autentificare și autorizare, fiind un ecosistem deja maturizat și pre-testat împotriva vulnerabilităților web comune (CSRF, XSS).
+
+$\to$ Pipeline-ul middleware permite un control deplin asupra procesării cererilor HTTP/HTTPS, incluzând impunerea HTTPS, servirea fișierelor și autentificarea.
+
+\textbf{Pipeline-ul middleware (infrastructura de procesare):}
+
+Aplicația utilizează un pipeline HTTP configurabil, bazat pe lanțul de responsabilitate (Chain of Responsibility). Aceste pipeline-uri permit interceptarea și procesarea fluxului HTTP/HTTPS prin module middleware injectate secvențial, asigurând funcții critice precum: terminarea TLS (HTTPS redirection), negocierea resurselor statice, validarea schemelor de autentificare (ex. JWT sau Cookies) și tratarea centralizată a excepțiilor globale.
+
+\textbf{Inversion of Control (IoC) și Dependency Injection (DI):}
+
+Spre deosebire de generațiile anterioare de ASP.NET, aplicația utilizează containerul nativ de IoC (prin interfața IServiceCollection). Acesta facilitează implementarea conceptelor de arhitectură curată (Clean Architecture) prin injectarea dependențelor. Permite rezolvarea contractelor abstracte cu implementările lor concrete. Serviciile de infrastructură precum IHttpClientFactory, pentru apeluri externe optimizate și evitarea epuizării socket-urilor, sau IEmailSender au fost integrate fluent folosind acest container nativ, reducând cuplarea și crescând semnificativ testabilitatea componentelor individuale.
+
+\section{Persistența datelor: Entity Framework Core și SQL Server}
+
+\subsection{Strategia ORM cu Entity Framework Core}
+Entity Framework Core (EF Core) este un mapper obiect-relațional (ORM) care abstractizează operațiile bazei de date, permițând dezvoltatorilor să lucreze cu modele de domeniu puternic tipizate, eliminând necesitatea interacțiunii directe prin interogări SQL brute. În contextul acestei aplicații, EF Core oferă o serie de avantaje arhitecturale.
+
+Gestionarea relațiilor: Arhitectura datelor din aplicație prezintă interdependențe elaborate:
+
+\begin{itemize}
+    \item  Unu-la-Mai-Mulți (One-to-Many): Utilizatori (Users) → Călătorii (Trips) → Planuri Zilnice (DayPlans) → Elemente de Itinerar (ItineraryItems).
+    \item  Mai-Mulți-la-Mai-Mulți (Many-to-Many): Locații (Locations) ↔ Etichete (Tags), relație rezolvată printr-o tabelă de joncțiune (LocationTag).
+    \item  Preferințele utilizatorilor: Entitatea UserTagPreferences, implementată cu chei primare compuse (composite keys).
+\end{itemize}
+
+Configurația API-ului și a modelului fluent al EF Core gestionează aceste relații într-o manieră elegantă, asigurând managementul automat al cheilor externe și aplicarea riguroasă a politicilor de ștergere în cascadă.
+
+Sistemul de migrări asigură controlul versiunilor pentru schema bazei de date. Această abordare este superioară utilizării scripturilor SQL manuale deoarece:
+
+\begin{itemize}
+    \item  migrările sunt integrate direct în limbaj și sigure din punct de vedere al tipurilor;
+    \item  sistemul menține o pistă de audit completă a evoluției și mutațiilor schemei;
+    \item  procedura de anulare a modificărilor este directă, predictibilă și complet reversibilă.
+\end{itemize}
+
+\subsection{Platfoma de Baze de Date: SQL Server}
+
+SQL Server este cea mai bună alegere pentru gestionarea bazei de date.
+
+\includegraphics[width=\linewidth]{Licenta.drawio.png}
+
+\section{Autentificare și Autorizare: ASP.NET Identity}
+
+\subsection{Cadrul de gestionare a identității}
+ASP.NET Core Identity este un sistem de membri încorporat, conceput special pentru aplicațiile ASP.NET. Adoptarea acestuia este optimă din următoarele considerente:
+
+\begin{itemize}
+    \item  hashing-ul și stocarea securizată a parolelor (folosind algoritmi de hashing adaptivi precum PBKDF2);
+    \item  capacități de autentificare cu doi pași, înlocuită în acest caz cu confirmarea prin e-mail;
+    \item  controlul accesului bazat pe rol, activat prin intermediul AddRoles<IdentityRole>().
+\end{itemize}
+
+Verificarea e-mailului: condiționarea accesului complet la platformă previne crearea de conturi rău intenționate și se aliniază cu cerințele de notificare bazate pe e-mail ale aplicației.
+
+Integrare cu EF Core: Identity utilizează Entity Framework pentru persistența datelor, eliminând necesitatea unei biblioteci de autentificare separate și asigurând o integrare cu modelul de date al aplicației prin `IdentityDbContext<ApplicationUser>`.
+
+\section{Tehnologii FrontEnd}
+\subsection{Framework-ul Bootstrap}
+Bootstrap, inclus în structura proiectului sub directorul wwwroot/lib/bootstrap/, este un framework CSS esențial care furnizează:
+
+\begin{itemize}
+    \item  design responsive: esențial pentru orice aplicație modernă;
+    \item  consistență vizuală: componentele arhitecturale predefinite garantează o interfață cu utilizatorul consistentă pe diferite pagini;
+    \item  accesibilitate: componentele Bootstrap sunt implementate în strictă conformitate cu directivele WCAG (Web Content Accessibility Guidelines), asigurând accesibilitatea și ergonomia platformei;
+    \item  dezvoltare rapidă: reduce scrierea CSS personalizată, accelerând timpul de dezvoltare.
+\end{itemize}
+
+\subsection{jQuery și mecanismele de validare}
+Biblioteca jQuery împreună cu extensiile sale dedicate validării oferă următoarele avantaje tehnice:
+\begin{itemize}
+    \item  validare non-intruzivă: regulile de validare sunt specificate în atributele data ale HTML, mai degrabă decât în JavaScript inline, păstrând preocupările separate;
+    \item  prevenirea erorilor pe partea de client: înainte ca datele să ajungă la server, validarea pe partea clientului oferă feedback imediat utilizatorului, reducând încărcarea serverului și îmbunătățind experiența;
+    \item  îmbunătățire progresivă: dacă JavaScript este dezactivat, validarea pe partea serverului funcționează în continuare, asigurând integritatea datelor.
+\end{itemize}
+
+Deși framework-urile moderne (React, Vue, Angular) ar putea înlocui jQuery, configurația actuală oferă o soluție ușoară, dovedită, care nu necesită complexitate suplimentară în pipeline-ul de build pentru o aplicație ASP.NET Core monolitică.
+
+\section{Caracteristici geospațiale: Mapbox}
+Mapbox este configurat ca furnizor principal de hărți. Pentru acest scenariu, Mapbox prezintă avantaje față de alte alternative deoarece:
+
+\begin{itemize}
+    \item  Eficiența costurilor: modelul de tarifare al platformei Mapbox se bazează pe utilizarea reală, ceea ce îl face rentabil pentru aplicațiile cu încărcături variabile de utilizatori. Vederile asociate permit randarea unor hărți interactive capabile să vizualizeze:
+        \begin{itemize}
+            \item  ppuncte de interes (POI) distribuite de-a lungul itinerariului;
+            \item  rute și traiectorii topologice calculate între locații;
+            \item  evidențierea țărilor vizitate.
+        \end{itemize}
+    \item  Prelucrarea datelor de geolocalizare: locațiile sunt persistate utilizând coordonate spațiale precise (latitudine și longitudine), capacitate care permite motorului Mapbox să efectueze operațiuni computaționale precum: calcularea precisă a distanțelor, optimizarea rutelor, reprezentarea vizuală a gradului de complexitate a topografiei.
+
+\end{itemize}
+
+\section{Servicii de e-mail: MailKit}
+Biblioteca MailKit reprezintă o soluție modernă și complet funcțională. În contextul acestei aplicații, MailKit furnizează următoarele capabilități tehnice:
+
+\begin{itemize}
+    \item  suport extins pentru protocolul SMTP: integrarea directă cu infrastructura SMTP a platformei Gmail facilitează transmiterea automată a mesajelor pentru diferite necesități;
+    \item  securitate la nivel de transport: spre deosebire de alte biblioteci, MailKit suportă standarde moderne de autentificare și criptare a canalelor de comunicație, garantând protecție;
+    \item  implementare personalizată: serviciul EmailSender implementează interfața IEmailSender, menținând o cuplare slabă și permițând migrarea viitoare către serviciile cloud fără modificări de cod.
+\end{itemize}
 

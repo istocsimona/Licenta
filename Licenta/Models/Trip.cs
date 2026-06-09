@@ -46,7 +46,7 @@ namespace Licenta.Models
         public virtual ICollection<Reservation> Reservations { get; set; } = new List<Reservation>();
 
 
-        // --- NEW: Server-side custom validation ---
+        // Server-side custom validation ---
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Check if StartDate is in the past (ignoring time)

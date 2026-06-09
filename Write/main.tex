@@ -2,6 +2,8 @@
 % !TEX program = xelatex
 \documentclass[12pt, a4paper]{report}
 
+
+\usepackage{pifont}
 % Suport pentru diacritice și alte simboluri
 \usepackage{fontspec}
 
@@ -39,7 +41,7 @@
 % Setează spațiere inter-linie (doublespacing din LaTeX este echivalentul setarii 1.5 in Microsoft Word)
 \usepackage{setspace}
 \doublespacing
-
+\usepackage{tgtermes}
 % Modificarea geometriei paginii (cu margini de 2,5 cm) 
 \usepackage[margin=2.5cm]{geometry}
 
@@ -126,8 +128,9 @@
 \pagestyle{main}
 \let\ps@plain\ps@main
 
-\include{1-introducere}
+\include{1-introducere} 
 \include{2-preliminarii}
+\include{aplicatie}
 \include{3-concluzii}
 
 \nocite{dotnet_aspnet}

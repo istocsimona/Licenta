@@ -200,9 +200,6 @@
         opacity: .1;
     }
 
-    /* ===============================
-           MAPBOX STYLING OVERRIDES
-           =============================== */
     .mapboxgl-ctrl-geocoder {
         width: 100% !important;
         max-width: 100% !important;
@@ -323,9 +320,6 @@
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
 
     <script>
-        // =========================
-        // SLIDER (Pre-filled)
-        // =========================
         var slider = document.getElementById('exploration-slider');
         var startInput = document.getElementById('start-input');
         var endInput = document.getElementById('end-input');
@@ -354,9 +348,6 @@
             endLabel.innerHTML = "End: " + values[1].toString().padStart(2, '0') + ":00";
         });
 
-        // =========================
-        // FLATPICKR RANGE CALENDAR (Pre-filled)
-        // =========================
         const hiddenStartDate = document.getElementById('hidden-start-date');
         const hiddenEndDate = document.getElementById('hidden-end-date');
         const dateSummary = document.getElementById('date-summary');
@@ -405,9 +396,6 @@
             }
         });
 
-        // =========================
-        // MAPBOX AUTOCOMPLETE (Pre-filled)
-        // =========================
         const mapboxToken = '@Configuration["Mapbox:PublicKey"]';
         const hiddenCity = document.getElementById("hidden-city");
         const hiddenCountry = document.getElementById("hidden-country");
@@ -417,16 +405,14 @@
             accessToken: mapboxToken,
             types: 'country,region,place,locality,neighborhood,poi',
             placeholder: 'Search for a city, place, or museum...',
-            marker: false // We don't have a map visual here, just the search bar
+            marker: false 
         });
 
         geocoder.addTo('#geocoder-container');
 
-        // PRE-FILL for the Edit screen!
         const initialCity = '@Html.Raw(Model.City)';
         const initialCountry = '@Html.Raw(Model.Country)';
         if (initialCity || initialCountry) {
-            // Set the visible text inside the Mapbox Search bar to match the saved location
             geocoder.setInput(`${initialCity}, ${initialCountry}`);
         }
 
@@ -456,7 +442,6 @@
             hiddenCountry.value = "";
         });
 
-        // VALIDATE BEFORE SUBMIT
         document.getElementById("tripForm").addEventListener("submit", function (e) {
             if (!hiddenCity.value) {
                 e.preventDefault();

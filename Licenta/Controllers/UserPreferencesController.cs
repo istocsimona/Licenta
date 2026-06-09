@@ -53,11 +53,10 @@ namespace Licenta.Controllers
         {
             var userId = _userManager.GetUserId(User);
 
-            // 1. Delete existing preferences to start fresh
+            // Delete existing preferences to start fresh
             var existingPrefs = _context.UserTagPreferences.Where(p => p.UserId == userId);
             _context.UserTagPreferences.RemoveRange(existingPrefs);
 
-            // 2. Add the newly assigned tiers (We ignore tier 4 "Don't Care" so it doesn't bloat the DB)
             if (tieredTags != null && tieredTags.Any())
             {
                 foreach (var item in tieredTags)
