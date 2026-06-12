@@ -19,39 +19,45 @@
 
 \refsection{0}
   \datalist[entry]{nty/global//global/global/global}
-    \entry{asp_ref}{online}{}{}
+    \entry{hav_ref}{online}{}{}
       \name{author}{1}{}{%
-        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
-           family={Microsoft},
-           familyi={M\bibinitperiod}}}%
+        {{hash=119b67d48967eb82e846ba67a694648a}{%
+           family={Prof.\bibnamedelimi Nitin\bibnamedelima R.Chopde},
+           familyi={P\bibinitperiod\bibinitdelim N\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Mr.\bibnamedelimi Mangesh\bibnamedelimb K.\bibnamedelimi Nichat},
+           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim K\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
       }
-      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
-      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
-      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
-      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
-      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
-      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
-      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
-      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
-      \field{sortinit}{M}
-      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \strng{namehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{fullhash}{119b67d48967eb82e846ba67a694648a}
+      \strng{fullhashraw}{119b67d48967eb82e846ba67a694648a}
+      \strng{bibnamehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authorbibnamehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authornamehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authorfullhash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authorfullhashraw}{119b67d48967eb82e846ba67a694648a}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{ASP.NET Core Documentation}
+      \field{title}{Landmark Based Shortest Path Detection by Using A* and Haversine Formula}
       \field{urlday}{20}
       \field{urlmonth}{5}
       \field{urlyear}{2024}
-      \field{year}{2024}
+      \field{year}{2013}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-8.0
+      \verb https://www.researchgate.net/profile/Mangesh-Nichat-2/publication/282314348_Landmark_based_shortest_path_detection_by_using_A_Algorithm_and_Haversine_Formula/links/56389bb708ae4bde5021b0f5/Landmark-based-shortest-path-detection-by-using-A-Algorithm-and-Haversine-Formula.pdf
       \endverb
       \verb{url}
-      \verb https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-8.0
+      \verb https://www.researchgate.net/profile/Mangesh-Nichat-2/publication/282314348_Landmark_based_shortest_path_detection_by_using_A_Algorithm_and_Haversine_Formula/links/56389bb708ae4bde5021b0f5/Landmark-based-shortest-path-detection-by-using-A-Algorithm-and-Haversine-Formula.pdf
       \endverb
     \endentry
   \enddatalist
+  \missing{controller_ref}
+  \missing{dependency_ref}
   \missing{dotnet_aspnet}
+  \missing{linq_ref}
+  \missing{tspNN_ref}
 \endrefsection
 \endinput
 

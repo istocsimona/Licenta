@@ -32,14 +32,47 @@ INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\fontenc
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\fontspec\fontspec.cfg
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\fontspec\fontspec.cfg
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\fontspec\fontspec.cfg
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\times.sty
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\psnfss\times.sty
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\polyglossia.sty
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\polyglossia.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\newtx\newtxtext.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\newtx\newtxtext.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xpatch\xpatch.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xpatch\xpatch.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\etoolbox\etoolbox.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\etoolbox\etoolbox.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xcolor\xcolor.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xcolor\xcolor.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\color.cfg
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\color.cfg
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\color.cfg
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-def\xetex.def
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-def\xetex.def
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-def\xetex.def
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\iftex\iftex.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\iftex\iftex.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xkeyval\xkeyval.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xkeyval\xkeyval.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\xkeyval\xkeyval.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\xkeyval\xkvutils.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\xkeyval\keyval.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\textcomp.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\textcomp.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xstring\xstring.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\xstring\xstring.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\xstring\xstring.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\ifthen.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\ifthen.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\carlisle\scalefnt.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\carlisle\scalefnt.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\mweights\mweights.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\binhex\binhex.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\binhex\binhex.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\binhex\binhex.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\binhex\binhex.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\generic\binhex\binhex.tex
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\polyglossia.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\polyglossia.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\gloss-latex.ldf
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\gloss-latex.ldf
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\gloss-romanian.ldf
@@ -48,7 +81,6 @@ INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\polyglossia\gloss-english.ldf
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\csquotes\csquotes.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\csquotes\csquotes.sty
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\keyval.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\keyval.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\csquotes\csquotes.def
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\csquotes\csquotes.def
@@ -73,8 +105,6 @@ INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\logreq\logre
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\logreq\logreq.def
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\logreq\logreq.def
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\logreq\logreq.def
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\ifthen.sty
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\base\ifthen.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\url\url.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\url\url.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\biblatex\blx-dm.def
@@ -124,9 +154,8 @@ INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\tri
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\graphics.cfg
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\graphics.cfg
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\graphics.cfg
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-def\xetex.def
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-def\xetex.def
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-def\xetex.def
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\wrapfig\wrapfig.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\wrapfig\wrapfig.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\listings\listings.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\listings\listings.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\listings\lstpatch.sty
@@ -205,6 +234,10 @@ INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\appendix\app
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\appendix\appendix.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\fancyhdr\fancyhdr.sty
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\fancyhdr\fancyhdr.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\titlesec\titlesec.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\titlesec\titlesec.sty
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\newtx\TeXGyreTermesX.fontspec
+INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\newtx\TeXGyreTermesX.fontspec
 INPUT .\main.aux
 INPUT .\main.aux
 INPUT main.aux
@@ -246,13 +279,6 @@ INPUT .\main.bbl
 INPUT .\main.bbl
 INPUT main.bbl
 INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\color.sty
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\color.sty
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\color.cfg
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\color.cfg
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics-cfg\color.cfg
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
-INPUT C:\Users\Simona Istoc\AppData\Local\Programs\MiKTeX\tex\latex\graphics\mathcolor.ltx
 INPUT .\main.out
 INPUT .\main.out
 INPUT main.out
@@ -304,6 +330,16 @@ OUTPUT aplicatie.aux
 INPUT .\aplicatie.tex
 INPUT .\aplicatie.tex
 INPUT aplicatie.tex
+INPUT .\images\tripCard.png
+INPUT .\images\tripCard.png
+INPUT .\images\detalii.png
+INPUT .\images\detalii.png
+INPUT .\images\adaugare.png
+INPUT .\images\adaugare.png
+INPUT .\images\calendar.png
+INPUT .\images\calendar.png
+INPUT .\images\harta.png
+INPUT .\images\harta.png
 INPUT .\3-concluzii.tex
 INPUT .\3-concluzii.tex
 OUTPUT 3-concluzii.aux

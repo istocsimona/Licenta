@@ -19,7 +19,141 @@
 
 \refsection{0}
   \datalist[entry]{nty/global//global/global/global}
-    \entry{asp_ref}{online}{}{}
+    \entry{mapbox_havesine_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=422214450f2a9164517882e68eaaff80}{%
+           family={Ahmat\bibnamedelima Adil},
+           familyi={A\bibinitperiod\bibinitdelim A\bibinitperiod},
+           given={Bambang\bibnamedelimb Krismono\bibnamedelima Triwijoyo},
+           giveni={B\bibinitperiod\bibinitdelim K\bibinitperiod\bibinitdelim T\bibinitperiod}}}%
+      }
+      \strng{namehash}{422214450f2a9164517882e68eaaff80}
+      \strng{fullhash}{422214450f2a9164517882e68eaaff80}
+      \strng{fullhashraw}{422214450f2a9164517882e68eaaff80}
+      \strng{bibnamehash}{422214450f2a9164517882e68eaaff80}
+      \strng{authorbibnamehash}{422214450f2a9164517882e68eaaff80}
+      \strng{authornamehash}{422214450f2a9164517882e68eaaff80}
+      \strng{authorfullhash}{422214450f2a9164517882e68eaaff80}
+      \strng{authorfullhashraw}{422214450f2a9164517882e68eaaff80}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Spatial Implementation of the Harvesine Algorithm in The Mapbox API for Tourism Mapping}
+      \field{urlday}{11}
+      \field{urlmonth}{3}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://journal.universitasbumigora.ac.id/bite/article/view/2874
+      \endverb
+      \verb{url}
+      \verb https://journal.universitasbumigora.ac.id/bite/article/view/2874
+      \endverb
+    \endentry
+    \entry{identity_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=72f9c5b103654f7354d38497a1f6389c}{%
+           family={Alexander\bibnamedelima Barabanov},
+           familyi={A\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Denis\bibnamedelima Makrushin},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{fullhash}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{fullhashraw}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{bibnamehash}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{authorbibnamehash}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{authornamehash}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{authorfullhash}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{authorfullhashraw}{72f9c5b103654f7354d38497a1f6389c}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Authentication and authorization in microservice-based systems: survey of architecture patterns}
+      \field{urlday}{1}
+      \field{urlmonth}{2}
+      \field{urlyear}{2026}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2009.02114
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2009.02114
+      \endverb
+    \endentry
+    \entry{recomandation_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=5a4a29e6288f773825cfe051d263b710}{%
+           family={Hang\bibnamedelima Liu},
+           familyi={H\bibinitperiod\bibinitdelim L\bibinitperiod},
+           given={Akihiko\bibnamedelima Hyodo},
+           giveni={A\bibinitperiod\bibinitdelim H\bibinitperiod},
+           suffix={Shintaro\bibnamedelima Suzuki},
+           suffixi={S\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+      }
+      \strng{namehash}{5a4a29e6288f773825cfe051d263b710}
+      \strng{fullhash}{5a4a29e6288f773825cfe051d263b710}
+      \strng{fullhashraw}{5a4a29e6288f773825cfe051d263b710}
+      \strng{bibnamehash}{5a4a29e6288f773825cfe051d263b710}
+      \strng{authorbibnamehash}{5a4a29e6288f773825cfe051d263b710}
+      \strng{authornamehash}{5a4a29e6288f773825cfe051d263b710}
+      \strng{authorfullhash}{5a4a29e6288f773825cfe051d263b710}
+      \strng{authorfullhashraw}{5a4a29e6288f773825cfe051d263b710}
+      \field{sortinit}{H}
+      \field{sortinithash}{23a3aa7c24e56cfa16945d55545109b5}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{LLMs Based Multi-Modal Location Recommendation for Smart Building}
+      \field{urlday}{25}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://journals.sagepub.com/doi/10.3233/FAIA241326
+      \endverb
+      \verb{url}
+      \verb https://journals.sagepub.com/doi/10.3233/FAIA241326
+      \endverb
+    \endentry
+    \entry{jitAOT_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=2dbd4de40f1f358c0a4d5909f5f34257}{%
+           family={Jafri},
+           familyi={J\bibinitperiod},
+           given={Syed\bibnamedelimb Zeeshan\bibnamedelima Ali},
+           giveni={S\bibinitperiod\bibinitdelim Z\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+      }
+      \strng{namehash}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{fullhash}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{fullhashraw}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{bibnamehash}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{authorbibnamehash}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{authornamehash}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{authorfullhash}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{authorfullhashraw}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \field{sortinit}{J}
+      \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Just-In-Time (JIT) vs. Ahead-Of-Time (AOT) Compilation in .NET Core}
+      \field{urlday}{25}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://medium.com/@Mr.Jafri_01/just-in-time-jit-vs-ahead-of-time-aot-compilation-in-net-core-c7650f1a366a
+      \endverb
+      \verb{url}
+      \verb https://medium.com/@Mr.Jafri_01/just-in-time-jit-vs-ahead-of-time-aot-compilation-in-net-core-c7650f1a366a
+      \endverb
+    \endentry
+    \entry{linq_ref}{online}{}{}
       \name{author}{1}{}{%
         {{hash=140864078aeca1c7c35b4beb33c53c34}{%
            family={Microsoft},
@@ -33,21 +167,217 @@
       \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
       \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
       \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{1}
       \field{sortinit}{M}
       \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{ASP.NET Core Documentation}
+      \field{title}{Deferred execution and lazy evaluation (LINQ to XML)}
       \field{urlday}{20}
-      \field{urlmonth}{5}
-      \field{urlyear}{2024}
-      \field{year}{2024}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2022}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-8.0
+      \verb https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/deferred-execution-and-lazy-evaluation
       \endverb
       \verb{url}
-      \verb https://learn.microsoft.com/en-us/aspnet/core/?view=aspnetcore-8.0
+      \verb https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/deferred-execution-and-lazy-evaluation
+      \endverb
+    \endentry
+    \entry{dependency_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{2}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Dependency injection in ASP.NET Core}
+      \field{urlday}{20}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0
+      \endverb
+    \endentry
+    \entry{controller_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{3}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Handle requests with controllers in ASP.NET Core MVC}
+      \field{urlday}{20}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-10.0
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-10.0
+      \endverb
+    \endentry
+    \entry{razor_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{4}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Simple authorization in ASP.NET Core Razor Pages}
+      \field{urlday}{20}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/razor-pages/security/authorization/simple?view=aspnetcore-10.0
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/razor-pages/security/authorization/simple?view=aspnetcore-10.0
+      \endverb
+    \endentry
+    \entry{hav_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=119b67d48967eb82e846ba67a694648a}{%
+           family={Prof.\bibnamedelimi Nitin\bibnamedelima R.Chopde},
+           familyi={P\bibinitperiod\bibinitdelim N\bibinitperiod\bibinitdelim R\bibinitperiod},
+           given={Mr.\bibnamedelimi Mangesh\bibnamedelimb K.\bibnamedelimi Nichat},
+           giveni={M\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim K\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+      }
+      \strng{namehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{fullhash}{119b67d48967eb82e846ba67a694648a}
+      \strng{fullhashraw}{119b67d48967eb82e846ba67a694648a}
+      \strng{bibnamehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authorbibnamehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authornamehash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authorfullhash}{119b67d48967eb82e846ba67a694648a}
+      \strng{authorfullhashraw}{119b67d48967eb82e846ba67a694648a}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Landmark Based Shortest Path Detection by Using A* and Haversine Formula}
+      \field{urlday}{1}
+      \field{urlmonth}{3}
+      \field{urlyear}{2026}
+      \field{year}{2013}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.researchgate.net/profile/Mangesh-Nichat-2/publication/282314348_Landmark_based_shortest_path_detection_by_using_A_Algorithm_and_Haversine_Formula/links/56389bb708ae4bde5021b0f5/Landmark-based-shortest-path-detection-by-using-A-Algorithm-and-Haversine-Formula.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.researchgate.net/profile/Mangesh-Nichat-2/publication/282314348_Landmark_based_shortest_path_detection_by_using_A_Algorithm_and_Haversine_Formula/links/56389bb708ae4bde5021b0f5/Landmark-based-shortest-path-detection-by-using-A-Algorithm-and-Haversine-Formula.pdf
+      \endverb
+    \endentry
+    \entry{mapbox_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=903163dcd48b010a4354e24f96168366}{%
+           family={Rzeszewski},
+           familyi={R\bibinitperiod},
+           given={Michał},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{903163dcd48b010a4354e24f96168366}
+      \strng{fullhash}{903163dcd48b010a4354e24f96168366}
+      \strng{fullhashraw}{903163dcd48b010a4354e24f96168366}
+      \strng{bibnamehash}{903163dcd48b010a4354e24f96168366}
+      \strng{authorbibnamehash}{903163dcd48b010a4354e24f96168366}
+      \strng{authornamehash}{903163dcd48b010a4354e24f96168366}
+      \strng{authorfullhash}{903163dcd48b010a4354e24f96168366}
+      \strng{authorfullhashraw}{903163dcd48b010a4354e24f96168366}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Evaluating Participatory Mapping Software, Chapter Mapbox}
+      \field{urlday}{27}
+      \field{urlmonth}{2}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://link.springer.com/chapter/10.1007/978-3-031-19594-5_2
+      \endverb
+      \verb{url}
+      \verb https://link.springer.com/chapter/10.1007/978-3-031-19594-5_2
+      \endverb
+    \endentry
+    \entry{tspNN_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=d49a933936917680e2acb180704d7154}{%
+           family={Stefan\bibnamedelima Hougardy},
+           familyi={S\bibinitperiod\bibinitdelim H\bibinitperiod},
+           given={Mirko\bibnamedelima Wilde},
+           giveni={M\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{d49a933936917680e2acb180704d7154}
+      \strng{fullhash}{d49a933936917680e2acb180704d7154}
+      \strng{fullhashraw}{d49a933936917680e2acb180704d7154}
+      \strng{bibnamehash}{d49a933936917680e2acb180704d7154}
+      \strng{authorbibnamehash}{d49a933936917680e2acb180704d7154}
+      \strng{authornamehash}{d49a933936917680e2acb180704d7154}
+      \strng{authorfullhash}{d49a933936917680e2acb180704d7154}
+      \strng{authorfullhashraw}{d49a933936917680e2acb180704d7154}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{On the nearest neighbor rule for the metric traveling salesman problem}
+      \field{urlday}{13}
+      \field{urlmonth}{3}
+      \field{urlyear}{2026}
+      \field{year}{2015}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.sciencedirect.com/science/article/pii/S0166218X14001486#a000005
+      \endverb
+      \verb{url}
+      \verb https://www.sciencedirect.com/science/article/pii/S0166218X14001486#a000005
       \endverb
     \endentry
   \enddatalist

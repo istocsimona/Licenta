@@ -477,8 +477,8 @@
 
                 <!-- ACCOMMODATION SECTION -->
                 
-                <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
-    <h3 class="section-title m-0"><i class="bi bi-house-door-fill me-2"></i> Accommodation</h3>
+<div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+ <h3 class="section-title m-0"><i class="bi bi-house-door-fill me-2"></i> Accommodation</h3>
 </div>
 
 @if (Model.Accommodation != null)
@@ -548,10 +548,13 @@ else
                 <!-- LOCATIONS SECTION -->
                 <div class="locations-header">
                     <h3 class="section-title"><i class="bi bi-map-fill me-2"></i>Locations & Itinerary</h3>
-                    
-                    <a asp-controller="Locations" asp-action="Add" asp-route-tripId="@Model.TripId" class="btn-add-location">
-                        <i class="bi bi-plus-lg me-1"></i> Add More
-                    </a>
+    
+                    @if (Model.EndDate >= DateTime.Now.Date)
+                    {
+                        <a asp-controller="Locations" asp-action="Add" asp-route-tripId="@Model.TripId" class="btn-add-location">
+                            <i class="bi bi-plus-lg me-1"></i> Add More
+                        </a>
+                    }
                 </div>
 
                 @if (Model.Locations != null && Model.Locations.Any())
@@ -789,6 +792,32 @@ else
     </div>
 </div>
 
+
+
+<div class="modal fade" id="missingPreferencesModal" tabindex="-1" aria-labelledby="missingPreferencesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 1.2rem;">
+            <div class="modal-header bg-light border-0" style="border-radius: 1.2rem 1.2rem 0 0;">
+                <h5 class="modal-title fw-bold text-dark" id="missingPreferencesModalLabel">
+                    <i class="bi text-warning me-2"></i>Preferences Needed
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4 text-center">
+                <div style="font-size: 3rem; color: var(--p3); margin-bottom: 1rem;">
+                    <i class="bi bi-person-lines-fill"></i>
+                </div>
+                <h5 class="fw-bold mb-3">Tell us what you like!</h5>
+                <p class="text-muted mb-4">You don't have your travel preferences selected yet. We need these to give you the best, personalized AI recommendations for your trip.</p>
+                
+                <a asp-controller="UserPreferences" asp-action="Index" class="btn text-white px-4 py-2 w-100" style="background-color: var(--p4); border-radius: 0.8rem; font-weight: 600;">
+                    Go to Preferences
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
@@ -855,10 +884,17 @@ else
                 try {
                     const response = await fetch(this.action, { method: this.method, body: new FormData(this) });
                     const data = await response.json();
+            
                     if (data.success) {
                         window.location.reload(); 
                     } else {
-                        alert("AI Error: " + (data.message || "Could not generate."));
+                        // Check if the backend is telling us we need to set preferences
+                        if (data.needsPreferences) {
+                            const prefsModal = new bootstrap.Modal(document.getElementById('missingPreferencesModal'));
+                            prefsModal.show();
+                        } else {
+                            alert("AI Error: " + (data.message || "Could not generate."));
+                        }
                         btn.innerHTML = originalHtml;
                         btn.disabled = false;
                     }

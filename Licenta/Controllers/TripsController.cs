@@ -280,6 +280,19 @@ namespace Licenta.Controllers
 
             return View();
         }
+
+        public IActionResult PastTrips()
+        {
+            var today = DateTime.Now.Date;
+
+            // Fetch only past trips from your database (assuming _context.Trips)
+            var pastTrips = _context.Trips
+                .Where(t => t.EndDate.Date < today)
+                .OrderByDescending(t => t.EndDate)
+                .ToList();
+
+            return View(pastTrips);
+        }
     }
 
 }
