@@ -8,7 +8,7 @@
 \usepackage{fontspec}
 
 % Font Times New Roman
-\usepackage{times}
+\usepackage{newtxtext} 
 
 % Suport pentru mai multe limbi
 \usepackage{polyglossia}
@@ -47,6 +47,7 @@
 
 % Include funcțiile de grafică
 \usepackage{graphicx}
+\usepackage{wrapfig}
 % Încarcă imaginile din directorul `images`
 \graphicspath{{./images/}}
 
@@ -55,12 +56,17 @@
 
 % Linkuri interactive în PDF
 \usepackage[
-    colorlinks,
+    colorlinks=true,
     linkcolor={black},
     menucolor={black},
     citecolor={black},
-    urlcolor={blue}
+    urlcolor={black}      % black globally
 ]{hyperref}
+
+\usepackage{biblatex}
+
+% Switch URL color to blue only inside the bibliography
+\AtBeginBibliography{\hypersetup{urlcolor=blue}}
 
 % Simboluri matematice codificate Unicode
 \usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
@@ -95,6 +101,16 @@
 
 % Generează variabilele cu @
 \makeatletter
+
+% Pachet pentru formatarea titlurilor de capitole și secțiuni
+\usepackage{titlesec}
+
+% Redefinirea formatului pentru \chapter pe un singur rând
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries}{\chaptername~\thechapter.}{15pt}{\Huge}
+
+% Opțional: Ajustarea spațiului de deasupra și dedesubtul titlului
+\titlespacing*{\chapter}{0pt}{-20pt}{40pt}
 
 \begin{document}
 

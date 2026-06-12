@@ -9,15 +9,17 @@
     // 2. Filter and categorize trips
     var currentTrips = Model.Where(t => t.StartDate.Date <= today && t.EndDate.Date >= today).OrderBy(t => t.StartDate).ToList();
     var upcomingTrips = Model.Where(t => t.StartDate.Date > today).OrderBy(t => t.StartDate).ToList();
-    var pastTrips = Model.Where(t => t.EndDate.Date < today).OrderByDescending(t => t.EndDate).ToList();
+
+    // Get ALL past trips to count them, but take only the first 2 for the main view
+    var allPastTrips = Model.Where(t => t.EndDate.Date < today).OrderByDescending(t => t.EndDate).ToList();
+    var recentPastTrips = allPastTrips.Take(2).ToList();
 
     // 3. Create a structure to easily loop through the sections in the UI
-    // Added a 'Type' property to apply specific CSS styles to different categories
     var tripSections = new[]
     {
-        new { Title = "✨ Happening Now", Trips = currentTrips, ShowPlan = true, Type = "current" },
-        new { Title = "🗓️ Upcoming Adventures", Trips = upcomingTrips, ShowPlan = true, Type = "upcoming" },
-        new { Title = "📸 Travel Memories", Trips = pastTrips, ShowPlan = false, Type = "past" }
+        new { Title = "Happening Now", Trips = currentTrips, ShowPlan = true, Type = "current", HasMore = false },
+        new { Title = "Upcoming Adventures", Trips = upcomingTrips, ShowPlan = true, Type = "upcoming", HasMore = false },
+        new { Title = "Travel Memories", Trips = recentPastTrips, ShowPlan = false, Type = "past", HasMore = allPastTrips.Count > 2 }
     };
 }
 
@@ -182,23 +184,20 @@
         }
 
     @@keyframes pulse {
-        0%
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(121, 180, 169, 0.7);
+        }
 
-    {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(121, 180, 169, 0.7);
-    }
+        70% {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 8px rgba(121, 180, 169, 0);
+        }
 
-    70% {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 8px rgba(121, 180, 169, 0);
-    }
-
-    100% {
-        transform: scale(1);
-        box-shadow: 0 0 0 0 rgba(121, 180, 169, 0);
-    }
-
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(121, 180, 169, 0);
+        }
     }
 
     .badge-live {
@@ -256,19 +255,58 @@
                 background-color: #fdf2f2;
             }
 
-    /* Fact Box */
-    .fact-sidebar {
-        position: sticky;
-        top: 2rem;
-    }
-
-    .fact-box {
+    /* ===============================
+           FLOATING TRIVIA WIDGET
+           =============================== */
+    .floating-trivia {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 320px;
+        z-index: 1050; /* Keeps it above the trips */
         background-color: #fdfdfc;
         border: 2px dashed var(--p3);
         border-radius: 1.5rem;
-        padding: 1.8rem;
-        box-shadow: 0 8px 24px rgba(103, 111, 84, 0.08);
+        box-shadow: 0 15px 35px rgba(103, 111, 84, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        padding: 1.2rem;
     }
+
+        .floating-trivia:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(103, 111, 84, 0.25);
+        }
+
+    /* Make it responsive for mobile phones */
+    @@media (max-width: 768px) {
+        .floating-trivia {
+            bottom: 1rem;
+            right: 1rem;
+            width: calc(100% - 2rem);
+        }
+    }
+
+    /* Collapsible Trivia Card Animations */
+    .trivia-toggle {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+        .trivia-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .trivia-toggle .chevron {
+            transition: transform 0.3s ease;
+            color: var(--p3);
+            font-weight: bold;
+        }
+
+        /* Rotates the arrow when the card is open */
+        .trivia-toggle[aria-expanded="true"] .chevron {
+            transform: rotate(180deg);
+        }
 
     .btn-reveal {
         background-color: var(--p1);
@@ -285,10 +323,30 @@
             background-color: var(--p3);
             color: white;
         }
+
+    .btn-see-all {
+        color: var(--p4);
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        padding: 0.4rem 1rem;
+        border-radius: 2rem;
+        background-color: var(--p1);
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+        .btn-see-all:hover {
+            background-color: var(--p3);
+            color: white;
+            transform: translateX(4px);
+        }
 </style>
 
 <div class="row mt-3">
-    <div class="col-lg-9">
+    <div class="col-12">
         <div class="d-flex justify-content-between align-items-center mb-5">
             <h1 class="page-title mb-0">My Trips</h1>
 
@@ -319,7 +377,7 @@
             {
                 <h3 class="section-title mb-4">@tripCategory.Title</h3>
 
-                <div class="row row-cols-1 row-cols-md-2 g-4 mb-5">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3  g-4 mb-5">
                     @foreach (var item in tripCategory.Trips)
                     {
                         <div class="col">
@@ -433,50 +491,99 @@
                         </div>
                     }
                 </div>
+                @if (tripCategory.HasMore)
+                {
+                    <div class="text-center mb-5">
+                        <a asp-action="PastTrips" class="btn-card-details d-inline-block w-auto px-5 py-2">
+                            See all past trips <i class="bi bi-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-5"></div>
+                }
             }
         }
     </div>
 
-    <div class="col-lg-3 mt-4 mt-lg-0">
-        <div class="fact-sidebar">
-            <div class="fact-box">
-                <h4 style="color: var(--p4); font-weight: 900; font-size: 1.3rem; margin-bottom: 1rem;">
-                    <i class="bi bi-patch-question-fill me-1" style="color: #ffc107;"></i>
-                    Trivia Time!
-                </h4>
+</div>
 
-                <p style="color: var(--p5); font-weight: 700; font-size: 1.05rem; line-height: 1.5;">
-                    @ViewBag.TriviaQuestion
-                </p>
+<div class="floating-trivia">
+    <div class="trivia-toggle d-flex justify-content-between align-items-center"
+         data-bs-toggle="collapse"
+         data-bs-target="#triviaContent"
+         aria-expanded="false"
+         aria-controls="triviaContent">
+        <h4 class="mb-0" style="color: var(--p4); font-weight: 900; font-size: 1.2rem;">
+            <i class="bi bi-patch-question-fill me-1" style="color: #ffc107;"></i>
+            Trivia Time!
+        </h4>
+        <i class="bi bi-chevron-down chevron"></i>
+    </div>
 
-                @if (ViewBag.TriviaOptions != null)
-                {
-                    <ul style="list-style-type: none; padding-left: 0; margin-bottom: 1.5rem;">
-                        @foreach (var option in (List<string>)ViewBag.TriviaOptions)
-                        {
-                            <li style="background-color: var(--p1); padding: 0.5rem 1rem; border-radius: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--p5);">
-                                @option
-                            </li>
-                        }
-                    </ul>
-                }
+    <div class="collapse" id="triviaContent">
+        <div class="pt-4">
+            <p style="color: var(--p5); font-weight: 700; font-size: 1rem; line-height: 1.4;">
+                @ViewBag.TriviaQuestion
+            </p>
 
-                @if (!string.IsNullOrEmpty(ViewBag.TriviaAnswer))
-                {
-                    <div style="margin-top: 0.5rem;">
-                        <button class="btn-reveal shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#triviaAnswer">
-                            <i class="bi bi-stars me-1"></i> Reveal Answer
-                        </button>
-                        <div class="collapse mt-3" id="triviaAnswer">
-                            <div class="text-center p-3" style="background-color: #e9f0e6; border-radius: 1rem;">
-                                <p class="mb-0" style="font-weight: 900; color: var(--p5); font-size: 1.1rem;">
-                                    @ViewBag.TriviaAnswer
-                                </p>
-                            </div>
+            @if (ViewBag.TriviaOptions != null)
+            {
+                <ul style="list-style-type: none; padding-left: 0; margin-bottom: 1.5rem;">
+                    @foreach (var option in (List<string>)ViewBag.TriviaOptions)
+                    {
+                        <li style="background-color: var(--p1); padding: 0.5rem 1rem; border-radius: 0.8rem; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; color: var(--p5);">
+                            @option
+                        </li>
+                    }
+                </ul>
+            }
+
+            @if (!string.IsNullOrEmpty(ViewBag.TriviaAnswer))
+            {
+                <div style="margin-top: 0.5rem;">
+                    <button class="btn-reveal shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#triviaAnswer">
+                        <i class="bi bi-stars me-1"></i> Reveal Answer
+                    </button>
+                    <div class="collapse mt-3" id="triviaAnswer">
+                        <div class="text-center p-3" style="background-color: #e9f0e6; border-radius: 1rem;">
+                            <p class="mb-0" style="font-weight: 900; color: var(--p5); font-size: 1.1rem;">
+                                @ViewBag.TriviaAnswer
+                            </p>
                         </div>
                     </div>
-                }
-            </div>
+                </div>
+            }
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const triviaContent = document.getElementById('triviaContent');
+            let collapseTimeout;
+
+            if (triviaContent) {
+                triviaContent.addEventListener('shown.bs.collapse', function () {
+
+                    clearTimeout(collapseTimeout);
+
+                    // Set a timer for 1 minute (60000 ms)
+                    collapseTimeout = setTimeout(function () {
+                        // Find the bootstrap collapse instance and hide it
+                        let bsCollapse = bootstrap.Collapse.getInstance(triviaContent);
+                        if (bsCollapse) {
+                            bsCollapse.hide();
+                        }
+                    }, 60000);
+                });
+
+                triviaContent.addEventListener('hidden.bs.collapse', function () {
+                    clearTimeout(collapseTimeout);
+                });
+            }
+        });
+    </script>
+}

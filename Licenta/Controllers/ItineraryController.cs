@@ -427,7 +427,15 @@ namespace Licenta.Controllers
                     .Select(p => p.Tag)
                     .ToListAsync();
 
-                if (!topTags.Any()) return Json(new { success = false, message = "Please rank your preferences first!" });
+                if (!topTags.Any())
+                {
+                    return Json(new
+                    {
+                        success = false,
+                        needsPreferences = true,
+                        message = "You don't have your preferences selected."
+                    });
+                }
 
                 var mapboxToken = _configuration["Mapbox:PublicKey"];
                 var client = _httpClientFactory.CreateClient();
