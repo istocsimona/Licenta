@@ -52,37 +52,111 @@
       \verb https://journal.universitasbumigora.ac.id/bite/article/view/2874
       \endverb
     \endentry
-    \entry{identity_ref}{online}{}{}
+    \entry{cSharp_ref}{online}{}{}
       \name{author}{1}{}{%
-        {{hash=72f9c5b103654f7354d38497a1f6389c}{%
-           family={Alexander\bibnamedelima Barabanov},
-           familyi={A\bibinitperiod\bibinitdelim B\bibinitperiod},
-           given={Denis\bibnamedelima Makrushin},
-           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=1622ba11260b898cc6adc1a0c79c2491}{%
+           family={Anders\bibnamedelima Hejlsberg},
+           familyi={A\bibinitperiod\bibinitdelim H\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod},
+           suffix={Scott\bibnamedelima Wiltamuth},
+           suffixi={S\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
       }
-      \strng{namehash}{72f9c5b103654f7354d38497a1f6389c}
-      \strng{fullhash}{72f9c5b103654f7354d38497a1f6389c}
-      \strng{fullhashraw}{72f9c5b103654f7354d38497a1f6389c}
-      \strng{bibnamehash}{72f9c5b103654f7354d38497a1f6389c}
-      \strng{authorbibnamehash}{72f9c5b103654f7354d38497a1f6389c}
-      \strng{authornamehash}{72f9c5b103654f7354d38497a1f6389c}
-      \strng{authorfullhash}{72f9c5b103654f7354d38497a1f6389c}
-      \strng{authorfullhashraw}{72f9c5b103654f7354d38497a1f6389c}
+      \strng{namehash}{1622ba11260b898cc6adc1a0c79c2491}
+      \strng{fullhash}{1622ba11260b898cc6adc1a0c79c2491}
+      \strng{fullhashraw}{1622ba11260b898cc6adc1a0c79c2491}
+      \strng{bibnamehash}{1622ba11260b898cc6adc1a0c79c2491}
+      \strng{authorbibnamehash}{1622ba11260b898cc6adc1a0c79c2491}
+      \strng{authornamehash}{1622ba11260b898cc6adc1a0c79c2491}
+      \strng{authorfullhash}{1622ba11260b898cc6adc1a0c79c2491}
+      \strng{authorfullhashraw}{1622ba11260b898cc6adc1a0c79c2491}
       \field{sortinit}{A}
       \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Authentication and authorization in microservice-based systems: survey of architecture patterns}
-      \field{urlday}{1}
-      \field{urlmonth}{2}
+      \field{title}{The C\# Programming Language}
+      \field{urlday}{25}
+      \field{urlmonth}{4}
       \field{urlyear}{2026}
-      \field{year}{2020}
+      \field{year}{2006}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://arxiv.org/abs/2009.02114
+      \verb https://books.google.ro/books?hl=ro&lr=&id=6L1Rm031qCkC&oi=fnd&pg=PA3&dq=c%23+language&ots=5yOX9xRYsM&sig=MqDiu-i5oopbHbnfK348lA-mM3o&redir_esc=y#v=onepage&q=c%23%20language&f=false
       \endverb
       \verb{url}
-      \verb https://arxiv.org/abs/2009.02114
+      \verb https://books.google.ro/books?hl=ro&lr=&id=6L1Rm031qCkC&oi=fnd&pg=PA3&dq=c%23+language&ots=5yOX9xRYsM&sig=MqDiu-i5oopbHbnfK348lA-mM3o&redir_esc=y#v=onepage&q=c%23%20language&f=false
+      \endverb
+    \endentry
+    \entry{nn_ref}{online}{}{}
+      \name{author}{2}{}{%
+        {{hash=d97b454d6ed9a9576ab2eb2d620c9ca0}{%
+           family={Electrical},
+           familyi={E\bibinitperiod},
+           given={IEEE\bibnamedelimb -\bibnamedelima Institute},
+           giveni={I\bibinitperiod\bibinitdelim \bibinithyphendelim \bibinitperiod\bibinitdelim I\bibinitperiod},
+           prefix={of},
+           prefixi={o\bibinitperiod}}}%
+        {{hash=4b130cfa309b2ff17cea51cb7fb7d85f}{%
+           family={Engineers},
+           familyi={E\bibinitperiod},
+           given={Electronics},
+           giveni={E\bibinitperiod}}}%
+      }
+      \strng{namehash}{a6b37963f83327a27290af9b58e65811}
+      \strng{fullhash}{a6b37963f83327a27290af9b58e65811}
+      \strng{fullhashraw}{a6b37963f83327a27290af9b58e65811}
+      \strng{bibnamehash}{a6b37963f83327a27290af9b58e65811}
+      \strng{authorbibnamehash}{a6b37963f83327a27290af9b58e65811}
+      \strng{authornamehash}{a6b37963f83327a27290af9b58e65811}
+      \strng{authorfullhash}{a6b37963f83327a27290af9b58e65811}
+      \strng{authorfullhashraw}{a6b37963f83327a27290af9b58e65811}
+      \field{sortinit}{E}
+      \field{sortinithash}{8da8a182d344d5b9047633dfc0cc9131}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{A Brief Review of Nearest Neighbor Algorithm for Learning and Classification}
+      \field{urlday}{11}
+      \field{urlmonth}{3}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://ieeexplore.ieee.org/abstract/document/9065747
+      \endverb
+      \verb{url}
+      \verb https://ieeexplore.ieee.org/abstract/document/9065747
+      \endverb
+    \endentry
+    \entry{mapbox_check_ref}{online}{}{}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labeltitlesource}{title}
+      \field{title}{Geocoding}
+      \field{urlday}{25}
+      \field{urlmonth}{3}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.mapbox.com/geocoding
+      \endverb
+      \verb{url}
+      \verb https://www.mapbox.com/geocoding
+      \endverb
+    \endentry
+    \entry{groq_ref}{online}{}{}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labeltitlesource}{title}
+      \field{title}{Groq Page}
+      \field{urlday}{25}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://groq.com/
+      \endverb
+      \verb{url}
+      \verb https://groq.com/
       \endverb
     \endentry
     \entry{recomandation_ref}{online}{}{}
@@ -120,40 +194,55 @@
       \verb https://journals.sagepub.com/doi/10.3233/FAIA241326
       \endverb
     \endentry
-    \entry{jitAOT_ref}{online}{}{}
+    \entry{jwt_ref}{online}{}{}
       \name{author}{1}{}{%
-        {{hash=2dbd4de40f1f358c0a4d5909f5f34257}{%
-           family={Jafri},
-           familyi={J\bibinitperiod},
-           given={Syed\bibnamedelimb Zeeshan\bibnamedelima Ali},
-           giveni={S\bibinitperiod\bibinitdelim Z\bibinitperiod\bibinitdelim A\bibinitperiod}}}%
+        {{hash=31bc9add0736a1165550c9896234e3c2}{%
+           family={JWT.IO},
+           familyi={J\bibinitperiod}}}%
       }
-      \strng{namehash}{2dbd4de40f1f358c0a4d5909f5f34257}
-      \strng{fullhash}{2dbd4de40f1f358c0a4d5909f5f34257}
-      \strng{fullhashraw}{2dbd4de40f1f358c0a4d5909f5f34257}
-      \strng{bibnamehash}{2dbd4de40f1f358c0a4d5909f5f34257}
-      \strng{authorbibnamehash}{2dbd4de40f1f358c0a4d5909f5f34257}
-      \strng{authornamehash}{2dbd4de40f1f358c0a4d5909f5f34257}
-      \strng{authorfullhash}{2dbd4de40f1f358c0a4d5909f5f34257}
-      \strng{authorfullhashraw}{2dbd4de40f1f358c0a4d5909f5f34257}
+      \strng{namehash}{31bc9add0736a1165550c9896234e3c2}
+      \strng{fullhash}{31bc9add0736a1165550c9896234e3c2}
+      \strng{fullhashraw}{31bc9add0736a1165550c9896234e3c2}
+      \strng{bibnamehash}{31bc9add0736a1165550c9896234e3c2}
+      \strng{authorbibnamehash}{31bc9add0736a1165550c9896234e3c2}
+      \strng{authornamehash}{31bc9add0736a1165550c9896234e3c2}
+      \strng{authorfullhash}{31bc9add0736a1165550c9896234e3c2}
+      \strng{authorfullhashraw}{31bc9add0736a1165550c9896234e3c2}
       \field{sortinit}{J}
       \field{sortinithash}{b2f54a9081ace9966a7cb9413811edb4}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Just-In-Time (JIT) vs. Ahead-Of-Time (AOT) Compilation in .NET Core}
-      \field{urlday}{25}
+      \field{title}{Introduction to JSON Web Tokens}
+      \field{urlday}{20}
       \field{urlmonth}{1}
       \field{urlyear}{2026}
-      \field{year}{2025}
+      \field{year}{2024}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://medium.com/@Mr.Jafri_01/just-in-time-jit-vs-ahead-of-time-aot-compilation-in-net-core-c7650f1a366a
+      \verb https://www.jwt.io/introduction#what-is-json-web-token
       \endverb
       \verb{url}
-      \verb https://medium.com/@Mr.Jafri_01/just-in-time-jit-vs-ahead-of-time-aot-compilation-in-net-core-c7650f1a366a
+      \verb https://www.jwt.io/introduction#what-is-json-web-token
       \endverb
     \endentry
-    \entry{linq_ref}{online}{}{}
+    \entry{mail_ref}{online}{}{}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labeltitlesource}{title}
+      \field{title}{MailKit}
+      \field{urlday}{27}
+      \field{urlmonth}{2}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://mimekit.net/docs/html/Introduction.htm
+      \endverb
+      \verb{url}
+      \verb https://mimekit.net/docs/html/Introduction.htm
+      \endverb
+    \endentry
+    \entry{dependency_ref}{online}{}{}
       \name{author}{1}{}{%
         {{hash=140864078aeca1c7c35b4beb33c53c34}{%
            family={Microsoft},
@@ -172,20 +261,20 @@
       \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Deferred execution and lazy evaluation (LINQ to XML)}
+      \field{title}{Dependency injection in ASP.NET Core}
       \field{urlday}{20}
       \field{urlmonth}{1}
       \field{urlyear}{2026}
-      \field{year}{2022}
+      \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/deferred-execution-and-lazy-evaluation
+      \verb https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0
       \endverb
       \verb{url}
-      \verb https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/deferred-execution-and-lazy-evaluation
+      \verb https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0
       \endverb
     \endentry
-    \entry{dependency_ref}{online}{}{}
+    \entry{EF_core_ref}{online}{}{}
       \name{author}{1}{}{%
         {{hash=140864078aeca1c7c35b4beb33c53c34}{%
            family={Microsoft},
@@ -204,17 +293,17 @@
       \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Dependency injection in ASP.NET Core}
+      \field{title}{Entity Framework Core}
       \field{urlday}{20}
       \field{urlmonth}{1}
       \field{urlyear}{2026}
       \field{year}{2026}
       \field{urldateera}{ce}
       \verb{urlraw}
-      \verb https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0
+      \verb https://learn.microsoft.com/en-us/ef/core/
       \endverb
       \verb{url}
-      \verb https://learn.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-10.0
+      \verb https://learn.microsoft.com/en-us/ef/core/
       \endverb
     \endentry
     \entry{controller_ref}{online}{}{}
@@ -249,7 +338,7 @@
       \verb https://learn.microsoft.com/en-us/aspnet/core/mvc/controllers/actions?view=aspnetcore-10.0
       \endverb
     \endentry
-    \entry{razor_ref}{online}{}{}
+    \entry{identity_ref}{online}{}{}
       \name{author}{1}{}{%
         {{hash=140864078aeca1c7c35b4beb33c53c34}{%
            family={Microsoft},
@@ -268,8 +357,168 @@
       \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
-      \field{title}{Simple authorization in ASP.NET Core Razor Pages}
+      \field{title}{Introduction to Identity on ASP.NET Core}
+      \field{urlday}{1}
+      \field{urlmonth}{2}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-10.0&tabs=visual-studio
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-10.0&tabs=visual-studio
+      \endverb
+    \endentry
+    \entry{linq_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{5}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Language Integrated Query (LINQ)}
       \field{urlday}{20}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/dotnet/csharp/linq/
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/dotnet/csharp/linq/
+      \endverb
+    \endentry
+    \entry{JIT_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{6}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Managed execution process}
+      \field{urlday}{12}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/dotnet/standard/managed-execution-process
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/dotnet/standard/managed-execution-process
+      \endverb
+    \endentry
+    \entry{AOT_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{7}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Native AOT deployment}
+      \field{urlday}{12}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/?tabs=windows%2Cnet8
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/?tabs=windows%2Cnet8
+      \endverb
+    \endentry
+    \entry{MVC_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{8}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Overview of ASP.NET Core MVC}
+      \field{urlday}{16}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-10.0
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/aspnet/core/mvc/overview?view=aspnetcore-10.0
+      \endverb
+    \endentry
+    \entry{razor_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{9}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Simple authorization in ASP.NET Core Razor Pages}
+      \field{urlday}{15}
       \field{urlmonth}{1}
       \field{urlyear}{2026}
       \field{year}{2026}
@@ -279,6 +528,102 @@
       \endverb
       \verb{url}
       \verb https://learn.microsoft.com/en-us/aspnet/core/razor-pages/security/authorization/simple?view=aspnetcore-10.0
+      \endverb
+    \endentry
+    \entry{cSharpType_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{10}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The C\# type system}
+      \field{urlday}{25}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/types/
+      \endverb
+    \endentry
+    \entry{iam_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{11}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{What is identity and access management (IAM)?}
+      \field{urlday}{15}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.microsoft.com/en-us/security/business/security-101/what-is-identity-access-management-iam
+      \endverb
+      \verb{url}
+      \verb https://www.microsoft.com/en-us/security/business/security-101/what-is-identity-access-management-iam
+      \endverb
+    \endentry
+    \entry{net8_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=140864078aeca1c7c35b4beb33c53c34}{%
+           family={Microsoft},
+           familyi={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{fullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{bibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorbibnamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authornamehash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhash}{140864078aeca1c7c35b4beb33c53c34}
+      \strng{authorfullhashraw}{140864078aeca1c7c35b4beb33c53c34}
+      \field{extraname}{12}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{What's new in .NET 8}
+      \field{urlday}{10}
+      \field{urlmonth}{1}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview
+      \endverb
+      \verb{url}
+      \verb https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview
       \endverb
     \endentry
     \entry{hav_ref}{online}{}{}
@@ -335,8 +680,8 @@
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{title}{Evaluating Participatory Mapping Software, Chapter Mapbox}
-      \field{urlday}{27}
-      \field{urlmonth}{2}
+      \field{urlday}{1}
+      \field{urlmonth}{3}
       \field{urlyear}{2026}
       \field{year}{2023}
       \field{urldateera}{ce}
@@ -345,6 +690,39 @@
       \endverb
       \verb{url}
       \verb https://link.springer.com/chapter/10.1007/978-3-031-19594-5_2
+      \endverb
+    \endentry
+    \entry{cSharpExeption_ref}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=d1383f1275ef3376be3261f0adf08e46}{%
+           family={Schulte},
+           familyi={S\bibinitperiod},
+           given={K.\bibnamedelimi Rustan\bibnamedelimb M.\bibnamedelimi Leino\bibnamedelima Wolfram},
+           giveni={K\bibinitperiod\bibinitdelim R\bibinitperiod\bibinitdelim M\bibinitperiod\bibinitdelim L\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \strng{namehash}{d1383f1275ef3376be3261f0adf08e46}
+      \strng{fullhash}{d1383f1275ef3376be3261f0adf08e46}
+      \strng{fullhashraw}{d1383f1275ef3376be3261f0adf08e46}
+      \strng{bibnamehash}{d1383f1275ef3376be3261f0adf08e46}
+      \strng{authorbibnamehash}{d1383f1275ef3376be3261f0adf08e46}
+      \strng{authornamehash}{d1383f1275ef3376be3261f0adf08e46}
+      \strng{authorfullhash}{d1383f1275ef3376be3261f0adf08e46}
+      \strng{authorfullhashraw}{d1383f1275ef3376be3261f0adf08e46}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Exception safety for C\#}
+      \field{urlday}{25}
+      \field{urlmonth}{4}
+      \field{urlyear}{2026}
+      \field{year}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/specsharp-krml135.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/specsharp-krml135.pdf
       \endverb
     \endentry
     \entry{tspNN_ref}{online}{}{}
