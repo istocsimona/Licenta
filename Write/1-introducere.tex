@@ -5,18 +5,18 @@
 Această lucrare este structurată în patru capitole, fiecare servind un rol specific în prezentarea temei abordate:
 
 \begin{itemize}
-    \item Introducere: Oferă o privire de ansamblu asupra subiectului, motivația mea, nevoi pe care aplicația le satisface, o analiză a aplicațiilor similare evidențiind îmbunătățirile
-    \item Tehnologii și framework-ul utilizat: este structurat pe subcapitole dedicat fiecărei tehnologii utilizate
-    \item Prezentarea aplicației: detaliază funcționalitatea aplicației, din perspectiva unui utilizator obișnuit. 
-    \item Concluzia: concluziile și perspectivele de dezvoltare ale aplicației.
-\end{itemize}t reunite concluziile și perspectivele de dezvoltare ale aplicației.
+    \item \textbf{Introducere}: Oferă o privire de ansamblu asupra subiectului, motivația mea, nevoi pe care aplicația le satisface, o analiză a aplicațiilor similare evidențiind îmbunătățirile.
+    \item \textbf{Tehnologii și framework-ul utilizat}: Este structurat pe subcapitole dedicate fiecărei tehnologii utilizate
+    \item \textbf{Prezentarea aplicației}: Detaliază funcționalitatea aplicației, din perspectiva unui utilizator obișnuit.
+    \item \textbf{Concluzia}: Concluziile și perspectivele de dezvoltare ale aplicației în viitor.
+\end{itemize}
 
 \section{Motivație}
-Mereu am fost pasionată de călătorii și de organizarea acestora. În era digitală actuală, am observat că există o multitudine de aplicații care oferă informații turistice, posibilitatea de a face liste cu destinații sau care marchează destinațiile pe hartă. însă puține dintre ele se concentrează pe planificarea detaliată a itinerariilor. 
+Mereu am fost pasionată de călătorii și de organizarea acestora. În era digitală actuală, am observat că există o multitudine de aplicații care oferă informații turistice, posibilitatea de a face liste cu destinații sau care marchează destinațiile pe hartă, însă puține dintre ele se concentrează pe planificarea detaliată a itinerariilor. 
 
-Mi-am dorit să creez o soluție care să ajute utilizatorii să-și organizeze eficient traseele turistice, să aibă posibilitatea de a adăuga rezervări, oferindu-le posibilitatea de a genera un plan zilnic coerent pentru a maximiza experiența de călătorie.
+Mi-am dorit să creez o soluție care să ajute utilizatorii să-și organizeze eficient traseele turistice, să aibă posibilitatea de a adăuga rezervări și de a genera un plan zilnic coerent pentru a maximiza experiența de călătorie.
 
-Motivația mea este de a inspira cât mai mulți oameni să descopere diversitatea lumii, să viziteze cât mai mult eliminând stresul organizării.
+Motivația mea este de a inspira cât mai mulți oameni să descopere diversitatea culturală și socială, să viziteze cât mai mult eliminând stresul organizării.
 
 \section{Aplicații similare}
 
@@ -26,7 +26,7 @@ O funcționalitate importantă este posibilitatea de a salva locațiile preferat
 
 \textbf{„Wanderlog”} este o aplicație de planificare a călătoriilor ce permite utilizatorilor adăugarea de destinații, unități de cazare și atracții turistice, pe care le integrează și le plasează pe o hartă interactivă. 
 
-Deși oferă funcționalități utile organizării, un aspect limitativ este faptul că aplicația condiționează accesul la numeroase funcții avansate de achiziționarea unei subscripții plătite. Cea mai importantă este funcția de optimizare, aceasta fiind disponibilă doar pentru variantele plătite.  În lipsa acesteia, utilizatorul trebuie să își planifice manual întregul itinerariu.
+Deși oferă funcționalități utile organizării, un aspect care constrânge experința utilizatorului este faptul că aplicația condiționează accesul la numeroase funcții avansate de achiziționarea unei subscripții plătite,  cea mai importantă dintre ele fiind cea de optimizare. În lipsa acesteia, utilizatorul trebuie să își planifice manual întregul itinerariu.
 
 \textbf{„Roamy”} este o aplicație dedicată creării de itinerarii, disponibilă exclusiv în magazinul Apple Store. La crearea unei călătorii, utilizatorul trebuie să introducă destinația dorită și numărul de zile alocate călătoriei. Ulterior, traseul poate fi construit fie prin adăugarea manuală a locațiilor, fie generat automat cu ajutorul funcțiilor bazate pe inteligență artificială.
 
@@ -36,7 +36,7 @@ Aplicația este limitată la generarea unor itinerarii simple, întrucât nu dis
 
 În ceea ce privește noutățile și avantajele aduse față de alte soluții existente pe piață, aplicația se distinge în primul rând printr-un algoritm de recomandare personalizat. Spre deosebire de alte platforme care se limitează la a sugera cele mai vizitate atracții dintr-un oraș, acest algoritm utilizează un sistem de selecție bazat pe preferințele reale ale utilizatorului. Aceste date sunt colectate într-un mod practic și interactiv: se ordonează o listă de categorii, încadrându-le în trei niveluri distincte de prioritate. Mai mult, algoritmul oferă flexibilitatea de a genera itinerariul fie integral, fie parțial, completând inteligent lista de locații deja adăugate manual de către utilizator, în cazul în care acestea nu sunt suficiente pentru a acoperi programul unei zile întregi.
 
-Un alt avantaj major în organizare este serviciul de adăugare a cazării ca punct oficial de pornire. Această funcționalitate contribuie la o calculare mai precisă a traseului, luând în considerare distanța și timpul exact de deplasare de la cazare până la prima destinație. În completarea acestei funcții, aplicația oferă posibilitatea de a integra rezervări direct în itinerariu. Acestora li se alocă automat prioritatea maximă. Pentru a garanta respectarea programului, sistemul calculează și adaugă o marjă de eroare temporală, ascunsă în interfața utilizatorului, garantând astfel sosirea la timp la rezervările efectuate.
+Un alt avantaj major în organizare este serviciul de adăugare a cazării ca punct oficial de pornire. Această funcționalitate contribuie la o calculare mai precisă a traseului, luând în considerare distanța și timpul exact de deplasare de la cazare până la prima destinație. În completarea, aplicația oferă posibilitatea de a integra rezervări direct în itinerariu, acestora fiindu-le alocată automat prioritatea maximă. Pentru a garanta respectarea programului, sistemul calculează și adaugă o marjă de eroare temporală, ascunsă în interfața utilizatorului, garantând astfel sosirea la timp la rezervările efectuate.
 
 Pe parcursul desfășurării călătoriei, aplicația permite un management dinamic al traseului. Utilizatorul are posibilitatea de a bifa locațiile vizitate, iar în cazul în care anumite obiective din program nu au putut fi atinse în zilele anterioare, sistemul oferă opțiunea de a regenera itinerariul, reprogramând inteligent locațiile rămase. 
 

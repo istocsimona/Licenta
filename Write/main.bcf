@@ -2373,18 +2373,32 @@
     <bcf:datasource type="file" datatype="bibtex" glob="false">bibliography.bib</bcf:datasource>
   </bcf:bibdata>
   <bcf:section number="0">
-    <bcf:citekey order="1" intorder="1">jitAOT_ref</bcf:citekey>
-    <bcf:citekey order="2" intorder="1">linq_ref</bcf:citekey>
-    <bcf:citekey order="3" intorder="1">controller_ref</bcf:citekey>
-    <bcf:citekey order="4" intorder="1">razor_ref</bcf:citekey>
-    <bcf:citekey order="5" intorder="1">dependency_ref</bcf:citekey>
-    <bcf:citekey order="6" intorder="1">identity_ref</bcf:citekey>
-    <bcf:citekey order="7" intorder="1">mapbox_ref</bcf:citekey>
-    <bcf:citekey order="8" intorder="1">tspNN_ref</bcf:citekey>
-    <bcf:citekey order="9" intorder="1">hav_ref</bcf:citekey>
-    <bcf:citekey order="10" intorder="1">mapbox_havesine_ref</bcf:citekey>
-    <bcf:citekey order="11" intorder="1">recomandation_ref</bcf:citekey>
-    <bcf:citekey order="12" intorder="1" nocite="1">dotnet_aspnet</bcf:citekey>
+    <bcf:citekey order="1" intorder="1">cSharp_ref</bcf:citekey>
+    <bcf:citekey order="2" intorder="1">net8_ref</bcf:citekey>
+    <bcf:citekey order="3" intorder="1">tspNN_ref</bcf:citekey>
+    <bcf:citekey order="4" intorder="1">cSharpType_ref</bcf:citekey>
+    <bcf:citekey order="5" intorder="1">cSharpExeption_ref</bcf:citekey>
+    <bcf:citekey order="6" intorder="1">JIT_ref</bcf:citekey>
+    <bcf:citekey order="7" intorder="1">AOT_ref</bcf:citekey>
+    <bcf:citekey order="8" intorder="1">linq_ref</bcf:citekey>
+    <bcf:citekey order="9" intorder="1">MVC_ref</bcf:citekey>
+    <bcf:citekey order="10" intorder="1">controller_ref</bcf:citekey>
+    <bcf:citekey order="11" intorder="1">iam_ref</bcf:citekey>
+    <bcf:citekey order="12" intorder="1">razor_ref</bcf:citekey>
+    <bcf:citekey order="13" intorder="1">jwt_ref</bcf:citekey>
+    <bcf:citekey order="14" intorder="1">dependency_ref</bcf:citekey>
+    <bcf:citekey order="15" intorder="1">EF_core_ref</bcf:citekey>
+    <bcf:citekey order="16" intorder="1">identity_ref</bcf:citekey>
+    <bcf:citekey order="17" intorder="1">mapbox_ref</bcf:citekey>
+    <bcf:citekey order="18" intorder="1">mail_ref</bcf:citekey>
+    <bcf:citekey order="19" intorder="1">tspNN_ref</bcf:citekey>
+    <bcf:citekey order="20" intorder="1">nn_ref</bcf:citekey>
+    <bcf:citekey order="21" intorder="1">hav_ref</bcf:citekey>
+    <bcf:citekey order="22" intorder="1">mapbox_havesine_ref</bcf:citekey>
+    <bcf:citekey order="23" intorder="1">recomandation_ref</bcf:citekey>
+    <bcf:citekey order="24" intorder="1">groq_ref</bcf:citekey>
+    <bcf:citekey order="25" intorder="1">mapbox_check_ref</bcf:citekey>
+    <bcf:citekey order="26" intorder="1" nocite="1">dotnet_aspnet</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="nty">

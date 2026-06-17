@@ -15,23 +15,24 @@
 \contentsline {section}{\numberline {2.2}Persistența datelor}{10}{section.2.2}%
 \contentsline {subsection}{\numberline {2.2.1}Strategia ORM cu Entity Framework Core}{10}{subsection.2.2.1}%
 \contentsline {subsection}{\numberline {2.2.2}Platfoma de Baze de Date: SQL Server}{11}{subsection.2.2.2}%
-\contentsline {section}{\numberline {2.3}Autentificare și Autorizare: ASP.NET Identity}{11}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Cadrul de gestionare a identității}{11}{subsection.2.3.1}%
+\contentsline {section}{\numberline {2.3}Autentificare și Autorizare: ASP.NET Identity}{12}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Cadrul de gestionare a identității}{12}{subsection.2.3.1}%
 \contentsline {section}{\numberline {2.4}Tehnologii Frontend}{12}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Framework-ul Bootstrap}{12}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}jQuery și mecanismele de validare}{12}{subsection.2.4.2}%
 \contentsline {section}{\numberline {2.5}Caracteristici geospațiale: Mapbox}{13}{section.2.5}%
-\contentsline {section}{\numberline {2.6}Servicii de e-mail: MailKit}{13}{section.2.6}%
+\contentsline {section}{\numberline {2.6}Servicii de e-mail: MailKit}{14}{section.2.6}%
 \contentsline {chapter}{\numberline {3}Prezentarea aplicației}{15}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Sign in si sign out}{15}{section.3.1}%
+\contentsline {section}{\numberline {3.1}Sign in și sign out}{15}{section.3.1}%
 \contentsline {section}{\numberline {3.2}Pagina principala}{15}{section.3.2}%
 \contentsline {section}{\numberline {3.3}Călătoriile mele}{15}{section.3.3}%
 \contentsline {section}{\numberline {3.4}Creare călătorie}{16}{section.3.4}%
 \contentsline {section}{\numberline {3.5}Detaliile călătoriei}{16}{section.3.5}%
 \contentsline {subsection}{\numberline {3.5.1}Generare simpla a itinerariului}{17}{subsection.3.5.1}%
-\contentsline {subsection}{\numberline {3.5.2}Generare cu AI}{19}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.2}Ce folosește algoritmul pentru a calcula}{18}{subsection.3.5.2}%
+\contentsline {subsection}{\numberline {3.5.3}Generare cu AI}{19}{subsection.3.5.3}%
 \contentsline {section}{\numberline {3.6}Adăugare obiective}{20}{section.3.6}%
-\contentsline {section}{\numberline {3.7}Pagina calendar}{21}{section.3.7}%
+\contentsline {section}{\numberline {3.7}Pagina calendar}{22}{section.3.7}%
 \contentsline {section}{\numberline {3.8}Harta interactivă}{22}{section.3.8}%
 \contentsline {section}{\numberline {3.9}Pagina de preferințe}{23}{section.3.9}%
 \contentsline {chapter}{\numberline {4}Concluzii și perspective de dezvoltare}{24}{chapter.4}%

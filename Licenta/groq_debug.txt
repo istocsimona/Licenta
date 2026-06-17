@@ -1,0 +1,19 @@
+=== GROQ DEBUG [2026-06-12 18:01:21] ===
+
+--- RAW RESPONSE ---
+{"id":"chatcmpl-1d7a9406-3fd2-4562-85ac-b76e27bf0330","object":"chat.completion","created":1781276482,"model":"llama-3.3-70b-versatile","choices":[{"index":0,"message":{"role":"assistant","content":"{\n  \"attractions\": [\n       {\"name\": \"The Louvre\", \"tag\": \"Museum\"},\n       {\"name\": \"Palace of Versailles\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Musée d'Orsay\", \"tag\": \"Museum\"},\n       {\"name\": \"Arc de Triomphe\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Sainte-Chapelle\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Musée Rodin\", \"tag\": \"Museum\"},\n       {\"name\": \"Château de Fontainebleau\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Musée National du Moyen Âge\", \"tag\": \"Museum\"}\n   ]\n}"},"logprobs":null,"finish_reason":"stop"}],"usage":{"queue_time":0.051363747,"prompt_tokens":183,"prompt_time":0.009944954,"completion_tokens":162,"completion_time":0.318235926,"total_tokens":345,"total_time":0.32818088},"usage_breakdown":null,"system_fingerprint":"fp_f8b414701e","x_groq":{"id":"req_01kty5m63se87tk3tn3q9bg95s","seed":337648699},"service_tier":"on_demand"}
+
+
+--- PARSED ATTRACTIONS JSON ---
+{
+  "attractions": [
+       {"name": "The Louvre", "tag": "Museum"},
+       {"name": "Palace of Versailles", "tag": "Historic Site"},
+       {"name": "Musée d'Orsay", "tag": "Museum"},
+       {"name": "Arc de Triomphe", "tag": "Historic Site"},
+       {"name": "Sainte-Chapelle", "tag": "Historic Site"},
+       {"name": "Musée Rodin", "tag": "Museum"},
+       {"name": "Château de Fontainebleau", "tag": "Historic Site"},
+       {"name": "Musée National du Moyen Âge", "tag": "Museum"}
+   ]
+}

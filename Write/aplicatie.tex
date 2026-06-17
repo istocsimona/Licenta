@@ -1,30 +1,30 @@
 \chapter{Prezentarea aplicației}
-\section{Sign in si sign out}
-Aplicația cere fiecărui utilizator să își creeze un cont pe baza unui email și a unei parole pentru folosirea funcționalităților. Fiecare cont are nevoie de confirmarea email-ului, abia după confirmare utilizatorul se poate autentifica și folosi aplicația.
+\section{Sign in și sign out}
+Aplicația cere fiecărui utilizator să își creeze un cont pe baza unui email și a unei parole pentru folosirea funcționalităților. Fiecare cont are nevoie de confirmarea email-ului, iar după confirmare utilizatorul se poate autentifica și folosi aplicația.
 
-Ecranele de sign in și sign up au atașate validări împreună cu mesaje specifice pentru fiecare caz: format incorect pentru email și parolă, parolă incorectă, utilizator inexistent. Aplicația oferă posibilitatea deconectării și ștergerii contului, având un mesaj de avertizare că datele se vor șterge, cu verificarea parolei înainte, pentru ca ștergerea să poată fi făcută doar de utilizator.
+Ecranele de sign in și sign up au atașate validări împreună cu mesaje specifice pentru fiecare caz: format incorect pentru email și parolă, parolă incorectă, utilizator inexistent. Aplicația oferă posibilitatea deconectării și ștergerii contului, pentru a doua opțiune fiind atașat în prealabil un mesaj de avertizare că datele se vor șterge. Ca măsură de siguranță, înainte ca un cont să fie șters cu succes, utilizatorului îi este cerută o verificare a parolei, astfel acțiunea putând fi făcută doar de către utilizatorul datelor respective.
 
 \section{Pagina principala}
-Pagina principală este concepută atât ca punct de intrare pentru vizitatori, cât și ca panou de control pentru utilizatorii autentificați. Pentru utilizatorii neautentificați prezintă o pagină cu detalii despre aplicație împreună cu butoane de autentificare și înregistrare. După conectare, pagina ghidează utilizatorul să creeze o nouă călătorie sau să vizualizeze călătoriile existente. 
+Pagina principală este concepută atât ca punct de intrare pentru vizitatori, cât și ca panou de control pentru utilizatorii autentificați. Pentru utilizatorii neautentificați este prezentată o pagină cu detalii despre aplicație împreună cu butoane de autentificare și înregistrare. După conectare, pagina ghidează utilizatorul să creeze o nouă călătorie sau să vizualizeze călătoriile existente. 
 
 \section{Călătoriile mele}
-„My Trips" este pagina centrală pentru gestionarea călătoriilor unui utilizator. Călătoriile sunt separate în trei categorii distincte, în funcție de statutul lor temporal. Secțiunea „Happening Now” apare doar dacă o excursie este în desfășurare și afișează călătoriile active în prezent. „Upcoming Adventures” prezintă călătoriile viitoare în ordine calendaristică, facilitând organizarea acestora. Ultima secțiune, „Amintiri de călătorie", păstrează câteva călătorii terminate, împreună cu detaliile acestora, având la dispoziție un buton pentru a accesa o pagină cu toate călătoriile terminate.
+„My Trips" este pagina centrală pentru gestionarea călătoriilor unui utilizator. Călătoriile sunt separate în trei categorii distincte, în funcție de statutul lor temporal. Secțiunea \textit{Happening Now} apare doar dacă o excursie este în desfășurare și afișează călătoriile active în prezent. \textit{Upcoming Adventures} prezintă călătoriile viitoare în ordine calendaristică, facilitând organizarea acestora. Ultima secțiune, \textit{Travel Memories}, păstrează câteva călătorii terminate, împreună cu detaliile acestora, având la dispoziție un buton pentru a accesa o pagină cu toate călătoriile terminate.
 
-\begin{wrapfigure}{r}{0.5\textwidth} 
+\begin{wrapfigure}{r}{0.4\textwidth} 
     \centering
     \includegraphics[width=\linewidth]{tripCard.png}
-    \caption{Card interactiv pentru călătorii}
+    \caption{Card interactiv al fiecărei călătorii}
     \label{fig:system_diagram}
 \end{wrapfigure}
-Fiecare călătorie apare ca un card interactiv care afișează informațiile cheie, cum ar fi data și destinația. În cazul primelor două secțiuni, cardurile au atașate câte un buton către adăugarea de atracții și generarea de itinerariu și vizualizarea tuturor detaliilor, în ultima secțiune rămânând doar cel pentru vizualizarea detaliilor.
+Fiecare călătorie este afișat ca un card interactiv care detaliază informațiile cheie, cum ar fi data și destinația. În cazul primelor două secțiuni, cardurile au atașate câte un buton către adăugarea de atracții și vizualizarea tuturor detaliilor pentru generarea itinerariului, în ultima secțiune rămânând doar cel pentru vizualizarea detaliilor.
 
-„Create new trip"  permite utilizatorilor să acceseze ușor crearea unei noi călătorii.
+În pagină este prezent butonul \textit{Create new trip}  permite utilizatorilor să acceseze ușor crearea unei noi călătorii.
 
 \section{Creare călătorie}
-Primul pas în procesul de planificare a călătoriei este pagina „Plan new trip", care conține un formular prin care utilizatorii pot crea o nouă călătorie. În formular utilizatorii introduc informații precum numele, o descriere dacă doresc, destinația, datele de început și sfârșit. De asemenea, formularul include selectoare pentru orele pe care utilizatorul ar vrea să le folosească pentru vizitare, folosite la generarea itinerariului. Validarea formularului asigură integritatea datelor înainte de salvare, ajutând utilizatorul să completeze corect câmpurile. 
+Primul pas în procesul de planificare a călătoriei este pagina „Plan new trip", care conține un formular prin care utilizatorii pot crea o nouă călătorie. În formular utilizatorii introduc informații precum numele, o descriere opțională, destinația, datele de început și sfârșit. De asemenea, formularul include selectoare pentru orele pe care utilizatorul ar vrea să le folosească pentru vizitare, folosite la generarea itinerariului. Validarea formularului asigură integritatea datelor înainte de salvare, ajutând utilizatorul să completeze corect câmpurile. 
 
 \section{Detaliile călătoriei}
-Pagina „Details" (Detalii) include cele mai multe funcții din aplicație, concepută pentru a oferi o imagine de ansamblu și o interfață de gestionare a unei călătorii. Pagina este împărțită în două secțiuni.
+Pagina „Details" (Figura \ref{fig:detalii}) include cele mai multe funcții din aplicație, concepută pentru a oferi o imagine de ansamblu și o interfață de gestionare a unei călătorii. Pagina este împărțită în două secțiuni.
 
 Coloana din stânga prezintă toate detaliile călătoriei selectate. În partea de sus avem o listă colapsabilă cu toate locațiile adăugate și cele două butoane de generare. Opțional, utilizatorul poate adăuga adresa cazării în care va sta, care va apărea pe hartă. Odată ce itinerariul este generat, în secțiunea „Daily Itinerary" se afișează o listă cu fiecare zi din excursia selectată și un orar cu locațiile asociate acelei zile. Fiecare locație are o casetă de selectare unde utilizatorul poate bifa locațiile vizitate.
 
@@ -32,80 +32,80 @@ Coloana din dreapta prezintă o hartă interactivă generată prin Mapbox, în c
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\linewidth]{detalii.png}
+    \includegraphics[width=0.75\linewidth]{detalii.png}
     \caption{Pagina de detalii}
-    \label{fig:architecture_diagram}
+    \label{fig:detalii}
 \end{figure}
 
 \subsection{Generare simpla a itinerariului}
-Funcția „GenerateItinerary" este construită pe o euristică Greedy Nearest-Neighbor modificată, o abordare derivată din Problema Comis-Voiajorului (TSP)\href{https://www.sciencedirect.com/science/article/pii/S0166218X14001486#a000005}{}\cite{tspNN_ref}. În forma canonică, algoritmul Nearest-Neighbor pornește de la un nod dat și selectează în mod repetat cel mai apropiat nod nevizitat până când toate nodurile au fost vizitate. În implementarea noastră, acest concept a fost adaptat pentru a funcționa în cadrul constrângerilor specifice creării unui itinerariu de călătorie pe mai multe zile, unde ferestrele de timp, rezervările, disponibilitatea locațiilor și preferințele utilizatorului trebuie respectate simultan.
+Funcția „GenerateItinerary" este construită pe o euristică Greedy Nearest-Neighbor modificată, o abordare derivată din Problema Comis-Voiajorului (TSP)\href{https://www.sciencedirect.com/science/article/pii/S0166218X14001486#a000005}{}\cite{tspNN_ref}. În forma canonică, algoritmul \href{https://ieeexplore.ieee.org/abstract/document/9065747}{Nearest-Neighbor}\cite{nn_ref} pornește de la un nod dat și selectează în mod repetat cel mai apropiat nod nevizitat până când toate nodurile au fost vizitate. În implementarea aplicației de față, acest concept a fost adaptat pentru a funcționa în cadrul constrângerilor specifice creării unui itinerariu de călătorie pe mai multe zile, unde ferestrele de timp, rezervările, disponibilitatea locațiilor și preferințele utilizatorului trebuie respectate simultan.
 
-\textbf{Ce am modificat}
+Mai departe sunt prezentate modificări ale algoritmului clasic pentru a satisface funcționalitățile dorite.
 
-Versiunea noastră înlocuiește distanța geografică brută cu timpul real de călătorie, obținut din API-ul Mapbox Directions Matrix, care returnează duratele reale de mers pe jos și cu mașina între poziția curentă și toate destinațiile candidate. La fiecare pas, algoritmul încearcă să găsească cea mai apropiată locație din punct de vedere temporal, încadrându-se în fereastra de timp disponibilă. Această schimbare este importantă deoarece două locații echidistante pe hartă pot avea timpi de călătorie diferiți, în funcție de traseele parcurse.
+S-a înlocuit distanța geografică brută cu timpul real de călătorie, obținut din API-ul Mapbox Directions Matrix, care returnează duratele reale de mers pe jos și cu automobilul între poziția curentă și toate destinațiile candidate. La fiecare pas, algoritmul încearcă să găsească cea mai apropiată locație din punct de vedere temporal, încadrându-se în fereastra de timp disponibilă. Această schimbare este importantă deoarece două locații echidistante pe hartă pot avea timpi de călătorie diferiți, în funcție de traseele parcurse.
 
-Deoarece în aplicația noastră apar restricții de timp, vom introduce un concept de constrângeri temporale care include atât rezervări (evenimene externe fixe cu ore de început și de sfârșit), cât și elemente vizitate (locații pe care utilizatorul le-a vizitat deja). În faza de curățare, elementele vizitate sunt relocate, astfel încât următoarele zile să fie reconstruite de la zero. La fiecare iterație, algoritmul analizează anticipat următorul eveniment fix. Înainte de a plasa o locație nouă în program, algoritmul verifică dacă utilizatorul ar avea suficient timp pentru a ajunge acolo, a petrece timpul aproximativ introdus în planificare și a ajunge la următorul eveniment cu o marjă de eroare de 15 minute. Locațiile sunt parcurse pe rând până când este găsită una care respectă aceste condiții, pentru a evita crearea unui conflict cu rezervări preexistente.
+Deoarece în aplicația noastră apar restricții de timp, a fost introdus un concept de constrângeri temporale care include atât rezervări (evenimene externe fixe cu ore de început și de sfârșit), cât și elemente vizitate (locații pe care utilizatorul le-a vizitat deja). În faza de curățare, elementele vizitate sunt relocate, astfel încât următoarele zile să fie reconstruite de la zero. La fiecare iterație, algoritmul analizează anticipat următorul eveniment fix. Înainte de a plasa o locație nouă în program, algoritmul verifică dacă utilizatorul ar avea suficient timp pentru a ajunge acolo, a petrece timpul aproximativ introdus în planificare și a ajunge la următorul eveniment cu o marjă de eroare de 15 minute. Locațiile sunt parcurse pe rând până când este găsită una care respectă aceste condiții, pentru a evita crearea unui conflict cu rezervări preexistente.
 
-\textbf{Ce folosește algoritmul pentru a calcula}
+\subsection{Ce folosește algoritmul pentru a calcula}
 
-Fiecare iterație procesează câte un DayPlan cronologic. Bucla inițializează un cursor la ora configurată de începere a explorării și un cursor la ora de sfârșit a explorării. Dacă cazarea a fost adăugată, aceasta este ancorată ca poziție de pornire, astfel încât prima iterație din fiecare zi începe de la cazare.
+Fiecare iterație procesează câte un \textit{DayPlan} cronologic. Bucla inițializează un cursor la ora configurată de începere a explorării și un cursor la ora de sfârșit a explorării. Dacă cazarea a fost adăugată, aceasta este ancorată ca poziție de pornire, astfel încât prima iterație din fiecare zi începe de la cazare.
 
-Ca prim pas, se verifică dacă există mai mult de 24 de locații candidate. Dacă da, acestea sunt prefiltrate folosind \href{https://www.researchgate.net/profile/Mangesh-Nichat-2/publication/282314348_Landmark_based_shortest_path_detection_by_using_A_Algorithm_and_Haversine_Formula/links/56389bb708ae4bde5021b0f5/Landmark-based-shortest-path-detection-by-using-A-Algorithm-and-Haversine-Formula.pdf}{formula Haversine}\cite{hav_ref}, care calculează distanța dintre două coordonate geografice ținând cont de curbura Pământului, pentru a selecta doar cele 24 de locații cele mai apropiate. Aceasta este o optimizare necesară deoarece API-ul Mapbox Matrix are o limită de 25 de puncte per solicitare. Calculul Haversine convertește diferențele de latitudine și longitudine în radiani, aplică legea sferică a cosinusurilor prin termenii sin² și cos și returnează distanța în metri folosint raza Pământului.\href{https://journal.universitasbumigora.ac.id/bite/article/view/2874}{}\cite{mapbox_havesine_ref}
+Ca prim pas, se verifică dacă există mai mult de 24 de locații candidate. Dacă da, acestea sunt prefiltrate folosind \href{https://www.researchgate.net/profile/Mangesh-Nichat-2/publication/282314348_Landmark_based_shortest_path_detection_by_using_A_Algorithm_and_Haversine_Formula/links/56389bb708ae4bde5021b0f5/Landmark-based-shortest-path-detection-by-using-A-Algorithm-and-Haversine-Formula.pdf}{formula Haversine}\cite{hav_ref}, care calculează distanța dintre două coordonate geografice ținând cont de curbura Pământului, pentru a selecta doar cele 24 de locații cele mai apropiate. Aceasta este o optimizare necesară deoarece API-ul Mapbox Matrix are o limită de 25 de puncte per solicitare. Calculul Haversine convertește diferențele de latitudine și longitudine în radiani, aplică legea sferică a cosinusurilor prin termenii sin² și cos și returnează distanța în metri folosint raza Pământului\href{https://journal.universitasbumigora.ac.id/bite/article/view/2874}{}\cite{mapbox_havesine_ref}.
 
 Odată ce lista de candidați a fost redusă, se apelează API-ul Mapbox Matrix de două ori în paralel, o dată pentru durata de mers pe jos și o dată pentru durata de condus între poziția curentă și toți candidații. Pentru fiecare candidat algoritmul alege cel mai rapid mijloc de a ajunge în acea locație. Dacă API-ul eșuează sau nu returnează niciun rezultat pentru un anumit candidat, algoritmul revine la un timp de călătorie estimat calculat din distanța Haversine împărțită la o viteză medie de 10 km/h, aproximând un ritm de mers alert. Această soluție asigură că algoritmul nu se oprește din cauza defecțiunilor rețelei.
 
-Pentru fiecare candidat algoritmul aplică două filtre înainte de a-l considera cea mai bună alegere. Primul filtru verifică orele de deschidere și închidere ale locației în raport cu ora de sosire estimată. Al doilea verifică dacă vizita completă a locației, sosirea plus durata medie, se încheie în timp util pentru a ajunge la următoarea locație; în cazul rezervărilor această constrângere este extinsă cu 15 minute. Candidații care trec ambele filtre sunt luați în considerare, fiind ales cel care are cel mai scurt timp de călătorie, în concordanță cu logica algoritmului Greedy.
+Pentru fiecare candidat algoritmul aplică două filtre înainte de a-l considera cea mai bună alegere. Primul filtru verifică orele de deschidere și închidere ale locației în raport cu ora de sosire estimată. Al doilea verifică dacă vizita completă a locației, sosirea plus durata medie, se încheie în timp util pentru a ajunge la următoarea locație; în cazul rezervărilor această constrângere este extinsă cu 15 minute. Candidații care trec de ambele filtre sunt luați în considerare, fiind ales cel care are cel mai scurt timp de călătorie, în concordanță cu logica algoritmului Greedy.
 
 Algoritmul rezolvă și problema schimbărilor în itinerariu, detectează locațiile care au fost vizitate anterior și le mută în ziua curentă din baza de date. Istoricul locației este păstrat, dar ziua viitoare este eliberată astfel încât itinerariul să poată fi regenerat. După curățare, algoritmul construiește setul de locații încă disponibile pentru programare prin interogarea elementelor itinerariului și colectarea celor marcate „Vizitate". Acestea, împreună cu orice rezervări, sunt ulterior excluse din grupul de candidați, rămânând doar locațiile care pot fi reprogramate. Această strategie face ca algoritmul să fie idempotent.
 
 \subsection{Generare cu AI}
-Funcția GenerateWithAI implementează o conductă în două etape care combină un LLM pentru descoperirea semantică a locurilor cu API-ul de geocodare Mapbox pentru validarea coordonatelor din lumea reală, urmată de un apel recursiv pentru a programa efectiv locațiile nou descoperite.\href{https://journals.sagepub.com/doi/10.3233/FAIA241326}{}\cite{recomandation_ref}
+Funcția \textit{GenerateWithAI} implementează o conductă în două etape care combină un \href{https://journals.sagepub.com/doi/10.3233/FAIA241326}{LLM (Large Language Model)}\cite{recomandation_ref} pentru descoperirea semantică a locurilor cu API-ul de geocodare Mapbox pentru validarea coordonatelor din lumea reală, urmată de un apel recursiv pentru a programa efectiv locațiile nou descoperite.
 
 \textbf{Solicitarea LLM bazate pe preferințe}
 
-Prima etapă interoghează preferințele de etichete stocate ale utilizatorului din baza de date, preluând categoriile pe care le-a evaluat. Acestea sunt transmise într-o solicitare trimisă modelului LLaMA 3.3 70B prin intermediul API-ului Groq. Modelul este solicitat cu o instrucțiune de sistem constrânsă: trebuie să răspundă doar într-o schemă JSON specifică, care conține o matrice de obiecte, fiecare cu un nume și o etichetă. Se solicită până la 8 locuri de interes reale, vizitabile, în orașul și țara călătoriei sau în apropiere, prioritizate în funcție de etichetele principale ale utilizatorului și exclude în mod explicit hoteluri, restaurante și cartiere.
+Prima etapă interoghează preferințele de etichete stocate ale utilizatorului din baza de date, preluând categoriile pe care le-a evaluat. Acestea sunt transmise într-o solicitare trimisă modelului LLaMA 3.3 70B prin intermediul API-ului \href{https://groq.com/}{Groq}\cite{groq_ref}. Modelul este solicitat cu o instrucțiune de sistem constrânsă: trebuie să returneze o schemă specifică de tip JSON specifică, care conține o matrice de obiecte, fiecare cu un nume și o etichetă. Se solicită până la 8 locuri de interes, vizitabile, în orașul și țara călătoriei sau în apropiere, prioritizate în funcție de etichetele principale ale utilizatorului și exclude în mod explicit hoteluri, restaurante și cartiere.
 
 Răspunsul modelului este analizat, curățat și datele sunt extrase pentru următorul pas. 
 
 \textbf{Validarea}
 
-Deoarece LLM-ul poate halucina, fiecare sugestie returnată de model este validată independent prin intermediul API-ului Mapbox Search Forward Geocoding. Pentru fiecare nume de loc sugerat se combină numele locului cu orașul călătoriei și se adaugă o verificare de proximitate folosind coordonatele centrului geografic al orașului.
+Deoarece LLM-ul poate halucina, fiecare sugestie returnată de model este validată independent prin intermediul API-ului \href{https://www.mapbox.com/geocoding}{Mapbox Search Forward Geocoding}\cite{mapbox_check_ref}. Pentru fiecare nume de loc sugerat se combină numele locului cu orașul călătoriei și se adaugă o verificare de proximitate folosind coordonatele centrului geografic al orașului.
 
 Fiecare rezultat de geocodare este supus unor filtre de validare. Numele este verificat în raport cu o listă de cuvinte cheie precum „hotel", „apartament", „parcare" și altele asemenea, pentru a exclude locațiile nedorite din itinerariu. Adresa rezultatului este verificată pentru a confirma că menționează țara și orașul corect. Dacă numele orașului nu apare în adresă, se aplică o verificare de proximitate prin formula Haversine pentru a calcula distanța dintre coordonatele rezultatului și centrul orașului. Iar rezultatele aflate pe o rază de 30 de km sunt acceptate chiar dacă numele lipsește din textul adresei. În cele din urmă, rezultatul este verificat atât în raport cu locațiile deja existente, cât și cu cele deja adăugate, pentru a preveni intrările duplicate. Pentru fiecare locație validă se creează o nouă entitate care este adaugată în baza de date.
 
 Odată ce toate locațiile au fost salvate, se efectuează cu un apel către funția principală de generare, deoarece funcția reprezintă doar un mecanism de descoperire și populare cu locații. Cele două generări au în comun un singur motor de programare unificat, astfel încât îmbunătățirile aduse unuia îl avantajează și pe celălalt
 
 \section{Adăugare obiective}
-„Add Location" permite utilizatorilor să adauge puncte de interes în itinerariul călătoriei alese. În stânga se află harta interactivă, unde fiecare locație adăugată este evidențiată printr-un pin colorat specific etichetelor din care face parte. De asemenea, se pot selecta manual locații direct din hartă și ulterior se pot adăuga în listă, sau se pot căuta orice locație folosind bara de căutare de deasupra hărții. Odată ce o locație este selectată, pinul va apărea pe hartă, iar în dreapta secțiunea „Add New" se va completa cu datele acelei locații. Pentru fiecare locație sunt prezentate numele și adresa, o listă de etichete asociate. De asemenea, sunt prezente câmpuri suplimentare cu durata aproximativă de vizitare și orele de funționare, acestea completându-se automat, dar cu posibilitatea de editare. Apăsând pe butonul „Add to Itinerary", pinul se colorează corespunzător și locația rămâne salvată în listă.
+„Add Location" (Figura \ref{fig:add_location}) permite utilizatorilor să adauge puncte de interes în itinerariul călătoriei alese. În stânga se află harta interactivă, unde fiecare locație adăugată este evidențiată printr-un pin colorat specific etichetelor din care face parte. De asemenea, se pot selecta manual locații direct din hartă și ulterior se pot adăuga în listă, sau se pot căuta locații folosind bara de căutare de deasupra hărții. Odată ce o locație este selectată, pinul va apărea pe hartă, iar în dreapta secțiunea „Add New" se va completa cu datele acelei locații. Pentru fiecare locație sunt prezentate numele și adresa, o listă de etichete asociate. De asemenea, sunt prezente câmpuri suplimentare cu durata aproximativă de vizitare și orele de funționare, acestea completându-se automat, dar cu posibilitatea de editare. Apăsând pe butonul „Add to Itinerary" locația rămâne salvată în listă.
 
 Secțiunea de sugestii este concepută pentru a ajuta utilizatorii să descopere atracții și puncte de interes din orașul pe care îl vizitează. Conținutul este organizat pe categorii, cu un meniu derulant care oferă diverse opțiuni, cum ar fi Muzee, Parcuri, Restaurante, Atracții și multe altele. Când o locație este accesată, toate specificațiile vor apărea în pagina de adăugare.
 
-Ultima secțiune este lista de locații pe care utilizatorul le are adăugate în călătoria curentă, fiecare apărând într-un card interactiv care afișează toate detaliile. Dacă utilizatorul apasă pe un card, harta se va centra pe acea locație și detaliile vor apărea în secțiunea de adăugare. Fiecare locație poate fi ștearsă sau i se pot adăuga detaliile unui eveniment care va avea loc la acea locație: numele, ora de începere și durata.
+Ultima secțiune este lista de locații pe care utilizatorul le are adăugate în călătoria curentă, fiecare fiind prezentată într-un card interactiv care afișează toate detaliile. Dacă utilizatorul apasă pe un card, harta se va centra pe acea locație și detaliile vor apărea în secțiunea de adăugare. Fiecare locație poate fi ștearsă sau i se pot adăuga detaliile unui eveniment care va avea loc la acea locație: numele, ora de începere și durata.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\linewidth]{adaugare.png}
+    \includegraphics[width=0.75\linewidth]{adaugare.png}
     \caption{Pagina de adăugare a obiectivelor}
-    \label{fig:architecture_diagram}
+    \label{fig:add_location}
 \end{figure}
 \section{Pagina calendar}
-Pagina „Calendar" prezintă o imagine de ansamblu a tuturor călătoriilor unui utilizator. Fiecare călătorie este evidențiată, facilitând identificarea perioadei când are loc o călătorie și planificarea în funcție de acestea. Utilizatorii pot naviga între vizualizare pe luni sau pe ani, iar apăsând pe o anumită călătorie sunt redirecționați rapid către pagina cu detalii corespunzătoare. 
+Pagina „Calendar" (Figura \ref{fig:calendar}) prezintă o imagine de ansamblu a tuturor călătoriilor unui utilizator. Fiecare călătorie este evidențiată, facilitând identificarea perioadei când are loc o călătorie și planificarea în funcție de acestea. Utilizatorii pot naviga între vizualizare pe luni sau pe ani, iar apăsând pe o anumită călătorie sunt redirecționați rapid către pagina cu detalii corespunzătoare. 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\linewidth]{calendar.png}
+    \includegraphics[width=0.75\linewidth]{calendar.png}
     \caption{Pagina de calendar}
-    \label{fig:architecture_diagram}
+    \label{fig:calendar}
 \end{figure}
 
 \section{Harta interactivă}
-„ScratchMap" afișează o hartă interactivă a lumii care evidențiază toate țările vizitate anterior cât și cele planficate. Pe măsură ce utilizatorii creează și finalizează călătorii, țările sunt accentuate automat în culori distincte pe hartă. Verde pentru cele încheiate și galben pentru cele care vor urma, astfel creând o imagine de ansamblu vizuală a explorării la nivel global
+„ScratchMap" (Figura \ref{fig:map}) afișează o hartă interactivă a lumii care evidențiază toate țările vizitate anterior cât și cele planficate. Pe măsură ce utilizatorii creează și finalizează călătorii, țările sunt accentuate automat în culori distincte pe hartă. Verde pentru cele încheiate și galben pentru cele care vor urma, astfel creând o imagine de ansamblu vizuală a explorării la nivel global
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\linewidth]{harta.png}
+    \includegraphics[width=0.75\linewidth]{harta.png}
     \caption{Harta interactivă}
-    \label{fig:architecture_diagram}
+    \label{fig:map}
 \end{figure}
 
 

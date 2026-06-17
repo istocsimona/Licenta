@@ -136,10 +136,10 @@ namespace Licenta.Controllers
                 var tripLocations = trip.Locations ?? new List<Location>();
                 var tripReservations = trip.Reservations ?? new List<Reservation>();
 
-                
+
                 var visitedLocationIds = dayPlans
                     .SelectMany(dp => dp.ItineraryItems)
-                    .Where(i => i.VisitStatus == "Visited")  
+                    .Where(i => i.VisitStatus == "Visited")
                     .Select(i => i.LocationId)
                     .ToList();
 
@@ -315,7 +315,7 @@ namespace Licenta.Controllers
             Location lastLocation,
             List<Location> destinations,
             TimeSpan currentTime,
-            TimeSpan? nextConstraintTime, 
+            TimeSpan? nextConstraintTime,
             TimeSpan endTimeLimit)
         {
             if (lastLocation == null)
@@ -492,6 +492,18 @@ namespace Licenta.Controllers
                     if (aiResponse.IsSuccessStatusCode)
                     {
                         var aiJsonString = await aiResponse.Content.ReadAsStringAsync();
+
+                        // ── DEBUG: write raw Groq response to file (overwrites each time) ──
+                        var debugPath = Path.Combine(Directory.GetCurrentDirectory(), "groq_debug.txt");
+                        using (var debugFile = new StreamWriter(debugPath, append: false))
+                        {
+                            debugFile.WriteLine($"=== GROQ DEBUG [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ===");
+                            debugFile.WriteLine();
+                            debugFile.WriteLine("--- RAW RESPONSE ---");
+                            debugFile.WriteLine(aiJsonString);
+                        }
+                        // ─────────────────────────────────────────────────────────────────
+
                         using var aiDoc = JsonDocument.Parse(aiJsonString);
 
                         string rawContentJson = aiDoc.RootElement
@@ -512,6 +524,15 @@ namespace Licenta.Controllers
                             return Json(new { success = false, message = "AI Error: The AI did not return a valid JSON object." });
                         }
 
+                        // ── DEBUG: append parsed content to the same file ──────────────
+                        using (var debugFile = new StreamWriter(debugPath, append: true))
+                        {
+                            debugFile.WriteLine();
+                            debugFile.WriteLine("--- PARSED ATTRACTIONS JSON ---");
+                            debugFile.WriteLine(rawContentJson);
+                        }
+                        // ──────────────────────────────────────────────────────────────
+
                         using var contentDoc = JsonDocument.Parse(rawContentJson);
                         var attractionsArray = contentDoc.RootElement.GetProperty("attractions");
 
@@ -520,6 +541,18 @@ namespace Licenta.Controllers
                     else
                     {
                         string errorMsg = await aiResponse.Content.ReadAsStringAsync();
+
+                        // ── DEBUG: write error response to file (overwrites each time) ──
+                        var debugPath = Path.Combine(Directory.GetCurrentDirectory(), "groq_debug.txt");
+                        using (var debugFile = new StreamWriter(debugPath, append: false))
+                        {
+                            debugFile.WriteLine($"=== GROQ DEBUG [{DateTime.Now:yyyy-MM-dd HH:mm:ss}] ===");
+                            debugFile.WriteLine();
+                            debugFile.WriteLine($"--- ERROR (HTTP {(int)aiResponse.StatusCode}) ---");
+                            debugFile.WriteLine(errorMsg);
+                        }
+                        // ─────────────────────────────────────────────────────────────
+
                         return Json(new { success = false, message = $"AI Engine Error: {errorMsg}" });
                     }
                 }
@@ -572,7 +605,7 @@ namespace Licenta.Controllers
                             string fullAddress = props.TryGetProperty("full_address", out var addr) ? (addr.GetString() ?? "") : "";
                             string placeFormatted = props.TryGetProperty("place_formatted", out var pf) ? (pf.GetString() ?? "") : "";
 
-                           
+
                             bool matchesCountry = fullAddress.Contains(trip.Country, StringComparison.OrdinalIgnoreCase) || placeFormatted.Contains(trip.Country, StringComparison.OrdinalIgnoreCase);
                             bool matchesCity = fullAddress.Contains(trip.City, StringComparison.OrdinalIgnoreCase) || placeFormatted.Contains(trip.City, StringComparison.OrdinalIgnoreCase);
 
