@@ -1,19 +1,39 @@
-=== GROQ DEBUG [2026-06-12 18:01:21] ===
+=== GROQ DEBUG [2026-06-24 13:12:07] ===
 
 --- RAW RESPONSE ---
-{"id":"chatcmpl-1d7a9406-3fd2-4562-85ac-b76e27bf0330","object":"chat.completion","created":1781276482,"model":"llama-3.3-70b-versatile","choices":[{"index":0,"message":{"role":"assistant","content":"{\n  \"attractions\": [\n       {\"name\": \"The Louvre\", \"tag\": \"Museum\"},\n       {\"name\": \"Palace of Versailles\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Musée d'Orsay\", \"tag\": \"Museum\"},\n       {\"name\": \"Arc de Triomphe\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Sainte-Chapelle\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Musée Rodin\", \"tag\": \"Museum\"},\n       {\"name\": \"Château de Fontainebleau\", \"tag\": \"Historic Site\"},\n       {\"name\": \"Musée National du Moyen Âge\", \"tag\": \"Museum\"}\n   ]\n}"},"logprobs":null,"finish_reason":"stop"}],"usage":{"queue_time":0.051363747,"prompt_tokens":183,"prompt_time":0.009944954,"completion_tokens":162,"completion_time":0.318235926,"total_tokens":345,"total_time":0.32818088},"usage_breakdown":null,"system_fingerprint":"fp_f8b414701e","x_groq":{"id":"req_01kty5m63se87tk3tn3q9bg95s","seed":337648699},"service_tier":"on_demand"}
+{"id":"chatcmpl-49f46f63-3ef2-4ec2-b741-eeeecb0cfda6","object":"chat.completion","created":1782295927,"model":"llama-3.3-70b-versatile","choices":[{"index":0,"message":{"role":"assistant","content":"{\n  \"attractions\": [\n       {\n           \"name\": \"Neamț County Museum (Muzeul Județean Neamț)\",\n           \"tag\": \"Museum\"\n       },\n       {\n           \"name\": \"Roman Catholic Church (Biserica Catolică)\",\n           \"tag\": \"Historic Site\"\n       },\n       {\n           \"name\": \"Piatra Teiului\",\n           \"tag\": \"Natural Site\"\n       },\n       {\n           \"name\": \"Bistrița Monastery (Mănăstirea Bistrița)\",\n           \"tag\": \"Historic Site\"\n       },\n       {\n           \"name\": \"Cascada Durău\",\n           \"tag\": \"Natural Site\"\n       },\n       {\n           \"name\": \"Parc Astra\",\n           \"tag\": \"Local Park\"\n       },\n       {\n           \"name\": \"Mănăstirea Secu\",\n           \"tag\": \"Historic Site\"\n       }\n   ]\n}"},"logprobs":null,"finish_reason":"stop"}],"usage":{"queue_time":0.05101322,"prompt_tokens":328,"prompt_time":0.032124571,"completion_tokens":207,"completion_time":0.517831913,"total_tokens":535,"total_time":0.549956484},"usage_breakdown":null,"system_fingerprint":"fp_f8b414701e","x_groq":{"id":"req_01kvwhv5t7fsaadzd56ynntd1p","seed":1467004304},"service_tier":"on_demand"}
 
 
 --- PARSED ATTRACTIONS JSON ---
 {
   "attractions": [
-       {"name": "The Louvre", "tag": "Museum"},
-       {"name": "Palace of Versailles", "tag": "Historic Site"},
-       {"name": "Musée d'Orsay", "tag": "Museum"},
-       {"name": "Arc de Triomphe", "tag": "Historic Site"},
-       {"name": "Sainte-Chapelle", "tag": "Historic Site"},
-       {"name": "Musée Rodin", "tag": "Museum"},
-       {"name": "Château de Fontainebleau", "tag": "Historic Site"},
-       {"name": "Musée National du Moyen Âge", "tag": "Museum"}
+       {
+           "name": "Neamț County Museum (Muzeul Județean Neamț)",
+           "tag": "Museum"
+       },
+       {
+           "name": "Roman Catholic Church (Biserica Catolică)",
+           "tag": "Historic Site"
+       },
+       {
+           "name": "Piatra Teiului",
+           "tag": "Natural Site"
+       },
+       {
+           "name": "Bistrița Monastery (Mănăstirea Bistrița)",
+           "tag": "Historic Site"
+       },
+       {
+           "name": "Cascada Durău",
+           "tag": "Natural Site"
+       },
+       {
+           "name": "Parc Astra",
+           "tag": "Local Park"
+       },
+       {
+           "name": "Mănăstirea Secu",
+           "tag": "Historic Site"
+       }
    ]
 }
