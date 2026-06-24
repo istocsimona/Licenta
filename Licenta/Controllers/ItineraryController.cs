@@ -295,6 +295,174 @@ namespace Licenta.Controllers
             return R * c;
         }
 
+        // ------------------------------------------------------------------
+        // NAME MATCHING (so "Pantheon" doesn't get matched to a storage unit,
+        // and "Vatican Museums" can still match Mapbox's "Musei Vaticani")
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// Strips accents/diacritics and lowercases, so "Musei Vaticani" and
+        /// "MUSEI VATICANI" compare the same, and accented local names compare
+        /// fairly against their AI/English equivalents.
+        /// </summary>
+        private string NormalizeForMatch(string input)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return "";
+
+            var formD = input.ToLowerInvariant().Normalize(System.Text.NormalizationForm.FormD);
+            var sb = new System.Text.StringBuilder();
+            foreach (var ch in formD)
+            {
+                var category = System.Globalization.CharUnicodeInfo.GetUnicodeCategory(ch);
+                if (category != System.Globalization.UnicodeCategory.NonSpacingMark)
+                    sb.Append(ch);
+            }
+            return sb.ToString().Normalize(System.Text.NormalizationForm.FormC);
+        }
+
+        private static readonly HashSet<string> CommonWords = new HashSet<string>
+        {
+            "the", "of", "and", "de", "del", "della", "di", "la", "le", "il", "el", "los", "las",
+            "museum", "museo", "musee", "musei", "church", "chiesa", "basilica", "park", "parco",
+            "garden", "gardens", "square", "piazza", "plaza", "palace", "palazzo", "castle",
+            "castello", "tower", "torre", "national", "royal", "old", "ancient"
+        };
+
+        // ------------------------------------------------------------------
+        // NON-ATTRACTION FILTERING (lodging, vacation rentals, wellness venues,
+        // and other commercial/private listings that Mapbox indexes but that
+        // are not genuine sightseeing destinations)
+        // ------------------------------------------------------------------
+
+        /// <summary>
+        /// Words commonly found in vacation-rental / lodging / wellness listing titles.
+        /// Listing titles are written by hosts as marketing copy ("Beautiful penthouse
+        /// with terrace...", "Rooftop Jacuzzi with stunning view!") so this list is kept
+        /// broad and is reviewed alongside NonAttractionCategories, which catches listings
+        /// whose titles dodge every keyword here.
+        /// </summary>
+        private static readonly HashSet<string> NonAttractionKeywords = new HashSet<string>
+        {
+            "hotel", "apartment", "apartments", "penthouse", "studio", "bedroom", "bnb", "b&b",
+            "guesthouse", "guest house", "hostel", "resort", "loft", "flat", "condo",
+            "parking", "yespark", "suite", "room", "storage", "self storage",
+            "jacuzzi", "sauna", "spa", "hot tub", "rooftop", "terrace", "balcony",
+            "rental", "vacation rental", "airbnb", "booking.com", "lodging",
+            "with view", "stunning view", "private pool", "swimming pool"
+        };
+
+        /// <summary>
+        /// Substrings of Mapbox's poi_category values that indicate a commercial/private
+        /// venue rather than a genuine public attraction. Checking the category (assigned
+        /// by Mapbox's own data) catches listings even when the title itself is generic
+        /// enough to dodge NonAttractionKeywords.
+        /// </summary>
+        private static readonly HashSet<string> NonAttractionCategories = new HashSet<string>
+        {
+            "lodging", "hotel", "motel", "hostel", "vacation rental", "bed and breakfast",
+            "resort", "spa", "massage", "sauna", "parking", "self storage", "storage",
+            "real estate", "property management", "rental"
+        };
+
+        /// <summary>
+        /// Scores how well a geocoded result's name matches what was actually asked for.
+        /// Returns 0 (no relation) to 1 (essentially the same place). Designed to tolerate
+        /// local-language aliases (e.g. "Vatican Museums" vs "Musei Vaticani" share the
+        /// "vatican/vaticani" token) while still rejecting unrelated businesses that merely
+        /// happen to sit inside the right city ("Pantheon" vs "ABC Self Storage").
+        /// </summary>
+        private double NameSimilarityScore(string requestedName, string resultName)
+        {
+            string a = NormalizeForMatch(requestedName);
+            string b = NormalizeForMatch(resultName);
+            if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b)) return 0;
+
+            if (a == b) return 1.0;
+            if (a.Contains(b) || b.Contains(a)) return 0.85;
+
+            var tokensA = a.Split(new[] { ' ', '-', ',', '\'', '(', ')' }, StringSplitOptions.RemoveEmptyEntries)
+                           .Where(t => t.Length > 2).ToList();
+            var tokensB = b.Split(new[] { ' ', '-', ',', '\'', '(', ')' }, StringSplitOptions.RemoveEmptyEntries)
+                           .Where(t => t.Length > 2).ToList();
+            if (tokensA.Count == 0 || tokensB.Count == 0) return 0;
+
+            // Significant tokens (drop generic words like "museum"/"the"/"palace") carry
+            // more weight, since two places can both be "museums" without being the same
+            // museum, but sharing a distinctive word like "vatican" is a strong signal.
+            var significantA = tokensA.Where(t => !CommonWords.Contains(t)).ToList();
+            var significantB = tokensB.Where(t => !CommonWords.Contains(t)).ToList();
+
+            int sharedSignificant = significantA.Count(ta => significantB.Any(tb => TokensMatch(ta, tb)));
+            int sharedAny = tokensA.Count(ta => tokensB.Any(tb => TokensMatch(ta, tb)));
+
+            int significantDenominator = Math.Max(1, Math.Min(significantA.Count, significantB.Count));
+            int anyDenominator = Math.Max(1, Math.Min(tokensA.Count, tokensB.Count));
+
+            double significantRatio = significantA.Count > 0 && significantB.Count > 0
+                ? (double)sharedSignificant / significantDenominator
+                : 0;
+            double anyRatio = (double)sharedAny / anyDenominator;
+
+            // Weight distinctive-word overlap heavily; generic-word overlap alone
+            // (e.g. both contain "museum") shouldn't be enough to pass.
+            return Math.Max(significantRatio, anyRatio * 0.5);
+        }
+
+        /// <summary>
+        /// Compares two normalized tokens allowing for shared word stems, so
+        /// "vatican" matches "vaticani", "gallery" loosely matches "galleria", etc.
+        /// </summary>
+        private bool TokensMatch(string tokenA, string tokenB)
+        {
+            if (tokenA == tokenB) return true;
+            if (tokenA.Length >= 5 && tokenB.Length >= 5)
+            {
+                int stemLen = Math.Min(tokenA.Length, tokenB.Length) - 1;
+                if (stemLen >= 4 && tokenA.Substring(0, stemLen) == tokenB.Substring(0, stemLen)) return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Best-effort hint for the local language to additionally request from Mapbox,
+        /// so the geocoder is more likely to surface (or match against) the name the
+        /// place is actually known by locally, e.g. "musei vaticani" for Vatican Museums.
+        /// </summary>
+        private string GetLocalLanguageHint(string country)
+        {
+            if (string.IsNullOrWhiteSpace(country)) return "en";
+
+            var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["italy"] = "it",
+                ["italia"] = "it",
+                ["france"] = "fr",
+                ["spain"] = "es",
+                ["españa"] = "es",
+                ["germany"] = "de",
+                ["deutschland"] = "de",
+                ["romania"] = "ro",
+                ["portugal"] = "pt",
+                ["greece"] = "el",
+                ["netherlands"] = "nl",
+                ["austria"] = "de",
+                ["switzerland"] = "de",
+                ["poland"] = "pl",
+                ["czech republic"] = "cs",
+                ["czechia"] = "cs",
+                ["turkey"] = "tr",
+                ["türkiye"] = "tr",
+                ["japan"] = "ja",
+                ["china"] = "zh",
+                ["south korea"] = "ko",
+                ["russia"] = "ru",
+                ["egypt"] = "ar",
+                ["morocco"] = "ar",
+            };
+
+            return map.TryGetValue(country.Trim(), out var code) ? code : "en";
+        }
+
         private bool FitsBeforeNextEvent(Location l, TimeSpan current, TimeSpan? nextConstraintTime, TimeSpan endLimit)
         {
             var finishTime = current.Add(TimeSpan.FromMinutes(l.AvgDuration));
@@ -470,6 +638,16 @@ namespace Licenta.Controllers
 
                 string tagsListString = string.Join(", ", topTags.Select(t => t.Name));
 
+                // ── Scale the number of requested places to the actual trip length ──
+                // Roughly one stop per ~2.5h of exploration time per day, with sensible
+                // floor/ceiling so very short or very long trips still get a reasonable,
+                // non-fixed number of suggestions.
+                int tripDays = Math.Max(1, (trip.EndDate.Date - trip.StartDate.Date).Days + 1);
+                double exploreHoursPerDay = Math.Max(1, trip.EndExplorationHour - trip.StartExplorationHour);
+                int placesPerDay = (int)Math.Ceiling(exploreHoursPerDay / 2.5); // ~2.5h per stop incl. travel
+                int targetPlaceCount = tripDays * placesPerDay;
+                targetPlaceCount = Math.Clamp(targetPlaceCount, 6, 40);
+
                 var aiRequestPayload = new
                 {
                     model = "llama-3.3-70b-versatile",
@@ -478,7 +656,7 @@ namespace Licenta.Controllers
                     messages = new[]
                     {
                         new { role = "system", content = "You are a travel API. Output ONLY raw JSON. Your output must exactly match this schema: {\"attractions\": [{\"name\": \"Exact Name\", \"tag\": \"Category\"}]}" },
-                        new { role = "user", content = $"Give me up to 8 real, visitable places of interest in or very near {trip.City}, {trip.Country}. This may be a small village - if so, include nearby natural spots, viewpoints, churches, monuments, local parks, or any point of interest within 15km. Prioritize these categories: {tagsListString}. Do NOT include neighborhoods, hotels, or restaurants. Use their official real-world names. If fewer than 8 exist, return only what truly exists." }
+                        new { role = "user", content = $"Give me up to {targetPlaceCount} real, visitable PUBLIC places of interest in or very near {trip.City}, {trip.Country}. This is for a {tripDays}-day trip, so suggest enough variety to fill every day without repeats. This may be a small village - if so, include nearby natural spots, viewpoints, churches, monuments, local parks, or any point of interest within 15km. Prioritize these categories: {tagsListString}. Each suggestion MUST be a genuine, publicly-accessible landmark, museum, monument, park, or natural site with its own official name - the kind of place that would appear in a guidebook. Do NOT include neighborhoods, hotels, restaurants, vacation rentals, Airbnb-style listings, private apartments, rooftop bars or terraces, spas, jacuzzis, or any commercial/private venue named with marketing language (e.g. \"Beautiful penthouse with terrace\", \"Rooftop Jacuzzi with view\"). Use their official real-world names (and include the well-known local-language name in parentheses if it differs, e.g. \"Vatican Museums (Musei Vaticani)\"). If fewer than {targetPlaceCount} genuinely exist, return only what truly exists." }
                     }
                 };
 
@@ -568,91 +746,150 @@ namespace Licenta.Controllers
 
                 foreach (var item in recommendedPlaces)
                 {
-                    if (addedLocations.Count >= 8) break;
+                    if (addedLocations.Count >= targetPlaceCount) break;
 
-                    string geocodeQuery = $"{item.name}, {trip.City}";
-                    string url = $"https://api.mapbox.com/search/searchbox/v1/forward?q={Uri.EscapeDataString(geocodeQuery)}&access_token={mapboxToken}&limit=5&types=poi,place,locality,neighborhood";
-
-                    if (cityLat != 0 && cityLng != 0)
+                    // Try the AI's name as given first; if nothing scores well enough,
+                    // retry without the city suffix (helps when Mapbox's POI name is in
+                    // the local language and the city name confuses the match, e.g.
+                    // "Vatican Museums, Rome" vs the POI being named "Musei Vaticani").
+                    var queryAttempts = new List<string>
                     {
-                        string strLng = cityLng.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                        string strLat = cityLat.ToString(System.Globalization.CultureInfo.InvariantCulture);
-                        url += $"&proximity={strLng},{strLat}";
-                    }
+                        $"{item.name}, {trip.City}",
+                        item.name
+                    };
 
-                    try
+                    string candidateBestName = null;
+                    double candidateBestScore = 0;
+                    string candidateBestAddress = "";
+                    double candidateBestLat = 0, candidateBestLng = 0;
+
+                    foreach (var geocodeQuery in queryAttempts)
                     {
-                        var response = await client.GetAsync(new Uri(url));
-                        if (!response.IsSuccessStatusCode) continue;
+                        string url = $"https://api.mapbox.com/search/searchbox/v1/forward?q={Uri.EscapeDataString(geocodeQuery)}&access_token={mapboxToken}&limit=5&types=poi,place,locality,neighborhood&language=en,{GetLocalLanguageHint(trip.Country)}";
 
-                        using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
-                        var features = doc.RootElement.GetProperty("features");
-
-                        foreach (var feature in features.EnumerateArray())
+                        if (cityLat != 0 && cityLng != 0)
                         {
-                            var props = feature.GetProperty("properties");
-                            string validatedName = props.TryGetProperty("name", out var n) ? n.GetString() : item.name;
+                            string strLng = cityLng.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            string strLat = cityLat.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                            url += $"&proximity={strLng},{strLat}";
+                        }
 
-                            string lowerName = validatedName.ToLower();
-                            if (lowerName.Contains("hotel") || lowerName.Contains("apartment") ||
-                                lowerName.Contains("studio") || lowerName.Contains("bedroom") ||
-                                lowerName.Contains("parking") || lowerName.Contains("yespark") ||
-                                lowerName.Contains("suite") || lowerName.Contains("room"))
+                        try
+                        {
+                            var response = await client.GetAsync(new Uri(url));
+                            if (!response.IsSuccessStatusCode) continue;
+
+                            using var doc = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+                            var features = doc.RootElement.GetProperty("features");
+
+                            foreach (var feature in features.EnumerateArray())
                             {
-                                continue;
-                            }
+                                var props = feature.GetProperty("properties");
+                                string validatedName = props.TryGetProperty("name", out var n) ? n.GetString() : item.name;
+                                if (string.IsNullOrWhiteSpace(validatedName)) continue;
 
-                            string fullAddress = props.TryGetProperty("full_address", out var addr) ? (addr.GetString() ?? "") : "";
-                            string placeFormatted = props.TryGetProperty("place_formatted", out var pf) ? (pf.GetString() ?? "") : "";
+                                string lowerName = validatedName.ToLowerInvariant();
+                                if (NonAttractionKeywords.Any(kw => lowerName.Contains(kw)))
+                                {
+                                    continue;
+                                }
 
+                                string fullAddress = props.TryGetProperty("full_address", out var addr) ? (addr.GetString() ?? "") : "";
+                                string placeFormatted = props.TryGetProperty("place_formatted", out var pf) ? (pf.GetString() ?? "") : "";
+                                string featureType = props.TryGetProperty("feature_type", out var ft) ? (ft.GetString() ?? "") : "";
 
-                            bool matchesCountry = fullAddress.Contains(trip.Country, StringComparison.OrdinalIgnoreCase) || placeFormatted.Contains(trip.Country, StringComparison.OrdinalIgnoreCase);
-                            bool matchesCity = fullAddress.Contains(trip.City, StringComparison.OrdinalIgnoreCase) || placeFormatted.Contains(trip.City, StringComparison.OrdinalIgnoreCase);
+                                // poi_category is an array of category strings Mapbox assigns
+                                // (e.g. "lodging", "vacation rental", "spa", "historic site").
+                                // This catches commercial/private venues even when the listing's
+                                // NAME itself dodges the keyword blocklist (creative Airbnb titles,
+                                // marketing copy, etc.) since the category is assigned by Mapbox's
+                                // own data, not by whoever wrote the listing title.
+                                var poiCategories = new List<string>();
+                                if (props.TryGetProperty("poi_category", out var pc) && pc.ValueKind == JsonValueKind.Array)
+                                {
+                                    foreach (var catEl in pc.EnumerateArray())
+                                    {
+                                        var catStr = catEl.GetString();
+                                        if (!string.IsNullOrEmpty(catStr)) poiCategories.Add(catStr.ToLowerInvariant());
+                                    }
+                                }
+                                bool isNonAttractionCategory = poiCategories.Any(cat => NonAttractionCategories.Any(bad => cat.Contains(bad)));
+                                if (isNonAttractionCategory) continue;
 
-                            // Proximity fallback: if we have city coordinates, accept results within ~30km
-                            bool matchesProximity = false;
-                            if (!matchesCity && cityLat != 0 && cityLng != 0)
-                            {
+                                bool matchesCountry = fullAddress.Contains(trip.Country, StringComparison.OrdinalIgnoreCase) || placeFormatted.Contains(trip.Country, StringComparison.OrdinalIgnoreCase);
+                                bool matchesCity = fullAddress.Contains(trip.City, StringComparison.OrdinalIgnoreCase) || placeFormatted.Contains(trip.City, StringComparison.OrdinalIgnoreCase);
+
+                                double resultLat = 0, resultLng = 0;
+                                bool matchesProximity = false;
                                 if (feature.TryGetProperty("geometry", out var geom))
                                 {
                                     var resultCoords = geom.GetProperty("coordinates");
-                                    double resultLng = resultCoords[0].GetDouble();
-                                    double resultLat = resultCoords[1].GetDouble();
-                                    double distanceMeters = GetDistance(cityLat, cityLng, resultLat, resultLng);
-                                    matchesProximity = distanceMeters <= 30000; // 30km radius
+                                    resultLng = resultCoords[0].GetDouble();
+                                    resultLat = resultCoords[1].GetDouble();
+
+                                    if (!matchesCity && cityLat != 0 && cityLng != 0)
+                                    {
+                                        double distanceMeters = GetDistance(cityLat, cityLng, resultLat, resultLng);
+                                        matchesProximity = distanceMeters <= 30000; // 30km radius
+                                    }
+                                }
+
+                                if (!matchesCountry || (!matchesCity && !matchesProximity)) continue;
+
+                                // ── This is the key check that was missing: does the result's
+                                // NAME actually resemble what the AI asked for? Without this,
+                                // any random POI/business "in the right city" gets accepted as
+                                // a match (e.g. a self-storage unit matching "Pantheon").
+                                double nameScore = NameSimilarityScore(item.name, validatedName);
+
+                                // Small bonus for being a real point of interest rather than a
+                                // generic place/locality/neighborhood placeholder result.
+                                double typeBonus = featureType.Equals("poi", StringComparison.OrdinalIgnoreCase) ? 0.1 : 0;
+                                double totalScore = nameScore + typeBonus;
+
+                                if (totalScore > candidateBestScore)
+                                {
+                                    bool isDuplicate = trip.Locations.Any(l => l.Name.Equals(validatedName, StringComparison.OrdinalIgnoreCase)) ||
+                                                       addedLocations.Any(l => l.Name.Equals(validatedName, StringComparison.OrdinalIgnoreCase));
+                                    if (isDuplicate) continue;
+
+                                    candidateBestScore = totalScore;
+                                    candidateBestName = validatedName;
+                                    candidateBestAddress = !string.IsNullOrEmpty(fullAddress) ? fullAddress : placeFormatted;
+                                    candidateBestLat = resultLat;
+                                    candidateBestLng = resultLng;
                                 }
                             }
-
-                            if (!matchesCountry || (!matchesCity && !matchesProximity)) continue;
-
-                            bool isDuplicate = trip.Locations.Any(l => l.Name.Equals(validatedName, StringComparison.OrdinalIgnoreCase)) ||
-                                               addedLocations.Any(l => l.Name.Equals(validatedName, StringComparison.OrdinalIgnoreCase));
-
-                            if (!isDuplicate)
-                            {
-                                var coords = feature.GetProperty("geometry").GetProperty("coordinates");
-                                var targetTag = topTags.FirstOrDefault(t => t.Name.Equals(item.tag, StringComparison.OrdinalIgnoreCase)) ?? topTags.First();
-
-                                var newLoc = new Location
-                                {
-                                    TripId = tripId,
-                                    Name = validatedName,
-                                    City = trip.City,
-                                    Address = !string.IsNullOrEmpty(fullAddress) ? fullAddress : placeFormatted,
-                                    Latitude = coords[1].GetDouble(),
-                                    Longitude = coords[0].GetDouble(),
-                                    AvgDuration = 90,
-                                    IsIndoor = true
-                                };
-
-                                _context.Locations.Add(newLoc);
-                                addedLocations.Add(newLoc);
-                                _context.LocationTags.Add(new LocationTag { Location = newLoc, TagId = targetTag.TagId });
-                                break;
-                            }
                         }
+                        catch { }
+
+                        // Good enough match found on this attempt — no need to retry with
+                        // the alternate query form.
+                        if (candidateBestScore >= 0.6) break;
                     }
-                    catch { }
+
+                    // Reject low-confidence matches instead of silently keeping a wrong
+                    // place. A genuine match (even via local-language alias) should score
+                    // well above this; "happened to be in the same city" alone should not.
+                    if (candidateBestName == null || candidateBestScore < 0.35) continue;
+
+                    var targetTag = topTags.FirstOrDefault(t => t.Name.Equals(item.tag, StringComparison.OrdinalIgnoreCase)) ?? topTags.First();
+
+                    var newLoc = new Location
+                    {
+                        TripId = tripId,
+                        Name = candidateBestName,
+                        City = trip.City,
+                        Address = candidateBestAddress,
+                        Latitude = candidateBestLat,
+                        Longitude = candidateBestLng,
+                        AvgDuration = 90,
+                        IsIndoor = true
+                    };
+
+                    _context.Locations.Add(newLoc);
+                    addedLocations.Add(newLoc);
+                    _context.LocationTags.Add(new LocationTag { Location = newLoc, TagId = targetTag.TagId });
                 }
 
                 if (!addedLocations.Any())
